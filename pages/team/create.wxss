@@ -1,0 +1,80 @@
+/* pages/team/create.wxss */
+.page {
+  padding: 24rpx;
+  padding-bottom: 200rpx;
+}
+
+.form-group {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #999999;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  font-size: 30rpx;
+  color: #1A1A1A;
+  font-weight: 500;
+  width: 100%;
+  padding: 8rpx 0;
+}
+
+.form-textarea {
+  font-size: 28rpx;
+  color: #1A1A1A;
+  width: 100%;
+  min-height: 160rpx;
+  padding: 8rpx 0;
+}
+
+.district-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.dist-item {
+  padding: 12rpx 24rpx;
+  background: #F5F7FA;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.dist-item.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8rpx 0;
+  font-size: 28rpx;
+  color: #1A1A1A;
+}
+
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-top: 2rpx solid #F5F7FA;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.btn-primary.full {
+  display: block;
+  width: 100%;
+}

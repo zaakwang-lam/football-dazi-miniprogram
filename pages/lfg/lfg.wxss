@@ -1,0 +1,195 @@
+/* pages/lfg/lfg.wxss */
+.page {
+  padding: 24rpx 24rpx 60rpx;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: #F5F7FA;
+  padding: 8rpx;
+  border-radius: 999rpx;
+  margin-bottom: 24rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  font-size: 28rpx;
+  color: #666666;
+  border-radius: 999rpx;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 0, 0.3);
+}
+
+/* 筛选条 */
+.filter-bar {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 16rpx 0;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.filter-item {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  color: #666666;
+  padding: 12rpx 0;
+}
+
+/* 卡片 */
+.lfg-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.lfg-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.card-type {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.card-type.type-sub {
+  background: #FFE8D6;
+  color: #FF6B00;
+}
+
+.card-type.type-war {
+  background: #E6F2FF;
+  color: #007AFF;
+}
+
+.card-type.type-join {
+  background: #E8F8EE;
+  color: #2ECC71;
+}
+
+.type-icon {
+  margin-right: 8rpx;
+  font-size: 24rpx;
+}
+
+.card-time {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.card-main {
+  margin-bottom: 20rpx;
+}
+
+.main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.team-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.need-num {
+  font-size: 26rpx;
+  color: #FF4757;
+  font-weight: 700;
+  background: #FFEAEC;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+.main-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.info-item {
+  font-size: 24rpx;
+  color: #666666;
+  background: #F5F7FA;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+}
+
+.main-desc {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.5;
+  padding: 12rpx 16rpx;
+  background: #F9FAFB;
+  border-radius: 16rpx;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16rpx;
+  border-top: 2rpx solid #F5F7FA;
+}
+
+.contact-info {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.action-btn {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  padding: 14rpx 32rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 0, 0.3);
+}
+
+/* 浮动按钮 */
+.fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 140rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60rpx;
+  font-weight: 300;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.4);
+  z-index: 99;
+}

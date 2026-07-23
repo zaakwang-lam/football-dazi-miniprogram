@@ -1,0 +1,41 @@
+<!-- pages/login/login.wxml -->
+<view class="page">
+  <view class="hero">
+    <view class="hero-logo">⚽</view>
+    <view class="hero-name">足球搭子</view>
+    <view class="hero-sub">广州业余足球一站式平台</view>
+  </view>
+
+  <view class="login-card">
+    <view class="login-title">微信一键登录</view>
+    <view class="login-desc">登录后享受完整功能：订场、组队、约战</view>
+
+    <button class="btn-primary full" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+      微信授权登录
+    </button>
+
+    <view class="agreement" bindtap="onAgreeTap">
+      <view class="checkbox {{agreed ? 'checked' : ''}}">{{agreed ? '✓' : ''}}</view>
+      <text>我已阅读并同意 <text class="link">《用户协议》</text> 和 <text class="link">《隐私政策》</text></text>
+    </view>
+  </view>
+
+  <view class="features">
+    <view class="feature">
+      <view class="feature-icon">📍</view>
+      <text>附近场地</text>
+    </view>
+    <view class="feature">
+      <view class="feature-icon">👥</view>
+      <text>凑人约战</text>
+    </view>
+    <view class="feature">
+      <view class="feature-icon">💰</view>
+      <text>队费AA</text>
+    </view>
+    <view class="feature">
+      <view class="feature-icon">📊</view>
+      <text>数据统计</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,62 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/lfg/lfg",
+    "pages/team/team",
+    "pages/mine/mine",
+    "pages/court/list",
+    "pages/court/detail",
+    "pages/court/book",
+    "pages/order/list",
+    "pages/order/detail",
+    "pages/lfg/publish",
+    "pages/lfg/detail",
+    "pages/team/detail",
+    "pages/team/create",
+    "pages/team/checkin",
+    "pages/team/aa",
+    "pages/login/login",
+    "pages/court/eval"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF6B00",
+    "navigationBarTitleText": "足球搭子",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FF6B00",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home_a.png"
+      },
+      {
+        "pagePath": "pages/lfg/lfg",
+        "text": "凑人",
+        "iconPath": "images/tab/lfg.png",
+        "selectedIconPath": "images/tab/lfg_a.png"
+      },
+      {
+        "pagePath": "pages/team/team",
+        "text": "球队",
+        "iconPath": "images/tab/team.png",
+        "selectedIconPath": "images/tab/team_a.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab/mine.png",
+        "selectedIconPath": "images/tab/mine_a.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,66 @@
+<!-- pages/lfg/publish.wxml -->
+<view class="page">
+  <view class="form-title">发布类型</view>
+  <view class="type-selector">
+    <view class="type-item {{form.typeKey === 'sub' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="找人顶" data-key="sub">
+      <text class="type-emoji">🙋</text>
+      <text>找人顶</text>
+    </view>
+    <view class="type-item {{form.typeKey === 'war' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="约战" data-key="war">
+      <text class="type-emoji">⚔️</text>
+      <text>约战</text>
+    </view>
+    <view class="type-item {{form.typeKey === 'join' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="凑局" data-key="join">
+      <text class="type-emoji">👥</text>
+      <text>凑局</text>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">球队名称</view>
+    <input class="form-input" placeholder="请输入球队名称" value="{{form.teamName}}" bindinput="onInput" data-key="teamName" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">地点</view>
+    <input class="form-input" placeholder="如：天河体育中心" value="{{form.location}}" bindinput="onInput" data-key="location" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">时间</view>
+    <input class="form-input" placeholder="如：今晚 20:00" value="{{form.time}}" bindinput="onInput" data-key="time" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">缺人数</view>
+    <view class="number-picker">
+      <view class="picker-btn" bindtap="onNumChange" data-delta="-1">-</view>
+      <text class="picker-num">{{form.need}}</text>
+      <view class="picker-btn" bindtap="onNumChange" data-delta="1">+</view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">水平</view>
+    <view class="level-selector">
+      <view class="level-item {{form.level === '新手友好' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="新手友好">新手友好</view>
+      <view class="level-item {{form.level === '业余' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余">业余</view>
+      <view class="level-item {{form.level === '业余校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余校队">业余校队</view>
+      <view class="level-item {{form.level === '职业' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="职业">职业</view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">联系方式</view>
+    <input class="form-input" placeholder="如：微信同名 / 王队长" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">详细说明</view>
+    <textarea class="form-textarea" placeholder="补充说明（位置/人数/费用）" value="{{form.desc}}" bindinput="onInput" data-key="desc" maxlength="200"></textarea>
+  </view>
+
+  <view class="bottom-action safe-bottom">
+    <view class="btn-primary full" bindtap="onSubmit">立即发布</view>
+  </view>
+</view>

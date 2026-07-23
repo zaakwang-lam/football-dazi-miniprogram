@@ -1,0 +1,171 @@
+/* pages/court/book.wxss */
+.page {
+  padding: 24rpx;
+  padding-bottom: 200rpx;
+}
+
+.court-summary {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  padding: 32rpx;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.cs-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.cs-meta {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.form-group {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #999999;
+  margin-bottom: 16rpx;
+}
+
+.form-input {
+  font-size: 30rpx;
+  color: #1A1A1A;
+  font-weight: 500;
+  width: 100%;
+  padding: 8rpx 0;
+}
+
+.form-textarea {
+  font-size: 28rpx;
+  color: #1A1A1A;
+  width: 100%;
+  min-height: 100rpx;
+  padding: 8rpx 0;
+}
+
+/* 日期横滑 */
+.date-scroll {
+  white-space: nowrap;
+}
+
+.date-item {
+  display: inline-block;
+  text-align: center;
+  padding: 16rpx 24rpx;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  margin-right: 12rpx;
+  min-width: 100rpx;
+}
+
+.date-item.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+}
+
+.date-day {
+  font-size: 22rpx;
+  margin-bottom: 4rpx;
+}
+
+.date-num {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+/* 时段网格 */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.time-item {
+  text-align: center;
+  padding: 20rpx 0;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+}
+
+.time-item.active {
+  background: #FFE8D6;
+  border-color: #FF6B00;
+  color: #FF6B00;
+}
+
+.time-item.disabled {
+  background: #F5F7FA;
+  color: #999999;
+}
+
+.time-hour {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 4rpx;
+}
+
+.time-status {
+  font-size: 20rpx;
+}
+
+/* 摘要 */
+.summary-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.summary-row.total {
+  border-top: 2rpx solid #F5F7FA;
+  padding-top: 20rpx;
+  margin-top: 8rpx;
+  font-size: 32rpx;
+}
+
+.summary-price {
+  color: #FF6B00;
+  font-weight: 600;
+}
+
+.summary-total {
+  color: #FF6B00;
+  font-weight: 700;
+  font-size: 36rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-top: 2rpx solid #F5F7FA;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.btn-primary.full {
+  display: block;
+  width: 100%;
+}

@@ -1,0 +1,131 @@
+/* pages/order/list.wxss */
+.page {
+  padding: 24rpx;
+}
+
+.tabs {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 999rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  font-size: 26rpx;
+  color: #666666;
+  border-radius: 999rpx;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.order-item {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #F5F7FA;
+}
+
+.order-id {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.tag {
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+}
+
+.tag-pending {
+  background: #FFF7E6;
+  color: #FFB800;
+}
+
+.tag-paid {
+  background: #E6F2FF;
+  color: #007AFF;
+}
+
+.tag-done {
+  background: #E8F8EE;
+  color: #2ECC71;
+}
+
+.tag-canceled {
+  background: #F5F7FA;
+  color: #999999;
+}
+
+.order-main {
+  margin-bottom: 16rpx;
+}
+
+.order-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 6rpx;
+}
+
+.order-date {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.order-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-price {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FF6B00;
+}
+
+.order-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
+.action-btn {
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+}
+
+.action-btn.secondary {
+  background: #F5F7FA;
+  color: #666666;
+}

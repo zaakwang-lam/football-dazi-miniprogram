@@ -1,0 +1,141 @@
+/* pages/order/detail.wxss */
+.page {
+  padding: 24rpx;
+  padding-bottom: 200rpx;
+}
+
+.status-card {
+  padding: 48rpx 32rpx;
+  border-radius: 24rpx;
+  text-align: center;
+  color: #FFFFFF;
+  margin-bottom: 20rpx;
+}
+
+.status-card.status-pending {
+  background: linear-gradient(135deg, #FFB800, #FFD75E);
+}
+
+.status-card.status-paid {
+  background: linear-gradient(135deg, #007AFF, #4FACFE);
+}
+
+.status-card.status-done {
+  background: linear-gradient(135deg, #2ECC71, #58D68D);
+}
+
+.status-card.status-canceled {
+  background: linear-gradient(135deg, #999999, #B0B0B0);
+}
+
+.status-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.status-text {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.status-desc {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.court-block {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.block-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 8rpx;
+}
+
+.block-meta {
+  font-size: 26rpx;
+  color: #999999;
+  margin-bottom: 24rpx;
+}
+
+.block-divider {
+  height: 2rpx;
+  background: #F5F7FA;
+  margin-bottom: 16rpx;
+}
+
+.block-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+}
+
+.row-label {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.row-value {
+  font-size: 26rpx;
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.price-block {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12rpx 0;
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.price-row.total {
+  border-top: 2rpx solid #F5F7FA;
+  padding-top: 20rpx;
+  margin-top: 8rpx;
+  font-size: 32rpx;
+}
+
+.price-val {
+  color: #FF6B00;
+  font-weight: 600;
+}
+
+.price-total {
+  color: #FF6B00;
+  font-weight: 700;
+  font-size: 36rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 24rpx;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-top: 2rpx solid #F5F7FA;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.bottom-bar .btn-primary,
+.bottom-bar .btn-secondary {
+  flex: 1;
+  text-align: center;
+}

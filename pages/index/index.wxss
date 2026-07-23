@@ -1,0 +1,344 @@
+/* pages/index/index.wxss */
+.page {
+  padding-bottom: 24rpx;
+}
+
+/* 顶部 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #FF6B00 0%, #FF8C42 100%);
+}
+
+.city-selector {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999rpx;
+  margin-right: 16rpx;
+  font-size: 26rpx;
+  color: #FFFFFF;
+}
+
+.city-icon {
+  margin-right: 8rpx;
+}
+
+.city-arrow {
+  margin-left: 8rpx;
+  font-size: 20rpx;
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 14rpx 24rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.search-icon {
+  margin-right: 12rpx;
+}
+
+/* Banner */
+.banner {
+  margin: 24rpx;
+  height: 240rpx;
+  border-radius: 32rpx;
+  overflow: hidden;
+}
+
+.banner-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 48rpx;
+  height: 100%;
+  color: #FFFFFF;
+}
+
+.banner-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.banner-sub {
+  font-size: 26rpx;
+  opacity: 0.95;
+}
+
+/* 4 个入口 */
+.entry-grid {
+  display: flex;
+  justify-content: space-around;
+  padding: 32rpx 24rpx;
+  background: #FFFFFF;
+  margin: 0 24rpx;
+  border-radius: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  margin-bottom: 24rpx;
+}
+
+.entry-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.entry-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  margin-bottom: 12rpx;
+}
+
+.entry-icon.book {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+}
+
+.entry-icon.lfg {
+  background: linear-gradient(135deg, #007AFF, #4FACFE);
+}
+
+.entry-icon.war {
+  background: linear-gradient(135deg, #2ECC71, #58D68D);
+}
+
+.entry-icon.event {
+  background: linear-gradient(135deg, #FFB800, #FFD75E);
+}
+
+.entry-label {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+/* 通用 section */
+.section {
+  margin: 0 24rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 32rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32rpx 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.section-more {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 场地横滑 */
+.court-scroll {
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.court-card {
+  display: inline-block;
+  width: 320rpx;
+  margin-right: 20rpx;
+  vertical-align: top;
+  white-space: normal;
+}
+
+.court-img {
+  position: relative;
+  width: 100%;
+  height: 180rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: flex-end;
+  padding: 16rpx;
+}
+
+.court-type {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: #FF6B00;
+  font-weight: 600;
+}
+
+.court-info {
+  padding: 16rpx 4rpx;
+}
+
+.court-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.court-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.court-distance {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.court-price {
+  font-size: 26rpx;
+  color: #FF6B00;
+  font-weight: 700;
+}
+
+/* 球队横滑 */
+.team-scroll {
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.team-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200rpx;
+  margin-right: 16rpx;
+  padding: 24rpx 12rpx;
+  background: #F5F7FA;
+  border-radius: 24rpx;
+  vertical-align: top;
+  white-space: normal;
+}
+
+.team-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.team-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  text-align: center;
+  margin-bottom: 6rpx;
+}
+
+.team-meta {
+  font-size: 22rpx;
+  color: #999999;
+  text-align: center;
+  margin-bottom: 8rpx;
+}
+
+/* 凑人列表 */
+.lfg-list {
+  padding: 0 32rpx;
+}
+
+.lfg-item {
+  display: flex;
+  padding: 24rpx;
+  background: #F5F7FA;
+  border-radius: 24rpx;
+  margin-bottom: 16rpx;
+  align-items: center;
+}
+
+.lfg-left {
+  margin-right: 20rpx;
+}
+
+.lfg-type {
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lfg-type.type-sub {
+  background: #FFE8D6;
+  color: #FF6B00;
+}
+
+.lfg-type.type-war {
+  background: #E6F2FF;
+  color: #007AFF;
+}
+
+.lfg-type.type-join {
+  background: #E8F8EE;
+  color: #2ECC71;
+}
+
+.lfg-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.lfg-row1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.lfg-team {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.lfg-time {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.lfg-row2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lfg-loc {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.lfg-need {
+  font-size: 24rpx;
+  color: #FF4757;
+  font-weight: 600;
+}

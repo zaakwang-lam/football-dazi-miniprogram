@@ -1,0 +1,36 @@
+<!-- pages/order/list.wxml -->
+<view class="page">
+  <!-- Tabs -->
+  <view class="tabs">
+    <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onTabTap" data-status="all">全部</view>
+    <view class="tab {{status === '待支付' ? 'active' : ''}}" bindtap="onTabTap" data-status="待支付">待支付</view>
+    <view class="tab {{status === '已支付' ? 'active' : ''}}" bindtap="onTabTap" data-status="已支付">已支付</view>
+    <view class="tab {{status === '已完成' ? 'active' : ''}}" bindtap="onTabTap" data-status="已完成">已完成</view>
+  </view>
+
+  <view class="order-list">
+    <view class="order-item" wx:for="{{list}}" wx:key="id" bindtap="onOrderTap" data-id="{{item.id}}">
+      <view class="order-top">
+        <text class="order-id">订单号：{{item.id}}</text>
+        <view class="tag tag-{{item.statusKey}}">{{item.status}}</view>
+      </view>
+      <view class="order-main">
+        <view class="order-name">{{item.courtName}}</view>
+        <view class="order-date">{{item.date}}</view>
+      </view>
+      <view class="order-bottom">
+        <text class="order-price">¥{{item.price}}</text>
+        <view class="order-actions">
+          <view class="action-btn secondary" wx:if="{{item.status === '待支付'}}" catchtap="onCancel">取消</view>
+          <view class="action-btn primary" wx:if="{{item.status === '待支付'}}" catchtap="onPay">支付</view>
+          <view class="action-btn secondary" wx:if="{{item.status === '已支付'}}" catchtap="onRefund">退订</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{list.length === 0}}">
+    <view class="empty-icon">📋</view>
+    <text>暂无订单</text>
+  </view>
+</view>

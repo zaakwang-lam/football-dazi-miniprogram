@@ -1,0 +1,87 @@
+<!-- pages/mine/mine.wxml -->
+<view class="page">
+  <!-- 用户信息 -->
+  <view class="user-card">
+    <view class="user-avatar" wx:if="{{userInfo}}">
+      <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+    </view>
+    <view class="user-avatar placeholder" wx:else>👤</view>
+
+    <view class="user-info" wx:if="{{userInfo}}">
+      <view class="user-name">{{userInfo.nickName}}</view>
+      <view class="user-phone">{{userInfo.phone || '未绑定'}}</view>
+    </view>
+    <view class="user-info" wx:else>
+      <view class="user-name">未登录</view>
+      <view class="login-btn" bindtap="onLogin">点击登录</view>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="stats-row" wx:if="{{userInfo}}">
+    <view class="stat-item">
+      <text class="stat-num">50</text>
+      <text class="stat-label">出勤</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">12</text>
+      <text class="stat-label">进球</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">8</text>
+      <text class="stat-label">助攻</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">3</text>
+      <text class="stat-label">MVP</text>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="menu-card">
+    <view class="menu-row" bindtap="onMenuTap" data-type="order">
+      <view class="menu-icon icon-order">📋</view>
+      <text class="menu-label">我的订单</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="team">
+      <view class="menu-icon icon-team">⚽</view>
+      <text class="menu-label">我的球队</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="coupon">
+      <view class="menu-icon icon-coupon">🎟</view>
+      <text class="menu-label">优惠券</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="wallet">
+      <view class="menu-icon icon-wallet">💰</view>
+      <text class="menu-label">钱包</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-row" bindtap="onMenuTap" data-type="msg">
+      <view class="menu-icon icon-msg">💬</view>
+      <text class="menu-label">消息中心</text>
+      <view class="badge" wx:if="{{unread > 0}}">{{unread}}</view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="cert">
+      <view class="menu-icon icon-cert">🛡</view>
+      <text class="menu-label">实名认证</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="about">
+      <view class="menu-icon icon-about">ℹ️</view>
+      <text class="menu-label">关于我们</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="feedback">
+      <view class="menu-icon icon-feedback">📝</view>
+      <text class="menu-label">意见反馈</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+</view>

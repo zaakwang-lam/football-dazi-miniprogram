@@ -1,0 +1,140 @@
+/* pages/lfg/publish.wxss */
+.page {
+  padding: 24rpx;
+  padding-bottom: 200rpx;
+}
+
+.form-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 16rpx;
+  margin-top: 8rpx;
+}
+
+.type-selector {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.type-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 0;
+  background: #FFFFFF;
+  border: 2rpx solid #F5F7FA;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.type-item.active {
+  border-color: #FF6B00;
+  background: #FFE8D6;
+  color: #FF6B00;
+  font-weight: 600;
+}
+
+.type-emoji {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.form-group {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #999999;
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  font-size: 30rpx;
+  color: #1A1A1A;
+  font-weight: 500;
+  width: 100%;
+  padding: 8rpx 0;
+}
+
+.form-textarea {
+  font-size: 28rpx;
+  color: #1A1A1A;
+  width: 100%;
+  min-height: 160rpx;
+  padding: 8rpx 0;
+}
+
+/* 数量选择器 */
+.number-picker {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.picker-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #F5F7FA;
+  color: #FF6B00;
+  font-size: 36rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picker-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FF6B00;
+  min-width: 60rpx;
+  text-align: center;
+}
+
+/* 水平选择 */
+.level-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.level-item {
+  padding: 12rpx 28rpx;
+  background: #F5F7FA;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.level-item.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* 底部按钮 */
+.bottom-action {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-top: 2rpx solid #F5F7FA;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.btn-primary.full {
+  display: block;
+  width: 100%;
+}

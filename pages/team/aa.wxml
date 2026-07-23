@@ -1,0 +1,45 @@
+<!-- pages/team/aa.wxml -->
+<view class="page">
+  <view class="hero">
+    <view class="hero-icon">💰</view>
+    <view class="hero-title">队费 AA</view>
+    <view class="hero-sub">本周场地费自动平摊</view>
+  </view>
+
+  <view class="amount-card">
+    <view class="amount-label">人均金额</view>
+    <view class="amount-row">
+      <text class="amount-sign">¥</text>
+      <text class="amount-num">{{form.amount}}</text>
+      <text class="amount-unit">/人</text>
+    </view>
+    <view class="amount-divider">总额 ¥{{totalAmount}} · {{form.paidCount}}/{{members.length}} 人已付</view>
+    <view class="number-picker">
+      <view class="picker-btn" bindtap="onAmountChange" data-delta="-10">-</view>
+      <view class="picker-btn" bindtap="onAmountChange" data-delta="10">+</view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">说明</view>
+    <textarea class="form-textarea" placeholder="如：本周场地费 AA" value="{{form.desc}}" bindinput="onInput" data-key="desc" />
+  </view>
+
+  <view class="section-title">队员 ({{members.length}})</view>
+  <view class="member-list">
+    <view class="member-item" wx:for="{{members}}" wx:key="id">
+      <view class="member-avatar">{{item.shortName}}</view>
+      <view class="member-info">
+        <text class="member-name">{{item.name}}</text>
+        <text class="member-status {{item.paid ? 'paid' : 'unpaid'}}">
+          {{item.paid ? '✓ 已支付' : '待支付'}}
+        </text>
+      </view>
+      <text class="member-amount">¥{{form.amount}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-action safe-bottom">
+    <view class="btn-primary full" bindtap="onSubmit">发起 AA 收款</view>
+  </view>
+</view>

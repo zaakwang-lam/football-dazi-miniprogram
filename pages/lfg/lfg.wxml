@@ -1,0 +1,75 @@
+<!-- pages/lfg/lfg.wxml -->
+<view class="page">
+  <!-- 3 标签页 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'sub' ? 'active' : ''}}" bindtap="onTabTap" data-tab="sub">
+      <text>找人顶</text>
+    </view>
+    <view class="tab {{activeTab === 'war' ? 'active' : ''}}" bindtap="onTabTap" data-tab="war">
+      <text>约战</text>
+    </view>
+    <view class="tab {{activeTab === 'join' ? 'active' : ''}}" bindtap="onTabTap" data-tab="join">
+      <text>凑局</text>
+    </view>
+  </view>
+
+  <!-- 筛选条 -->
+  <view class="filter-bar">
+    <view class="filter-item" bindtap="onFilterTap" data-key="distance">
+      <text>📍 距离</text>
+    </view>
+    <view class="filter-item" bindtap="onFilterTap" data-key="level">
+      <text>⭐ 水平</text>
+    </view>
+    <view class="filter-item" bindtap="onFilterTap" data-key="time">
+      <text>🕐 时间</text>
+    </view>
+    <view class="filter-item" bindtap="onFilterTap" data-key="district">
+      <text>🏙 区域</text>
+    </view>
+  </view>
+
+  <!-- 信息流 -->
+  <view class="lfg-list">
+    <view class="lfg-card" wx:for="{{list}}" wx:key="id" bindtap="onItemTap" data-id="{{item.id}}">
+      <view class="card-top">
+        <view class="card-type type-{{item.typeKey}}">
+          <text class="type-icon">{{item.icon}}</text>
+          <text>{{item.type}}</text>
+        </view>
+        <text class="card-time">{{item.publishTime}}</text>
+      </view>
+
+      <view class="card-main">
+        <view class="main-row">
+          <text class="team-name">{{item.teamName}}</text>
+          <text class="need-num">缺 {{item.need}} 人</text>
+        </view>
+        <view class="main-info">
+          <text class="info-item">📍 {{item.location}}</text>
+          <text class="info-item">🕐 {{item.time}}</text>
+          <text class="info-item">⭐ {{item.level}}</text>
+        </view>
+        <view class="main-desc">{{item.desc}}</view>
+      </view>
+
+      <view class="card-bottom">
+        <text class="contact-info">💬 {{item.contact}}</text>
+        <view class="action-btn" catchtap="onActionTap" data-id="{{item.id}}">
+          {{item.actionText}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动 + 按钮 -->
+  <view class="fab" bindtap="onPublishTap">
+    <text>+</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{list.length === 0}}">
+    <view class="empty-icon">⚽</view>
+    <text>暂无{{tabLabels[activeTab]}}信息</text>
+  </view>
+</view>

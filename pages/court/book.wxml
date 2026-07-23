@@ -1,0 +1,61 @@
+<!-- pages/court/book.wxml -->
+<view class="page" wx:if="{{court}}">
+  <view class="court-summary">
+    <view class="cs-name">{{court.name}}</view>
+    <view class="cs-meta">{{court.type}} · ¥{{court.price}}/场</view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">选择日期</view>
+    <scroll-view scroll-x class="date-scroll">
+      <view class="date-item {{form.dateIdx === index ? 'active' : ''}}" wx:for="{{dateList}}" wx:key="*this" bindtap="onDateSelect" data-idx="{{index}}">
+        <view class="date-day">{{item.week}}</view>
+        <view class="date-num">{{item.day}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">选择时段</view>
+    <view class="time-grid">
+      <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="*this" bindtap="onSlotSelect" data-idx="{{index}}">
+        <view class="time-hour">{{item.time}}</view>
+        <view class="time-status">{{item.status === 'booked' ? '已订' : '空闲'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">联系人</view>
+    <input class="form-input" placeholder="姓名" value="{{form.name}}" bindinput="onInput" data-key="name" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">联系电话</view>
+    <input class="form-input" type="number" placeholder="手机号" value="{{form.phone}}" bindinput="onInput" data-key="phone" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">备注</view>
+    <textarea class="form-textarea" placeholder="选填" value="{{form.remark}}" bindinput="onInput" data-key="remark" />
+  </view>
+
+  <view class="summary-card">
+    <view class="summary-row">
+      <text>场地费</text>
+      <text class="summary-price">¥{{court.price}}</text>
+    </view>
+    <view class="summary-row">
+      <text>时段</text>
+      <text>{{form.dateText}} {{form.slotText || '未选择'}}</text>
+    </view>
+    <view class="summary-row total">
+      <text class="text-bold">合计</text>
+      <text class="summary-total">¥{{totalPrice}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="btn-primary full" bindtap="onSubmit">立即支付 ¥{{totalPrice}}</view>
+  </view>
+</view>

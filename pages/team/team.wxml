@@ -1,0 +1,62 @@
+<!-- pages/team/team.wxml -->
+<view class="page">
+  <!-- 我的球队 -->
+  <view class="my-team card" wx:if="{{myTeam}}">
+    <view class="my-team-header">
+      <view class="my-team-avatar" style="background: {{myTeam.bgColor}};">{{myTeam.shortName}}</view>
+      <view class="my-team-info">
+        <view class="my-team-name">{{myTeam.name}}</view>
+        <view class="my-team-meta">Lv.{{myTeam.level}} · {{myTeam.members}} 人 · {{myTeam.district}}</view>
+      </view>
+      <view class="my-team-arrow" bindtap="onTeamTap" data-id="{{myTeam.id}}">›</view>
+    </view>
+    <view class="data-bar">
+      <view class="data-item">
+        <text class="data-num">{{myTeam.attendance}}%</text>
+        <text class="data-label">出勤率</text>
+      </view>
+      <view class="data-item">
+        <text class="data-num">{{myTeam.wins}}-{{myTeam.draws}}-{{myTeam.losses}}</text>
+        <text class="data-label">战绩</text>
+      </view>
+      <view class="data-item">
+        <text class="data-num">{{myTeam.members}}</text>
+        <text class="data-label">队员</text>
+      </view>
+    </view>
+    <view class="quick-actions">
+      <view class="quick-btn" bindtap="onQuickTap" data-type="checkin">📍 考勤</view>
+      <view class="quick-btn" bindtap="onQuickTap" data-type="aa">💰 队费AA</view>
+      <view class="quick-btn" bindtap="onQuickTap" data-type="announce">📢 公告</view>
+      <view class="quick-btn" bindtap="onQuickTap" data-type="find">🤝 约战</view>
+    </view>
+  </view>
+
+  <!-- 无球队提示 -->
+  <view class="no-team card" wx:else>
+    <view class="no-team-icon">⚽</view>
+    <view class="no-team-text">还没有球队</view>
+    <view class="btn-primary" bindtap="onCreateTeam">创建球队</view>
+  </view>
+
+  <!-- 推荐球队 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">推荐球队</text>
+      <text class="section-more" bindtap="onCreateTeam">+ 创建</text>
+    </view>
+    <view class="team-list">
+      <view class="team-row" wx:for="{{teams}}" wx:key="id" bindtap="onTeamTap" data-id="{{item.id}}">
+        <view class="team-row-avatar" style="background: {{item.bgColor}};">{{item.shortName}}</view>
+        <view class="team-row-info">
+          <view class="team-row-name">{{item.name}}</view>
+          <view class="team-row-meta">{{item.members}}人 · 出勤{{item.attendance}}% · {{item.district}}</view>
+          <view class="team-row-motto">"{{item.motto}}"</view>
+        </view>
+        <view class="tag tag-primary" wx:if="{{item.recruitment}}">招募中</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

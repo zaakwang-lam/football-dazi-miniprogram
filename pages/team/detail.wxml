@@ -1,0 +1,70 @@
+<!-- pages/team/detail.wxml -->
+<view class="page" wx:if="{{team}}">
+  <view class="hero" style="background: {{team.bgColor}};">
+    <view class="hero-avatar">{{team.shortName}}</view>
+    <view class="hero-name">{{team.name}}</view>
+    <view class="hero-meta">Lv.{{team.level}} · {{team.district}} · 成立 {{team.founded}}</view>
+    <view class="hero-motto">"{{team.motto}}"</view>
+  </view>
+
+  <view class="stats-card">
+    <view class="stat-item">
+      <text class="stat-num">{{team.members}}</text>
+      <text class="stat-label">队员</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{team.attendance}}%</text>
+      <text class="stat-label">出勤率</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{team.wins}}</text>
+      <text class="stat-label">胜场</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{team.losses}}</text>
+      <text class="stat-label">负场</text>
+    </view>
+  </view>
+
+  <view class="section-title">最近比赛</view>
+  <view class="match-list">
+    <view class="match-item">
+      <view class="match-date">07-20</view>
+      <view class="match-info">
+        <text class="match-title">vs 海珠飓风队</text>
+        <text class="match-loc">📍 海珠7人场</text>
+      </view>
+      <view class="match-score win">3:1</view>
+    </view>
+    <view class="match-item">
+      <view class="match-date">07-13</view>
+      <view class="match-info">
+        <text class="match-title">vs 天河新星队</text>
+        <text class="match-loc">📍 天河体育中心</text>
+      </view>
+      <view class="match-score draw">2:2</view>
+    </view>
+    <view class="match-item">
+      <view class="match-date">07-06</view>
+      <view class="match-info">
+        <text class="match-title">vs 白云之鹰队</text>
+        <text class="match-loc">📍 白云山体育公园</text>
+      </view>
+      <view class="match-score loss">1:2</view>
+    </view>
+  </view>
+
+  <view class="section-title">队员 ({{team.members}})</view>
+  <view class="member-grid">
+    <view class="member-item" wx:for="{{members}}" wx:key="id">
+      <view class="member-avatar">{{item.shortName}}</view>
+      <text class="member-name">{{item.name}}</text>
+      <text class="member-role">{{item.role}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="btn-secondary" bindtap="onShareTap">分享球队</view>
+    <view class="btn-primary" bindtap="onJoinTap" wx:if="{{team.recruitment}}">申请加入</view>
+  </view>
+</view>

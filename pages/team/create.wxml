@@ -1,0 +1,36 @@
+<!-- pages/team/create.wxml -->
+<view class="page">
+  <view class="form-group">
+    <view class="form-label">球队名称 *</view>
+    <input class="form-input" placeholder="如：越秀老炮队" value="{{form.name}}" bindinput="onInput" data-key="name" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">球队口号</view>
+    <input class="form-input" placeholder="如：老炮不老，踢球到老" value="{{form.motto}}" bindinput="onInput" data-key="motto" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">所在区域</view>
+    <view class="district-selector">
+      <view class="dist-item {{form.district === item ? 'active' : ''}}" wx:for="{{districts}}" wx:key="*this" bindtap="onDistrictSelect" data-d="{{item}}">{{item}}</view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">球队介绍</view>
+    <textarea class="form-textarea" placeholder="球队简介 / 招募要求" value="{{form.desc}}" bindinput="onInput" data-key="desc" maxlength="200"></textarea>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">是否招募</view>
+    <view class="switch-row">
+      <text>允许散客申请加入</text>
+      <switch checked="{{form.recruitment}}" bindchange="onSwitchChange" color="#FF6B00" />
+    </view>
+  </view>
+
+  <view class="bottom-action safe-bottom">
+    <view class="btn-primary full" bindtap="onSubmit">创建球队</view>
+  </view>
+</view>

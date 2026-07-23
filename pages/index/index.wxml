@@ -1,0 +1,111 @@
+<!-- pages/index/index.wxml -->
+<view class="page">
+  <!-- 顶部城市选择 + 搜索 -->
+  <view class="top-bar">
+    <view class="city-selector" bindtap="onCityTap">
+      <text class="city-icon">📍</text>
+      <text class="city-name">{{city}}</text>
+      <text class="city-arrow">▾</text>
+    </view>
+    <view class="search-box" bindtap="onSearchTap">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索场地 / 球队</text>
+    </view>
+  </view>
+
+  <!-- Banner 轮播 -->
+  <swiper class="banner" indicator-dots autoplay circular interval="3000">
+    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-id="{{item.id}}">
+      <view class="banner-item" style="background: linear-gradient(135deg, {{item.color1}}, {{item.color2}});">
+        <view class="banner-title">{{item.title}}</view>
+        <view class="banner-sub">{{item.sub}}</view>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <!-- 4 个图标入口 -->
+  <view class="entry-grid">
+    <view class="entry-item" bindtap="onEntryTap" data-type="book">
+      <view class="entry-icon book">⚽</view>
+      <text class="entry-label">订场</text>
+    </view>
+    <view class="entry-item" bindtap="onEntryTap" data-type="lfg">
+      <view class="entry-icon lfg">👥</view>
+      <text class="entry-label">凑人</text>
+    </view>
+    <view class="entry-item" bindtap="onEntryTap" data-type="war">
+      <view class="entry-icon war">🏆</view>
+      <text class="entry-label">约战</text>
+    </view>
+    <view class="entry-item" bindtap="onEntryTap" data-type="event">
+      <view class="entry-icon event">🎯</view>
+      <text class="entry-label">赛事</text>
+    </view>
+  </view>
+
+  <!-- 附近场地 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">附近场地</text>
+      <text class="section-more" bindtap="onMoreCourt">更多 ›</text>
+    </view>
+    <scroll-view class="court-scroll" scroll-x>
+      <view class="court-card" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
+        <view class="court-img" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">
+          <view class="court-type">{{item.type}}</view>
+        </view>
+        <view class="court-info">
+          <text class="court-name">{{item.name}}</text>
+          <view class="court-meta">
+            <text class="court-distance">{{item.distance}}km</text>
+            <text class="court-price">¥{{item.price}}/场</text>
+          </view>
+          <view class="tag tag-success" wx:if="{{item.freeSlots.length > 0}}">{{item.freeSlots[0]}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 热门球队 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热门球队</text>
+      <text class="section-more" bindtap="onMoreTeam">更多 ›</text>
+    </view>
+    <scroll-view class="team-scroll" scroll-x>
+      <view class="team-card" wx:for="{{teams}}" wx:key="id" bindtap="onTeamTap" data-id="{{item.id}}">
+        <view class="team-avatar" style="background: {{item.bgColor}};">{{item.shortName}}</view>
+        <text class="team-name">{{item.name}}</text>
+        <text class="team-meta">{{item.members}}人 · 出勤{{item.attendance}}%</text>
+        <view class="tag tag-primary" wx:if="{{item.recruitment}}">招募中</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 进行中 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">⚡ 进行中</text>
+    </view>
+    <view class="lfg-list">
+      <view class="lfg-item" wx:for="{{lfgList}}" wx:key="id" bindtap="onLfgTap" data-id="{{item.id}}">
+        <view class="lfg-left">
+          <view class="lfg-type type-{{item.typeKey}}">{{item.type}}</view>
+        </view>
+        <view class="lfg-right">
+          <view class="lfg-row1">
+            <text class="lfg-team">{{item.teamName}}</text>
+            <text class="lfg-time">{{item.time}}</text>
+          </view>
+          <view class="lfg-row2">
+            <text class="lfg-loc">📍 {{item.location}}</text>
+            <text class="lfg-need">缺 {{item.need}} 人</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部安全区 -->
+  <view class="safe-bottom"></view>
+</view>

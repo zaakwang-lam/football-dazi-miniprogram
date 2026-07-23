@@ -1,0 +1,91 @@
+<!-- pages/court/detail.wxml -->
+<view class="page" wx:if="{{court}}">
+  <!-- 顶部封面 -->
+  <view class="hero" style="background: linear-gradient(135deg, {{court.bgColor1}}, {{court.bgColor2}});">
+    <view class="hero-type">{{court.type}}</view>
+    <view class="hero-name">{{court.name}}</view>
+    <view class="hero-tags">
+      <text class="hero-tag" wx:for="{{court.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 信息块 -->
+  <view class="info-block">
+    <view class="info-row">
+      <text class="info-label">📍 地址</text>
+      <text class="info-value">{{court.address}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">📞 电话</text>
+      <text class="info-value phone" bindtap="onCallTap" data-phone="{{court.phone}}">{{court.phone}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">🕐 营业</text>
+      <text class="info-value">{{court.openTime}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">⭐ 评分</text>
+      <text class="info-value">{{court.rating}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">💰 价格</text>
+      <text class="info-value price">¥{{court.price}}/场</text>
+    </view>
+  </view>
+
+  <!-- 排期表 -->
+  <view class="section-title">📅 排期表</view>
+  <view class="schedule-block">
+    <scroll-view scroll-x class="schedule-scroll">
+      <view class="schedule-row">
+        <view class="time-col">
+          <view class="time-cell header">时段</view>
+          <view class="time-cell" wx:for="{{timeSlots}}" wx:key="*this">{{item}}</view>
+        </view>
+        <view class="day-col" wx:for="{{schedule}}" wx:key="date" wx:for-item="day">
+          <view class="day-cell header">{{day.date}}</view>
+          <view class="day-cell status-{{item.status}}" wx:for="{{day.hours}}" wx:key="time" wx:for-item="item">
+            <text wx:if="{{item.status === 'free'}}">空闲</text>
+            <text wx:else>已订</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="schedule-legend">
+      <view class="legend-item"><view class="dot free"></view>空闲</view>
+      <view class="legend-item"><view class="dot booked"></view>已订</view>
+    </view>
+  </view>
+
+  <!-- 评价 -->
+  <view class="section-title">💬 评价</view>
+  <view class="review-block">
+    <view class="review-item">
+      <view class="review-header">
+        <view class="review-avatar">王</view>
+        <view>
+          <view class="review-name">王队长</view>
+          <view class="review-rating">⭐⭐⭐⭐⭐</view>
+        </view>
+        <text class="review-date">3天前</text>
+      </view>
+      <view class="review-text">场地质量好，灯光夜场效果佳，下次再来！</view>
+    </view>
+    <view class="review-item">
+      <view class="review-header">
+        <view class="review-avatar">李</view>
+        <view>
+          <view class="review-name">李前锋</view>
+          <view class="review-rating">⭐⭐⭐⭐</view>
+        </view>
+        <text class="review-date">1周前</text>
+      </view>
+      <view class="review-text">停车场大，旁边吃饭方便，价格略贵。</view>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="btn-secondary" bindtap="onEvalTap">写评价</view>
+    <view class="btn-primary" bindtap="onBookTap">立即预订 ¥{{court.price}}</view>
+  </view>
+</view>

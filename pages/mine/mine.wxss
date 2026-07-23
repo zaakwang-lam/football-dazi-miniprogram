@@ -1,0 +1,150 @@
+/* pages/mine/mine.wxss */
+.page {
+  padding: 24rpx;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  padding: 40rpx 32rpx;
+  border-radius: 32rpx;
+  margin-bottom: 20rpx;
+  color: #FFFFFF;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  overflow: hidden;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.user-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.user-avatar.placeholder {
+  font-size: 60rpx;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.user-phone {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.login-btn {
+  display: inline-block;
+  margin-top: 12rpx;
+  background: #FFFFFF;
+  color: #FF6B00;
+  padding: 8rpx 24rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.stats-row {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx 0;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FF6B00;
+  margin-bottom: 6rpx;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.menu-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+  padding: 0 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 2rpx solid #F5F7FA;
+}
+
+.menu-row:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 16rpx;
+  background: #FFE8D6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  margin-right: 20rpx;
+}
+
+.icon-order { background: #FFE8D6; }
+.icon-team { background: #E6F2FF; }
+.icon-coupon { background: #FFF7E6; }
+.icon-wallet { background: #E8F8EE; }
+.icon-msg { background: #F0E8FF; }
+.icon-cert { background: #E8F8EE; }
+.icon-about { background: #E6F2FF; }
+.icon-feedback { background: #FFE8D6; }
+
+.menu-label {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1A1A1A;
+  font-weight: 500;
+}
+
+.menu-arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+}
+
+.badge {
+  background: #FF4757;
+  color: #FFFFFF;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  margin-right: 12rpx;
+}

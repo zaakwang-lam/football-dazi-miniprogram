@@ -1,0 +1,43 @@
+<!-- pages/court/list.wxml -->
+<view class="page">
+  <!-- 筛选条 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filters.type === 'all' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="all">全部</view>
+    <view class="filter-item {{filters.type === '11人制' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="11人制">11人</view>
+    <view class="filter-item {{filters.type === '7人制' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="7人制">7人</view>
+    <view class="filter-item {{filters.type === '5人制' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="5人制">5人</view>
+    <view class="filter-item" bindtap="onSortTap">↕ 排序</view>
+  </view>
+
+  <!-- 场地列表 -->
+  <view class="court-list">
+    <view class="court-row" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
+      <view class="court-img" style="background: linear-gradient(135deg, {{item.bgColor1}}, {{item.bgColor2}});">
+        <view class="court-type-badge">{{item.type}}</view>
+      </view>
+      <view class="court-info">
+        <view class="court-name">{{item.name}}</view>
+        <view class="court-meta">
+          <text class="meta-item">⭐ {{item.rating}}</text>
+          <text class="meta-item">📍 {{item.distance}}km</text>
+          <text class="meta-item">🕐 {{item.openTime}}</text>
+        </view>
+        <view class="court-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
+        </view>
+        <view class="court-bottom">
+          <view class="court-price">
+            <text class="price-num">¥{{item.price}}</text>
+            <text class="price-unit">/场</text>
+          </view>
+          <view class="tag tag-success" wx:if="{{item.freeSlots.length > 0}}">{{item.freeSlots[0]}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{courts.length === 0}}">
+    <view class="empty-icon">🔍</view>
+    <text>暂无符合条件的场地</text>
+  </view>
+</view>
