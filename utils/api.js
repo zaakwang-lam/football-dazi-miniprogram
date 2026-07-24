@@ -1,13 +1,13 @@
 // utils/api.js
 // 真实后端 API 客户端
-// 调用后端地址：灰度期用云服务器 IP，正式上线改为生产域名
+// 调用后端地址：灰度期用云服务器 IP（Cloudflare Tunnel 临时 HTTPS），正式上线改为生产域名
 
 const app = getApp();
 
 // 后端 API 基础地址
-// 灰度期：http://43.136.84.244（腾讯云轻量·广州）
-// 生产：https://api.footballdazi.com（待 ICP 备案后替换）
-const API_BASE = 'http://43.136.84.244';
+// 灰度期：https://intelligent-emails-supporters-tribunal.trycloudflare.com（Cloudflare Tunnel）
+// 备注：Cloudflare Tunnel 免费临时域名，重启会变，备案后改 footballdazi.cn
+const API_BASE = 'https://intelligent-emails-supporters-tribunal.trycloudflare.com';
 
 /**
  * 通用请求方法
