@@ -2,6 +2,14 @@
 const app = getApp();
 const api = require('../../utils/api.js');
 
+const COLORS = [
+  'linear-gradient(135deg, #FF6B00, #FF8C42)',
+  'linear-gradient(135deg, #007AFF, #4FACFE)',
+  'linear-gradient(135deg, #2ECC71, #58D68D)',
+  'linear-gradient(135deg, #9B59B6, #BE7BDB)',
+  'linear-gradient(135deg, #FFB800, #FFD75E)'
+];
+
 Page({
   data: {
     city: '广州',
@@ -20,7 +28,6 @@ Page({
   },
 
   onShow() {
-    // 每次进入页面刷新
     this.loadData();
   },
 
@@ -29,43 +36,46 @@ Page({
   },
 
   async loadData() {
-    // 并行加载所有数据
-    const [courtsRes, teamsRes, lfgRes] = await Promise.all([
-      api.getNearbyCourts(),
-      api.getTeamList(),
-      api.getLfgList()
-    ]);
+    const promises = [api.getNearbyCourts(), api.getTeamList(), api.getLfgList()];
+    const [courtsRes, teamsRes, lfgRes] = await Promise.allSettled(promises);
 
-    // 处理球队头像颜色
-    const colors = [
-      'linear-gradient(135deg, #FF6B00, #FF8C42)',
-      'linear-gradient(135deg, #007AFF, #4FACFE)',
-      'linear-gradient(135deg, #2ECC71, #58D68D)',
-      'linear-gradient(135deg, #9B59B6, #BE7BDB)',
-      'linear-gradient(135deg, #FFB800, #FFD75E)'
-    ];
+    const courts = (courtsRes.status === 'fulfilled' ? courtsRes.value.data?.list || [] : []).map(c => ({
+      ...c,
+      freeSlots: c.freeSlots || []
+    }));
 
-    const teams = (teamsRes.data || []).map((t, i) => ({
+    const teams = (teamsRes.status === 'fulfilled' ? teamsRes.value.data?.list || [] : []).map((t, i) => ({
       ...t,
       shortName: t.name.substring(0, 2),
-      bgColor: colors[i % colors.length]
+      bgColor: COLORS[i % COLORS.length]
     }));
 
-    // 处理凑人 typeKey (英文 key 用于 wxss 类名映射)
-    const typeKeyMap = { '找人顶': 'sub', '约战': 'war', '凑局': 'join' };
-    const lfgList = (lfgRes.data || []).map(item => ({
+    const TYPE_KEY = { '找人顶': 'sub', '约战': 'war', '凑局': 'join' };
+    const lfgList = (lfgRes.status === 'fulfilled' ? lfgRes.value.data?.list || [] : []).map(item => ({
       ...item,
-      typeKey: typeKeyMap[item.type] || 'sub'
+      typeKey: TYPE_KEY[item.type] || 'sub',
+      teamName: item.publisher?.nickname || item.title || '招募中',
+      time: this.formatTime(item.playTime)
     }));
 
-    this.setData({
-      courts: courtsRes.data || [],
-      teams,
-      lfgList
-    });
+    this.setData({ courts, teams, lfgList });
   },
 
-  // 城市选择
+  formatTime(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d);
+    target.setHours(0, 0, 0, 0);
+    const diffDays = Math.round((target - today) / 86400000);
+    const hours = d.getHours().toString().padStart(2, '0');
+    const mins = d.getMinutes().toString().padStart(2, '0');
+    if (diffDays === 0) return `今晚 ${hours}:${mins}`;
+    if (diffDays === 1) return `明晚 ${hours}:${mins}`;
+    return `${d.getMonth() + 1}/${d.getDate()} ${hours}:${mins}`;
+  },
+
   onCityTap() {
     wx.showActionSheet({
       itemList: ['广州', '深圳', '佛山', '东莞'],
@@ -77,63 +87,53 @@ Page({
     });
   },
 
-  // 搜索
   onSearchTap() {
     wx.showToast({ title: '搜索功能开发中', icon: 'none' });
   },
 
-  // Banner 点击
   onBannerTap(e) {
     const id = e.currentTarget.dataset.id;
     wx.showToast({ title: `Banner ${id}`, icon: 'none' });
   },
 
-  // 4 入口
   onEntryTap(e) {
     const type = e.currentTarget.dataset.type;
     const map = {
       book: '/pages/court/list',
       lfg: '/pages/lfg/lfg',
       war: '/pages/lfg/lfg?tab=war',
-      event: '/pages/lfg/lfg?tab=event'
+      event: '/pages/lfg/lfg?tab=join'
     };
-    wx.switchTab({
-      url: map[type].includes('/lfg') ? '/pages/lfg/lfg' : map[type],
-      fail: () => {
-        wx.navigateTo({ url: map[type] });
-      }
-    });
+    if (map[type].includes('/lfg/lfg')) {
+      wx.switchTab({ url: '/pages/lfg/lfg' });
+    } else {
+      wx.navigateTo({ url: map[type] });
+    }
   },
 
-  // 场地更多
   onMoreCourt() {
     wx.navigateTo({ url: '/pages/court/list' });
   },
 
-  // 场地详情
   onCourtTap(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/court/detail?id=${id}` });
   },
 
-  // 球队更多
   onMoreTeam() {
     wx.switchTab({ url: '/pages/team/team' });
   },
 
-  // 球队详情
   onTeamTap(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/team/detail?id=${id}` });
   },
 
-  // 凑人详情
   onLfgTap(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/lfg/detail?id=${id}` });
   },
 
-  // 分享
   onShareAppMessage() {
     return {
       title: '足球搭子 - 广州业余足球一站式平台',

@@ -12,6 +12,7 @@ const COLOR_PAIRS = [
 Page({
   data: {
     filters: { type: 'all' },
+    _allCourts: [],
     courts: []
   },
 
@@ -24,19 +25,24 @@ Page({
   },
 
   async loadData() {
-    const res = await api.getNearbyCourts();
-    const courts = (res.data || []).map((c, i) => ({
-      ...c,
-      bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
-      bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1]
-    }));
-    this.setData({ courts });
-    this.applyFilters();
+    try {
+      const res = await api.getNearbyCourts();
+      const allCourts = (res.data?.list || []).map((c, i) => ({
+        ...c,
+        bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
+        bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
+        freeSlots: c.freeSlots || []
+      }));
+      this.setData({ _allCourts: allCourts });
+      this.applyFilters();
+    } catch (e) {
+      console.error('加载场地失败:', e);
+    }
   },
 
   applyFilters() {
     const { type } = this.data.filters;
-    let courts = this.data.courts;
+    let courts = this.data._allCourts || [];
     if (type !== 'all') {
       courts = courts.filter(c => c.type === type);
     }

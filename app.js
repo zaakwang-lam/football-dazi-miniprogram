@@ -1,33 +1,61 @@
 // app.js
 App({
   onLaunch() {
-    // 启动时获取本地缓存的用户信息
+    // 启动时获取本地缓存的用户信息 + token
     const userInfo = wx.getStorageSync('userInfo');
+    const token = wx.getStorageSync('token');
     if (userInfo) {
       this.globalData.userInfo = userInfo;
     }
+    if (token) {
+      this.globalData.token = token;
+    }
+
     // 获取系统信息
     const systemInfo = wx.getSystemInfoSync();
     this.globalData.systemInfo = systemInfo;
-    // 自定义导航栏高度
     this.globalData.navBarHeight = (systemInfo.statusBarHeight || 20) + 44;
+
+    // 后台静默获取 openid（不需要用户授权，仅 wx.login）
+    this.silentLogin();
+  },
+
+  /**
+   * 静默登录（拿 openid 缓存到 globalData，调用支付时用）
+   */
+  silentLogin() {
+    if (this.globalData.openid) return;  // 已获取过
+    wx.login({
+      success: (res) => {
+        if (!res.code) return;
+        // 缓存 code 给支付时用（或者直接调后端 code2Session）
+        this.globalData.wxCode = res.code;
+        // 可选：立即调后端静默登录拿 openid（不需要用户授权）
+        wx.request({
+          url: 'http://localhost:3000/api/user/login',
+          method: 'POST',
+          data: { code: res.code },
+          success: (loginRes) => {
+            if (loginRes.data?.code === 0) {
+              this.globalData.openid = loginRes.data.data.openid;
+            }
+          }
+        });
+      }
+    });
   },
 
   globalData: {
     userInfo: null,
     token: '',
+    openid: '',          // 微信 openid（用于支付）
+    wxCode: '',          // 临时 wx.login code
     systemInfo: null,
     navBarHeight: 64,
-    apiBase: 'https://api.kickgo.example.com',
+    apiBase: 'http://localhost:3000',  // 后端地址（开发），上线后改生产域名
     city: '广州',
-    // 模拟数据 - 实际项目应替换为接口调用
-    mockData: {
-      courts: [
-        { id: 1, name: '天河体育中心', type: '11人', price: 1200, distance: 1.2, rating: 4.8, free: '今晚有空', img: '' },
-        { id: 2, name: '番禺五人球场A', type: '5人', price: 280, distance: 3.5, rating: 4.6, free: '周末空闲', img: '' },
-        { id: 3, name: '海珠7人制球场', type: '7人', price: 580, distance: 5.2, rating: 4.7, free: '周四可用', img: '' }
-      ]
-    }
+    // 兼容旧代码（部分页面可能仍引用）
+    mockData: {}
   },
 
   // 通用请求方法

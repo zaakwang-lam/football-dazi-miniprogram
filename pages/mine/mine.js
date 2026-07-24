@@ -1,5 +1,6 @@
 // pages/mine/mine.js
 const app = getApp();
+const api = require('../../utils/api.js');
 
 Page({
   data: {
@@ -15,9 +16,24 @@ Page({
     this.loadUser();
   },
 
-  loadUser() {
-    const userInfo = wx.getStorageSync('userInfo');
-    this.setData({ userInfo });
+  async loadUser() {
+    // 先用本地缓存（快速）
+    let userInfo = wx.getStorageSync('userInfo');
+    if (userInfo) this.setData({ userInfo });
+
+    // 后台异步拉取最新
+    if (wx.getStorageSync('token')) {
+      try {
+        const res = await api.getUserProfile();
+        if (res.code === 0 && res.data) {
+          const merged = { ...userInfo, ...res.data };
+          wx.setStorageSync('userInfo', merged);
+          this.setData({ userInfo: merged });
+        }
+      } catch (e) {
+        console.warn('拉取用户信息失败，使用本地缓存:', e);
+      }
+    }
   },
 
   onLogin() {

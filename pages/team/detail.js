@@ -30,19 +30,22 @@ Page({
   },
 
   async loadDetail(id) {
-    const res = await api.getTeamList();
-    const teams = res.data || [];
-    const team = teams.find(t => t.id === Number(id)) || teams[0];
-    if (team) {
-      const idx = teams.indexOf(team);
+    try {
+      const res = await api.getTeamDetail(id);
+      const team = res.data;
       this.setData({
         team: {
           ...team,
           shortName: team.name.substring(0, 2),
-          bgColor: COLORS[idx % COLORS.length]
+          bgColor: COLORS[(team.id || 0) % COLORS.length],
+          membersList: team.memberList || []
         }
       });
+      // 取队员列表
+      this.setData({ members: team.memberList || [] });
       wx.setNavigationBarTitle({ title: team.name });
+    } catch (e) {
+      console.error(e);
     }
   },
 

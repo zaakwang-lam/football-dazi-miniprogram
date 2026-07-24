@@ -26,9 +26,17 @@ Page({
     });
     wx.setNavigationBarTitle({ title: court.name });
 
-    // 加载排期
+    // 加载排期（后端返回 { courtId, schedules: { 'YYYY-MM-DD': [...] } }）
     const scheduleRes = await api.getCourtSchedule(id);
-    this.setData({ schedule: scheduleRes.data });
+    const grouped = scheduleRes.data.schedules || {};
+    const schedule = Object.keys(grouped).slice(0, 7).map(date => ({
+      date: date,
+      hours: grouped[date].map(slot => ({
+        time: slot.timeSlot ? slot.timeSlot.split('-')[0] : '',
+        status: slot.status
+      }))
+    }));
+    this.setData({ schedule });
   },
 
   onCallTap(e) {

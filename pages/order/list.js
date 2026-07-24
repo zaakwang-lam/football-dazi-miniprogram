@@ -1,10 +1,27 @@
 // pages/order/list.js
 const api = require('../../utils/api.js');
 
+// 后端 status: pending/paid/refunded/canceled/completed → 中文显示 + WXSS 类名 key
+const CN_MAP = {
+  pending: '待支付',
+  paid: '已支付',
+  refunded: '已退款',
+  canceled: '已取消',
+  completed: '已完成'
+};
 const STATUS_KEY_MAP = {
   '待支付': 'pending',
   '已支付': 'paid',
   '已完成': 'done',
+  '已退款': 'done',
+  '已取消': 'canceled'
+};
+// status(tab) → 英文
+const TAB_TO_EN = {
+  all: 'all',
+  '待支付': 'pending',
+  '已支付': 'paid',
+  '已完成': 'completed',
   '已取消': 'canceled'
 };
 
@@ -23,16 +40,27 @@ Page({
   },
 
   async loadData() {
-    const res = await api.getOrderList();
-    let list = res.data || [];
-    if (this.data.status !== 'all') {
-      list = list.filter(o => o.status === this.data.status);
+    try {
+      const res = await api.getOrderList();
+      let list = res.data?.list || [];
+      const filterEn = TAB_TO_EN[this.data.status];
+      if (filterEn && filterEn !== 'all') {
+        list = list.filter(o => o.status === filterEn);
+      }
+      list = list.map(o => {
+        const cn = CN_MAP[o.status] || o.status;
+        return {
+          ...o,
+          status: cn,
+          statusKey: STATUS_KEY_MAP[cn] || 'canceled',
+          price: parseFloat(o.amount)
+        };
+      });
+      this.setData({ list });
+    } catch (e) {
+      console.error('加载订单失败:', e);
+      this.setData({ list: [] });
     }
-    list = list.map(o => ({
-      ...o,
-      statusKey: STATUS_KEY_MAP[o.status] || '已取消'
-    }));
-    this.setData({ list });
   },
 
   onTabTap(e) {
@@ -47,17 +75,24 @@ Page({
   },
 
   onPay() {
-    wx.showToast({ title: '支付功能待对接', icon: 'none' });
+    wx.showToast({ title: '请在订单详情页支付', icon: 'none' });
   },
 
   onCancel() {
+    const id = this.data.list.find(o => o.status === '待支付')?.id;
+    if (!id) return;
     wx.showModal({
       title: '确认取消',
       content: '取消后定金将原路退回',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
-          wx.showToast({ title: '已取消', icon: 'success' });
-          this.loadData();
+          try {
+            await api.cancelOrder(id);
+            wx.showToast({ title: '已取消', icon: 'success' });
+            this.loadData();
+          } catch (e) {
+            console.error(e);
+          }
         }
       }
     });

@@ -8,7 +8,7 @@ Page({
       name: '',
       motto: '',
       district: '天河区',
-      desc: '',
+      description: '',
       recruitment: true
     }
   },
@@ -31,18 +31,15 @@ Page({
     if (!this.data.form.name) {
       return wx.showToast({ title: '请输入球队名称', icon: 'none' });
     }
-    wx.showLoading({ title: '创建中...' });
     try {
       const res = await api.createTeam(this.data.form);
-      wx.hideLoading();
       if (res.code === 0) {
         wx.setStorageSync('myTeamId', res.data.id);
         wx.showToast({ title: '创建成功！', icon: 'success' });
         setTimeout(() => wx.switchTab({ url: '/pages/team/team' }), 1500);
       }
     } catch (e) {
-      wx.hideLoading();
-      wx.showToast({ title: '创建失败', icon: 'none' });
+      console.error('创建球队失败:', e);
     }
   }
 });

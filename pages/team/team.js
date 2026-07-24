@@ -28,21 +28,26 @@ Page({
   },
 
   async loadData() {
-    const res = await api.getTeamList();
-    const teams = (res.data || []).map((t, i) => ({
-      ...t,
-      shortName: t.name.substring(0, 2),
-      bgColor: COLORS[i % COLORS.length]
-    }));
+    try {
+      const res = await api.getTeamList();
+      const teams = (res.data?.list || []).map((t, i) => ({
+        ...t,
+        shortName: t.name.substring(0, 2),
+        bgColor: COLORS[i % COLORS.length],
+        motto: t.motto || '',
+        attendance: t.attendance || 0
+      }));
 
-    // 从本地缓存获取用户的球队
-    const myTeamId = wx.getStorageSync('myTeamId');
-    let myTeam = null;
-    if (myTeamId) {
-      myTeam = teams.find(t => t.id === Number(myTeamId));
+      const myTeamId = wx.getStorageSync('myTeamId');
+      let myTeam = null;
+      if (myTeamId) {
+        myTeam = teams.find(t => t.id === Number(myTeamId));
+      }
+
+      this.setData({ teams, myTeam });
+    } catch (e) {
+      console.error('加载球队失败:', e);
     }
-
-    this.setData({ teams, myTeam });
   },
 
   onTeamTap(e) {

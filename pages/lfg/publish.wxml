@@ -28,14 +28,17 @@
 
   <view class="form-group">
     <view class="form-label">时间</view>
-    <input class="form-input" placeholder="如：今晚 20:00" value="{{form.time}}" bindinput="onInput" data-key="time" />
+    <view class="form-input" style="min-height:44rpx;padding:8rpx 0;" bindtap="onPickTime">
+      <text wx:if="{{form.timeText}}" style="color:#1A1A1A;font-weight:500;">{{form.timeText}}</text>
+      <text wx:else style="color:#999999;">点击选择时间</text>
+    </view>
   </view>
 
   <view class="form-group">
     <view class="form-label">缺人数</view>
     <view class="number-picker">
       <view class="picker-btn" bindtap="onNumChange" data-delta="-1">-</view>
-      <text class="picker-num">{{form.need}}</text>
+      <text class="picker-num">{{form.needCount}}</text>
       <view class="picker-btn" bindtap="onNumChange" data-delta="1">+</view>
     </view>
   </view>

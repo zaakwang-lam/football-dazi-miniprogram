@@ -1,3 +1,4 @@
+# ============ 操作系统 ============
 # Windows
 [Dd]esktop.ini
 Thumbs.db
@@ -10,5 +11,68 @@ $RECYCLE.BIN/
 .TemporaryItems
 .Trashes
 
-# Node.js
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+
+# ============ IDE ============
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+*.iml
+.history/
+
+# ============ Node.js ============
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============ 微信开发者工具 ============
+miniprogram_npm/
+.project.private.config.json
+project.private.config.json
+
+# ============ 日志 / 临时文件 ============
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+.cache/
+.tmp/
+tmp/
+temp/
+
+# ============ 环境变量 ============
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ============ 测试 / 覆盖率 ============
+coverage/
+.nyc_output/
+
+# ============ 构建产物 ============
+dist/
+build/
+*.min.js
+*.min.css
+
+# ============ 系统生成 ============
+Thumbs.db
+desktop.ini
+
+# ============ 上传 / 图片资源（按需） ============
+# 解开注释可忽略所有图片（小项目没必要，git LFS 太重）
+# *.png
+# *.jpg
+# *.jpeg
+# *.gif
+# *.webp

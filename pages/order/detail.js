@@ -18,31 +18,32 @@ Page({
   },
 
   async loadDetail(id) {
-    const res = await api.getOrderList();
-    const allOrders = res.data || [];
-    let order = allOrders.find(o => o.id === id);
-    if (!order && id) {
-      // 新创建的订单从 options 拿
-      order = {
-        id: id,
-        courtName: '天河体育中心',
-        date: '今晚 20:00',
-        time: '20:00-22:00',
-        price: 1200,
-        status: '已支付',
-        createdAt: new Date().toLocaleString('zh-CN'),
-        name: '广州老炮',
-        phone: '138****8888'
+    try {
+      const res = await api.getOrderDetail(id);
+      const order = res.data;
+      // 后端 status: pending/paid/refunded/canceled/completed → 中文映射
+      const statusMap = {
+        pending: '待支付',
+        paid: '已支付',
+        refunded: '已退款',
+        canceled: '已取消',
+        completed: '已完成'
       };
-    }
-    if (order) {
+      const cnStatus = statusMap[order.status] || order.status;
+      const config = STATUS_CONFIG[cnStatus] || STATUS_CONFIG['待支付'];
       this.setData({
         order: {
           ...order,
-          ...STATUS_CONFIG[order.status]
+          status: cnStatus,
+          courtName: order.court?.name || order.courtName,
+          date: order.schedule ? `${order.schedule.date} ${order.schedule.timeSlot}` : order.createdAt,
+          price: order.amount,
+          ...config
         }
       });
       wx.setNavigationBarTitle({ title: '订单详情' });
+    } catch (e) {
+      console.error('加载订单失败:', e);
     }
   },
 

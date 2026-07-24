@@ -1,6 +1,12 @@
 // pages/lfg/detail.js
 const api = require('../../utils/api.js');
 
+const TYPE_CONFIG = {
+  sub: { icon: '🙋', cnName: '找人顶' },
+  war: { icon: '⚔️', cnName: '约战' },
+  join: { icon: '👥', cnName: '凑局' }
+};
+
 Page({
   data: {
     detail: null
@@ -11,23 +17,23 @@ Page({
   },
 
   async loadDetail(id) {
-    const res = await api.getLfgList();
-    const allList = res.data || [];
-    const detail = allList.find(item => item.id === Number(id)) || allList[0];
-
-    if (detail) {
-      const typeConfig = {
-        '找人顶': { icon: '🙋', typeKey: 'sub' },
-        '约战': { icon: '⚔️', typeKey: 'war' },
-        '凑局': { icon: '👥', typeKey: 'join' }
-      };
+    try {
+      const res = await api.getLfgDetail(id);
+      const detail = res.data;
+      const config = TYPE_CONFIG[detail.type] || TYPE_CONFIG.sub;
       this.setData({
         detail: {
           ...detail,
-          ...typeConfig[detail.type]
+          icon: config.icon,
+          teamName: detail.publisher?.nickname || detail.title,
+          desc: detail.description || '',
+          contact: detail.contact || '微信同名',
+          status: detail.status === 'open' ? '招募中' : (detail.status === 'full' ? '已满' : '已关闭')
         }
       });
-      wx.setNavigationBarTitle({ title: detail.teamName });
+      wx.setNavigationBarTitle({ title: detail.publisher?.nickname || '凑人详情' });
+    } catch (e) {
+      console.error(e);
     }
   },
 
@@ -40,12 +46,19 @@ Page({
   },
 
   onJoinTap() {
+    const id = this.data.detail?.id;
+    if (!id) return;
     wx.showModal({
       title: '确认加入',
       content: '加入后将通过微信服务通知联系你',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
-          wx.showToast({ title: '已报名成功！', icon: 'success' });
+          try {
+            await api.joinLfg(id);
+            wx.showToast({ title: '已报名成功！', icon: 'success' });
+          } catch (e) {
+            console.error(e);
+          }
         }
       }
     });

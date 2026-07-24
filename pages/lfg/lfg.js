@@ -1,16 +1,21 @@
 // pages/lfg/lfg.js
 const api = require('../../utils/api.js');
 
+// 中文 → 英文 key (用于 wxss 类名 + tab 标识)
 const TAB_CONFIG = {
-  sub: { type: '找人顶', icon: '🙋', actionText: '我要顶' },
-  war: { type: '约战', icon: '⚔️', actionText: '接受约战' },
-  join: { type: '凑局', icon: '👥', actionText: '加入队伍' }
+  sub: { type: 'sub', icon: '🙋', actionText: '我要顶' },     // 找人顶
+  war: { type: 'war', icon: '⚔️', actionText: '接受约战' },    // 约战
+  join: { type: 'join', icon: '👥', actionText: '加入队伍' }   // 凑局
+};
+const TYPE_KEY = {
+  '找人顶': 'sub',
+  '约战': 'war',
+  '凑局': 'join'
 };
 
 Page({
   data: {
     activeTab: 'sub',
-    tabLabels: { sub: '找人顶', war: '约战', join: '凑局' },
     list: []
   },
 
@@ -30,23 +35,39 @@ Page({
   },
 
   async loadList() {
-    const config = TAB_CONFIG[this.data.activeTab];
-    const res = await api.getLfgList();
+    try {
+      const config = TAB_CONFIG[this.data.activeTab];
+      const res = await api.getLfgList({ type: config.type });
+      const list = (res.data?.list || []).map(item => {
+        const typeKey = TYPE_KEY[item.type] || 'sub';
+        const cfg = TAB_CONFIG[typeKey] || TAB_CONFIG.sub;
+        return {
+          ...item,
+          typeKey,
+          icon: cfg.icon,
+          actionText: cfg.actionText,
+          teamName: item.publisher?.nickname || item.title,
+          publishTime: this.formatTime(item.createdAt),
+          level: item.level || '业余',
+          desc: item.description || ''
+        };
+      });
+      this.setData({ list });
+    } catch (e) {
+      console.error('加载凑人失败:', e);
+      this.setData({ list: [] });
+    }
+  },
 
-    // 根据当前 tab 过滤（模拟数据）
-    const allList = res.data || [];
-    const filtered = allList.filter(item => item.type === config.type);
-
-    // 如果没有匹配的，补充 mock 数据使三个 tab 都有内容
-    const typeKeyMap = { '找人顶': 'sub', '约战': 'war', '凑局': 'join' };
-    const list = (filtered.length > 0 ? filtered : allList).map(item => ({
-      ...item,
-      typeKey: typeKeyMap[item.type] || 'sub',
-      icon: config.icon,
-      actionText: config.actionText
-    }));
-
-    this.setData({ list });
+  formatTime(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = (now - date) / 1000;
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+    return Math.floor(diff / 86400) + '天前';
   },
 
   onTabTap(e) {
@@ -77,9 +98,14 @@ Page({
     wx.showModal({
       title: '确认加入',
       content: '加入后将通过微信服务通知联系你，是否继续？',
-      success: (res) => {
+      success: async (res) => {
         if (res.confirm) {
-          wx.showToast({ title: '已报名！请等待联系', icon: 'success' });
+          try {
+            await api.joinLfg(id);
+            wx.showToast({ title: '已报名！请等待联系', icon: 'success' });
+          } catch (e) {
+            console.error(e);
+          }
         }
       }
     });

@@ -18,7 +18,7 @@
   <view class="form-group">
     <view class="form-label">选择时段</view>
     <view class="time-grid">
-      <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="*this" bindtap="onSlotSelect" data-idx="{{index}}">
+      <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="id" bindtap="onSlotSelect" data-idx="{{index}}">
         <view class="time-hour">{{item.time}}</view>
         <view class="time-status">{{item.status === 'booked' ? '已订' : '空闲'}}</view>
       </view>
