@@ -52,7 +52,7 @@ App({
     wxCode: '',          // 临时 wx.login code
     systemInfo: null,
     navBarHeight: 64,
-    apiBase: 'http://localhost:3000',  // 后端地址（开发），上线后改生产域名
+    apiBase: 'http://43.136.84.244',  // 后端地址（灰度期用云服务器IP，上线后改HTTPS域名）
     city: '广州',
     // 兼容旧代码（部分页面可能仍引用）
     mockData: {}

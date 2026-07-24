@@ -1,13 +1,13 @@
 // utils/api.js
 // 真实后端 API 客户端
-// 调用后端地址：开发时用 localhost:3000，上线后改为生产域名
+// 调用后端地址：灰度期用云服务器 IP，正式上线改为生产域名
 
 const app = getApp();
 
 // 后端 API 基础地址
-// 开发：localhost（本机调试时改成你电脑 IP 让手机访问）
+// 灰度期：http://43.136.84.244（腾讯云轻量·广州）
 // 生产：https://api.footballdazi.com（待 ICP 备案后替换）
-const API_BASE = 'http://localhost:3000';
+const API_BASE = 'http://43.136.84.244';
 
 /**
  * 通用请求方法
