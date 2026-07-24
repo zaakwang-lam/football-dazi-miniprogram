@@ -2,7 +2,7 @@
   "miniprogramRoot": "./",
   "projectname": "kickgo",
   "description": "广州业余足球场地预订小程序",
-  "appid": "wxb0faf2bff3330fc1",
+  "appid": "wxb3f1e355853399c8",
   "setting": {
     "urlCheck": true,
     "es6": true,
@@ -29,10 +29,11 @@
     "useCompilerPlugins": false,
     "condition": false,
     "swc": false,
-    "disableSWC": true
+    "disableSWC": true,
+    "ignoreUploadUnusedFiles": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.30.0",
+  "libVersion": "3.17.0",
   "condition": {},
   "simulatorPluginLibVersion": {},
   "packOptions": {
