@@ -36,29 +36,21 @@ Page({
   },
 
   async loadData() {
-    const promises = [api.getNearbyCourts(), api.getTeamList(), api.getLfgList()];
-    const [courtsRes, teamsRes, lfgRes] = await Promise.allSettled(promises);
+    // 取消滚动菜单后，只加载「进行中」（凑人+约战有效信息）
+    const lfgRes = await Promise.allSettled([api.getLfgList()]);
+    const lfgData = lfgRes[0].status === 'fulfilled' ? lfgRes[0].value.data?.list || [] : [];
 
-    const courts = (courtsRes.status === 'fulfilled' ? courtsRes.value.data?.list || [] : []).map(c => ({
-      ...c,
-      freeSlots: c.freeSlots || []
-    }));
-
-    const teams = (teamsRes.status === 'fulfilled' ? teamsRes.value.data?.list || [] : []).map((t, i) => ({
-      ...t,
-      shortName: t.name.substring(0, 2),
-      bgColor: COLORS[i % COLORS.length]
-    }));
-
-    const TYPE_KEY = { '找人顶': 'sub', '约战': 'war', '凑局': 'join' };
-    const lfgList = (lfgRes.status === 'fulfilled' ? lfgRes.value.data?.list || [] : []).map(item => ({
+    const TYPE_KEY = { sub: 'sub', war: 'war' };  // 取消 join 类型
+    const TYPE_LABEL = { sub: '找人顶', war: '约战' };
+    const lfgList = lfgData.map(item => ({
       ...item,
       typeKey: TYPE_KEY[item.type] || 'sub',
+      typeLabel: TYPE_LABEL[item.type] || '凑人',
       teamName: item.publisher?.nickname || item.title || '招募中',
       time: this.formatTime(item.playTime)
     }));
 
-    this.setData({ courts, teams, lfgList });
+    this.setData({ lfgList });
   },
 
   formatTime(dateStr) {
@@ -98,17 +90,17 @@ Page({
 
   onEntryTap(e) {
     const type = e.currentTarget.dataset.type;
+    // tabBar 取消了「凑人」tab，lfg/war 统一用 navigateTo
     const map = {
       book: '/pages/court/list',
-      lfg: '/pages/lfg/lfg',
-      war: '/pages/lfg/lfg?tab=war',
-      event: '/pages/lfg/lfg?tab=join'
+      lfg: '/pages/lfg/lfg?tab=sub',         // 凑人（原找人顶，个人顶个人）
+      war: '/pages/lfg/lfg?tab=war'          // 约战（球队vs球队）
     };
-    if (map[type].includes('/lfg/lfg')) {
-      wx.switchTab({ url: '/pages/lfg/lfg' });
-    } else {
-      wx.navigateTo({ url: map[type] });
-    }
+    wx.navigateTo({ url: map[type] });
+  },
+
+  onNearbyTap() {
+    wx.navigateTo({ url: '/pages/nearby/nearby' });
   },
 
   onMoreCourt() {

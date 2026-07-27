@@ -82,7 +82,7 @@ function wxLogin(code, userInfo = null) {
  * 获取用户个人资料
  */
 function getUserProfile() {
-  return request('/api/v1/user/profile', 'GET');
+  return request('/api/user/profile', 'GET');
 }
 
 /**
@@ -90,6 +90,28 @@ function getUserProfile() {
  */
 function updateUserProfile(data) {
   return request('/api/v1/user/profile', 'PUT', data);
+}
+
+/**
+ * 选择注册类型（个人/球场方）
+ */
+function registerRole(data) {
+  return request('/api/user/register-role', 'POST', data);
+}
+
+/**
+ * 球场方发布空闲时段
+ */
+function publishFreeSlots(courtId, slots) {
+  return request(`/api/v1/courts/${courtId}/free-slots`, 'POST', { slots });
+}
+
+/**
+ * 获取场地空闲时段
+ */
+function getFreeSlots(courtId, params = {}) {
+  const qs = Object.keys(params).map(k => `${k}=${params[k]}`).join('&');
+  return request(`/api/v1/courts/${courtId}/free-slots${qs ? '?' + qs : ''}`, 'GET');
 }
 
 // ===== 场地模块 =====
@@ -277,12 +299,15 @@ module.exports = {
   wxLogin,
   getUserProfile,
   updateUserProfile,
+  registerRole,
 
   // 场地
   getNearbyCourts,
   getCourtDetail,
   getCourtSchedule,
   evaluateCourt,
+  getFreeSlots,
+  publishFreeSlots,
 
   // 订单
   createOrder,

@@ -2,9 +2,8 @@
 const api = require('../../utils/api.js');
 
 const TYPE_CONFIG = {
-  sub: { icon: '🙋', cnName: '找人顶' },
-  war: { icon: '⚔️', cnName: '约战' },
-  join: { icon: '👥', cnName: '凑局' }
+  sub: { icon: '🙋', cnName: '凑人' },
+  war: { icon: '⚔️', cnName: '约战' }
 };
 
 Page({

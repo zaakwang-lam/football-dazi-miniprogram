@@ -2,17 +2,13 @@
 <view class="page">
   <view class="form-title">发布类型</view>
   <view class="type-selector">
-    <view class="type-item {{form.typeKey === 'sub' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="找人顶" data-key="sub">
+    <view class="type-item {{form.typeKey === 'sub' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="凑人" data-key="sub">
       <text class="type-emoji">🙋</text>
-      <text>找人顶</text>
+      <text>凑人</text>
     </view>
     <view class="type-item {{form.typeKey === 'war' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="约战" data-key="war">
       <text class="type-emoji">⚔️</text>
       <text>约战</text>
-    </view>
-    <view class="type-item {{form.typeKey === 'join' ? 'active' : ''}}" bindtap="onTypeSelect" data-type="凑局" data-key="join">
-      <text class="type-emoji">👥</text>
-      <text>凑局</text>
     </view>
   </view>
 

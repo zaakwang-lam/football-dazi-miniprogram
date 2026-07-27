@@ -1,15 +1,12 @@
 <!-- pages/lfg/lfg.wxml -->
 <view class="page">
-  <!-- 3 标签页 -->
+  <!-- 2 标签页（凑人 + 约战，取消凑局） -->
   <view class="tabs">
     <view class="tab {{activeTab === 'sub' ? 'active' : ''}}" bindtap="onTabTap" data-tab="sub">
-      <text>找人顶</text>
+      <text>凑人</text>
     </view>
     <view class="tab {{activeTab === 'war' ? 'active' : ''}}" bindtap="onTabTap" data-tab="war">
       <text>约战</text>
-    </view>
-    <view class="tab {{activeTab === 'join' ? 'active' : ''}}" bindtap="onTabTap" data-tab="join">
-      <text>凑局</text>
     </view>
   </view>
 

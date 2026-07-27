@@ -1,0 +1,53 @@
+<!-- pages/mine/court-register.wxml -->
+<view class="page">
+  <view class="form-tip">请如实填写球场信息，提交后由管理员审核（1-3 个工作日）</view>
+
+  <view class="form-section">
+    <view class="form-label required">球场名称</view>
+    <input class="form-input" placeholder="如：天河体育中心足球场" value="{{form.name}}" bindinput="onInput" data-field="name" />
+
+    <view class="form-label required">场地类型</view>
+    <picker mode="selector" range="{{courtTypes}}" value="{{courtTypeIndex}}" bindchange="onTypeChange">
+      <view class="form-picker">{{courtTypes[courtTypeIndex]}}</view>
+    </picker>
+
+    <view class="form-label required">场地性质</view>
+    <picker mode="selector" range="{{surfaceTypes}}" value="{{surfaceTypeIndex}}" bindchange="onSurfaceChange">
+      <view class="form-picker">{{surfaceTypes[surfaceTypeIndex]}}</view>
+    </picker>
+
+    <view class="form-label required">球场地址</view>
+    <input class="form-input" placeholder="如：天河区体育西路" value="{{form.address}}" bindinput="onInput" data-field="address" />
+
+    <view class="form-label">经纬度</view>
+    <view class="form-loc-row">
+      <input class="form-input loc-input" placeholder="经度" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
+      <input class="form-input loc-input" placeholder="纬度" value="{{form.latitude}}" bindinput="onInput" data-field="latitude" type="digit" />
+    </view>
+    <view class="loc-hint">📍 备案通过后接入腾讯地图 SDK 可一键选点定位</view>
+
+    <view class="form-label">联系电话</view>
+    <input class="form-input" placeholder="如：020-12345678" value="{{form.phone}}" bindinput="onInput" data-field="phone" type="number" />
+
+    <view class="form-label">基础价格（元/场）</view>
+    <input class="form-input" placeholder="如：300" value="{{form.price}}" bindinput="onInput" data-field="price" type="digit" />
+
+    <view class="form-label">开放时间</view>
+    <view class="form-time-row">
+      <picker mode="time" value="{{form.openTime}}" bindchange="onTimeChange" data-field="openTime">
+        <view class="form-picker">{{form.openTime}}</view>
+      </picker>
+      <text class="form-time-sep">至</text>
+      <picker mode="time" value="{{form.closeTime}}" bindchange="onTimeChange" data-field="closeTime">
+        <view class="form-picker">{{form.closeTime}}</view>
+      </picker>
+    </view>
+
+    <view class="form-label">球场简介</view>
+    <textarea class="form-textarea" placeholder="如：交通便利、有停车场、有更衣室" value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="200" />
+  </view>
+
+  <view class="form-actions">
+    <button class="btn-submit" bindtap="onSubmit">提交审核</button>
+  </view>
+</view>

@@ -3,14 +3,12 @@ const api = require('../../utils/api.js');
 
 // 中文 → 英文 key (用于 wxss 类名 + tab 标识)
 const TAB_CONFIG = {
-  sub: { type: 'sub', icon: '🙋', actionText: '我要顶' },     // 找人顶
-  war: { type: 'war', icon: '⚔️', actionText: '接受约战' },    // 约战
-  join: { type: 'join', icon: '👥', actionText: '加入队伍' }   // 凑局
+  sub: { type: 'sub', icon: '🙋', actionText: '我要顶' },     // 凑人（原找人顶，个人顶个人）
+  war: { type: 'war', icon: '⚔️', actionText: '接受约战' }    // 约战（球队vs球队）
 };
 const TYPE_KEY = {
-  '找人顶': 'sub',
-  '约战': 'war',
-  '凑局': 'join'
+  '凑人': 'sub',
+  '约战': 'war'
 };
 
 Page({

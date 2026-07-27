@@ -1,0 +1,43 @@
+<!-- pages/nearby/nearby.wxml -->
+<view class="page">
+  <!-- 顶部定位栏 -->
+  <view class="loc-bar">
+    <text class="loc-icon">📍</text>
+    <text class="loc-text" wx:if="{{userLocation}}">{{userLocation.address || '定位成功'}}</text>
+    <text class="loc-text" wx:else>正在定位...</text>
+    <text class="loc-refresh" bindtap="onRefresh">🔄</text>
+  </view>
+
+  <!-- 地图（待腾讯地图 Key 申请后启用） -->
+  <view class="map-placeholder">
+    <text class="map-icon">🗺️</text>
+    <text class="map-tip">腾讯地图 SDK 接入中</text>
+    <text class="map-sub">申请 Key 后即可显示附近 50km 内球场</text>
+  </view>
+
+  <!-- 类型筛选 -->
+  <view class="filter-row">
+    <view class="filter-item {{filterType === 'all' ? 'active' : ''}}" bindtap="onFilterTap" data-type="all">全部</view>
+    <view class="filter-item {{filterType === '11人制' ? 'active' : ''}}" bindtap="onFilterTap" data-type="11人制">11人制</view>
+    <view class="filter-item {{filterType === '7人制' ? 'active' : ''}}" bindtap="onFilterTap" data-type="7人制">7人制</view>
+    <view class="filter-item {{filterType === '5人制' ? 'active' : ''}}" bindtap="onFilterTap" data-type="5人制">5人制</view>
+  </view>
+
+  <!-- 列表 -->
+  <view class="section-title">附近 {{courts.length}} 个球场</view>
+  <view class="court-list">
+    <view class="court-item" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
+      <view class="court-info">
+        <view class="court-name">{{item.name}}</view>
+        <view class="court-meta">
+          <text class="court-type">{{item.type}}</text>
+          <text class="court-surface" wx:if="{{item.surfaceType}}">· {{item.surfaceType}}</text>
+        </view>
+        <view class="court-addr">📍 {{item.address}}</view>
+        <view class="court-distance" wx:if="{{item.distanceKm}}">{{item.distanceKm}} km</view>
+      </view>
+      <view class="court-price">¥{{item.price}}<text class="court-price-unit">/场</text></view>
+    </view>
+    <view class="empty" wx:if="{{courts.length === 0}}">暂无附近球场</view>
+  </view>
+</view>

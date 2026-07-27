@@ -23,7 +23,7 @@
     </swiper-item>
   </swiper>
 
-  <!-- 4 个图标入口 -->
+  <!-- 3 个图标入口（取消赛事） -->
   <view class="entry-grid">
     <view class="entry-item" bindtap="onEntryTap" data-type="book">
       <view class="entry-icon book">⚽</view>
@@ -37,49 +37,13 @@
       <view class="entry-icon war">🏆</view>
       <text class="entry-label">约战</text>
     </view>
-    <view class="entry-item" bindtap="onEntryTap" data-type="event">
-      <view class="entry-icon event">🎯</view>
-      <text class="entry-label">赛事</text>
-    </view>
   </view>
 
-  <!-- 附近场地 -->
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">附近场地</text>
-      <text class="section-more" bindtap="onMoreCourt">更多 ›</text>
-    </view>
-    <scroll-view class="court-scroll" scroll-x>
-      <view class="court-card" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
-        <view class="court-img" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);">
-          <view class="court-type">{{item.type}}</view>
-        </view>
-        <view class="court-info">
-          <text class="court-name">{{item.name}}</text>
-          <view class="court-meta">
-            <text class="court-distance">{{item.distance}}km</text>
-            <text class="court-price">¥{{item.price}}/场</text>
-          </view>
-          <view class="tag tag-success" wx:if="{{item.freeSlots.length > 0}}">{{item.freeSlots[0]}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 热门球队 -->
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">热门球队</text>
-      <text class="section-more" bindtap="onMoreTeam">更多 ›</text>
-    </view>
-    <scroll-view class="team-scroll" scroll-x>
-      <view class="team-card" wx:for="{{teams}}" wx:key="id" bindtap="onTeamTap" data-id="{{item.id}}">
-        <view class="team-avatar" style="background: {{item.bgColor}};">{{item.shortName}}</view>
-        <text class="team-name">{{item.name}}</text>
-        <text class="team-meta">{{item.members}}人 · 出勤{{item.attendance}}%</text>
-        <view class="tag tag-primary" wx:if="{{item.recruitment}}">招募中</view>
-      </view>
-    </scroll-view>
+  <!-- 附近球场点击入口（暂未集成腾讯地图 SDK，预留跳转） -->
+  <view class="nearby-entry" bindtap="onNearbyTap">
+    <text class="nearby-icon">📍</text>
+    <text class="nearby-text">查看附近球场</text>
+    <text class="nearby-arrow">›</text>
   </view>
 
   <!-- 进行中 -->

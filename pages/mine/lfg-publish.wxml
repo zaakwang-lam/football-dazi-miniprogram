@@ -1,0 +1,40 @@
+<!-- pages/mine/lfg-publish.wxml -->
+<view class="page">
+  <view class="form-tip">发起一个组队活动，其他个人可报名加入</view>
+
+  <view class="form-section">
+    <view class="form-label required">组队类型</view>
+    <picker mode="selector" range="{{teamTypes}}" value="{{teamTypeIndex}}" bindchange="onTeamTypeChange">
+      <view class="form-picker">{{teamTypes[teamTypeIndex]}}</view>
+    </picker>
+
+    <view class="form-label required">场地位置</view>
+    <input class="form-input" placeholder="如：天河体育中心足球场" value="{{form.location}}" bindinput="onInput" data-field="location" />
+
+    <view class="form-label required">比赛时间</view>
+    <picker mode="multiSelector" range="{{dateRange}}" value="{{dateIndex}}" bindchange="onDateChange">
+      <view class="form-picker">{{form.playTimeLabel}}</view>
+    </picker>
+
+    <view class="form-label required">空闲名额</view>
+    <view class="count-row">
+      <view class="count-btn" bindtap="onCountChange" data-delta="-1">-</view>
+      <text class="count-num">{{form.needCount}}</text>
+      <view class="count-btn" bindtap="onCountChange" data-delta="1">+</view>
+      <text class="count-unit">人</text>
+    </view>
+
+    <view class="form-label">人均费用（元）</view>
+    <input class="form-input" placeholder="如：30" value="{{form.costPerPerson}}" bindinput="onInput" data-field="costPerPerson" type="digit" />
+
+    <view class="form-label">联系方式</view>
+    <input class="form-input" placeholder="如：微信昵称或手机号" value="{{form.contact}}" bindinput="onInput" data-field="contact" />
+
+    <view class="form-label">备注</view>
+    <textarea class="form-textarea" placeholder="如：水平不限，欢迎新人" value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="200" />
+  </view>
+
+  <view class="form-actions">
+    <button class="btn-submit" bindtap="onSubmit">发布</button>
+  </view>
+</view>

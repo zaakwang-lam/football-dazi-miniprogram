@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "附近球场",
+  "navigationBarBackgroundColor": "#FF6B00",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true
+}
