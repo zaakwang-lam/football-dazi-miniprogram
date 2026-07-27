@@ -90,13 +90,18 @@ Page({
 
   onEntryTap(e) {
     const type = e.currentTarget.dataset.type;
-    // tabBar 取消了「凑人」tab，lfg/war 统一用 navigateTo
+    // tabBar 加回 凑人/约战：lfg/war 都是 tab 页 → switchTab
     const map = {
       book: '/pages/court/list',
-      lfg: '/pages/lfg/lfg?tab=sub',         // 凑人（原找人顶，个人顶个人）
-      war: '/pages/lfg/lfg?tab=war'          // 约战（球队vs球队）
+      lfg: '/pages/lfg/lfg',         // 凑人 tab
+      war: '/pages/war/war'          // 约战 tab
     };
-    wx.navigateTo({ url: map[type] });
+    const dest = map[type];
+    if (type === 'book') {
+      wx.navigateTo({ url: dest });
+    } else {
+      wx.switchTab({ url: dest });
+    }
   },
 
   onNearbyTap() {

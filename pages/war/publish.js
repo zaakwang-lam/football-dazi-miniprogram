@@ -1,16 +1,16 @@
-// pages/lfg/publish.js
-// 发布凑人（type='sub' 个人顶个人）
+// pages/war/publish.js
+// 发布约战（type='war' 球队对球队）
 const api = require('../../utils/api.js');
 
 Page({
   data: {
     form: {
-      type: 'sub',
+      type: 'war',
       teamName: '',
       location: '',
       playTime: '',
       timeText: '',
-      needCount: 2,
+      needCount: 1,
       level: '业余',
       contact: '',
       description: ''
@@ -64,15 +64,16 @@ Page({
   },
 
   async onSubmit() {
-    const { location, playTime, contact } = this.data.form;
+    const { teamName, location, playTime, contact } = this.data.form;
+    if (!teamName) return wx.showToast({ title: '请输入队伍名称', icon: 'none' });
     if (!location) return wx.showToast({ title: '请选择地点', icon: 'none' });
     if (!playTime) return wx.showToast({ title: '请选择时间', icon: 'none' });
     if (!contact) return wx.showToast({ title: '请输入联系方式', icon: 'none' });
 
     try {
       const res = await api.publishLfg({
-        type: 'sub',  // 硬编码：凑人发布
-        title: this.data.form.teamName || `${location} ${this.data.form.timeText}`,
+        type: 'war',  // 硬编码：约战发布
+        title: `${teamName} 约战`,
         location,
         playTime,
         needCount: this.data.form.needCount,
@@ -81,11 +82,11 @@ Page({
         description: this.data.form.description
       });
       if (res.code === 0) {
-        wx.showToast({ title: '发布成功', icon: 'success' });
+        wx.showToast({ title: '约战已发布！', icon: 'success' });
         setTimeout(() => wx.navigateBack(), 1500);
       }
     } catch (e) {
-      console.error('发布失败:', e);
+      console.error('约战发布失败:', e);
       wx.showToast({ title: '发布失败', icon: 'none' });
     }
   }

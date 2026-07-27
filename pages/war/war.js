@@ -1,5 +1,5 @@
-// pages/lfg/lfg.js
-// 凑人 tab：仅显示凑人（type='sub'），参与者是个人
+// pages/war/war.js
+// 约战 tab：仅显示约战（type='war'），球队对球队
 const api = require('../../utils/api.js');
 
 Page({
@@ -22,19 +22,19 @@ Page({
 
   async loadList() {
     try {
-      const res = await api.getLfgList({ type: 'sub' });
+      const res = await api.getLfgList({ type: 'war' });
       const list = (res.data?.list || []).map(item => ({
         ...item,
-        typeKey: 'sub',
-        teamName: item.publisher?.nickname || item.title || '广州老炮',
+        typeKey: 'war',
+        teamName: item.publisher?.nickname || item.title || '海珠飓风队',
         publishTime: this.formatTime(item.createdAt),
         level: item.level || '业余',
         desc: item.description || '',
-        need: item.needCount
+        time: this.formatPlayTime(item.playTime)
       }));
       this.setData({ list, loaded: true });
     } catch (e) {
-      console.error('加载凑人失败:', e);
+      console.error('加载约战失败:', e);
       this.setData({ list: [], loaded: true });
     }
   },
@@ -50,6 +50,21 @@ Page({
     return Math.floor(diff / 86400) + '天前';
   },
 
+  formatPlayTime(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const target = new Date(d);
+    target.setHours(0, 0, 0, 0);
+    const diffDays = Math.round((target - today) / 86400000);
+    const hours = d.getHours().toString().padStart(2, '0');
+    const mins = d.getMinutes().toString().padStart(2, '0');
+    if (diffDays === 0) return `今晚 ${hours}:${mins}`;
+    if (diffDays === 1) return `明晚 ${hours}:${mins}`;
+    return `${d.getMonth() + 1}/${d.getDate()} ${hours}:${mins}`;
+  },
+
   onFilterTap(e) {
     const key = e.currentTarget.dataset.key;
     const labels = { distance: '距离', level: '水平', time: '时间', district: '区域' };
@@ -63,19 +78,19 @@ Page({
 
   onItemTap(e) {
     const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/pages/lfg/detail?id=${id}` });
+    wx.navigateTo({ url: `/pages/war/detail?id=${id}` });
   },
 
   onActionTap(e) {
     const id = e.currentTarget.dataset.id;
     wx.showModal({
-      title: '确认加入',
-      content: '加入后将通过微信服务通知联系你，是否继续？',
+      title: '接受约战',
+      content: '确认挑战对方球队？挑战请求将通过微信服务通知联系。',
       success: async (res) => {
         if (res.confirm) {
           try {
             await api.joinLfg(id);
-            wx.showToast({ title: '已报名！请等待联系', icon: 'success' });
+            wx.showToast({ title: '已发起挑战！', icon: 'success' });
           } catch (e) {
             console.error(e);
           }
@@ -85,13 +100,13 @@ Page({
   },
 
   onPublishTap() {
-    wx.navigateTo({ url: '/pages/lfg/publish' });
+    wx.navigateTo({ url: '/pages/war/publish' });
   },
 
   onShareAppMessage() {
     return {
-      title: '缺人？来足球搭子凑一波！',
-      path: '/pages/lfg/lfg'
+      title: '来足球搭子约一队！',
+      path: '/pages/war/war'
     };
   }
 });

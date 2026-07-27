@@ -1,0 +1,57 @@
+<!-- pages/war/publish.wxml - 发起约战 -->
+<view class="page">
+  <view class="form-title">发起约战</view>
+  <view class="form-subtitle">球队对球队，向对手发起挑战</view>
+  <view class="form-tip">说明：本队平均水平、希望挑战的对手水平等</view>
+
+  <view class="form-group">
+    <view class="form-label required">队伍名称</view>
+    <input class="form-input" placeholder="如：海珠飓风队" value="{{form.teamName}}" bindinput="onInput" data-key="teamName" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label required">比赛地点</view>
+    <input class="form-input" placeholder="如：海珠7人场" value="{{form.location}}" bindinput="onInput" data-key="location" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label required">比赛时间</view>
+    <view class="time-row" bindtap="onPickTime">
+      <text wx:if="{{form.timeText}}">{{form.timeText}}</text>
+      <text wx:else class="placeholder">点击选择时间</text>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">挑战人数（可选）</view>
+    <view class="num-row">
+      <view class="num-btn" bindtap="onNumChange" data-delta="-1">-</view>
+      <text class="num-val">{{form.needCount}}</text>
+      <view class="num-btn" bindtap="onNumChange" data-delta="1">+</view>
+      <text class="num-unit">人 / 缺的人数</text>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label required">队伍水平</view>
+    <view class="level-row">
+      <view class="level-item {{form.level === '业余' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余">业余</view>
+      <view class="level-item {{form.level === '业余校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余校队">业余校队</view>
+      <view class="level-item {{form.level === '校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="校队">校队</view>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <view class="form-label required">联系方式</view>
+    <input class="form-input" placeholder="微信号或手机号" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
+  </view>
+
+  <view class="form-group">
+    <view class="form-label">挑战备注</view>
+    <textarea class="form-textarea" placeholder="如：欢迎同水平球队挑战，AA 制" value="{{form.description}}" bindinput="onInput" data-key="description" maxlength="200" />
+  </view>
+
+  <view class="bottom-action safe-bottom">
+    <view class="btn-primary full" bindtap="onSubmit">发布约战</view>
+  </view>
+</view>

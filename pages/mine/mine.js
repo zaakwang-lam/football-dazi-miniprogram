@@ -100,7 +100,7 @@ Page({
         return;
       }
       if (type === 'join-team') {
-        wx.navigateTo({ url: '/pages/lfg/lfg?tab=sub' });
+        wx.switchTab({ url: '/pages/lfg/lfg' });
         return;
       }
     }

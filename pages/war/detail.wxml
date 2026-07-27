@@ -1,0 +1,53 @@
+<!-- pages/lfg/detail.wxml -->
+<view class="page" wx:if="{{detail}}">
+  <view class="header">
+    <view class="type-badge type-{{detail.typeKey}}">
+      <text class="type-icon">{{detail.icon}}</text>
+      <text>{{detail.type}}</text>
+    </view>
+    <view class="status">{{detail.status}}</view>
+  </view>
+
+  <view class="info-block">
+    <view class="info-row">
+      <text class="info-label">球队</text>
+      <text class="info-value">{{detail.teamName}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">时间</text>
+      <text class="info-value">{{detail.time}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">地点</text>
+      <text class="info-value">{{detail.location}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">水平</text>
+      <text class="info-value">{{detail.level}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">缺人</text>
+      <text class="info-value need">{{detail.need}} 人</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">联系</text>
+      <text class="info-value">{{detail.contact}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">发布时间</text>
+      <text class="info-value text-3">{{detail.publishTime}}</text>
+    </view>
+  </view>
+
+  <view class="desc-block">
+    <view class="block-title">详情</view>
+    <view class="desc-content">{{detail.desc}}</view>
+  </view>
+
+  <view class="safe-bottom"></view>
+
+  <view class="bottom-bar">
+    <view class="btn-secondary" bindtap="onContactTap">联系队长</view>
+    <view class="btn-primary" bindtap="onJoinTap">我要{{detail.type === '找人顶' ? '顶' : '加入'}}</view>
+  </view>
+</view>

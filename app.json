@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/lfg/lfg",
+    "pages/war/war",
     "pages/team/team",
     "pages/mine/mine",
     "pages/court/list",
@@ -11,12 +12,16 @@
     "pages/order/detail",
     "pages/lfg/publish",
     "pages/lfg/detail",
+    "pages/war/publish",
     "pages/team/detail",
     "pages/team/create",
     "pages/team/checkin",
     "pages/team/aa",
     "pages/login/login",
-    "pages/court/eval"
+    "pages/court/eval",
+    "pages/nearby/nearby",
+    "pages/mine/court-register",
+    "pages/mine/lfg-publish"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -36,6 +41,18 @@
         "text": "首页",
         "iconPath": "images/tab/home.png",
         "selectedIconPath": "images/tab/home_a.png"
+      },
+      {
+        "pagePath": "pages/lfg/lfg",
+        "text": "凑人",
+        "iconPath": "images/tab/lfg.png",
+        "selectedIconPath": "images/tab/lfg_a.png"
+      },
+      {
+        "pagePath": "pages/war/war",
+        "text": "约战",
+        "iconPath": "images/tab/war.png",
+        "selectedIconPath": "images/tab/war_a.png"
       },
       {
         "pagePath": "pages/team/team",

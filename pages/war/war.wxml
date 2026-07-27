@@ -1,12 +1,10 @@
-<!-- pages/lfg/lfg.wxml -->
+<!-- pages/war/war.wxml -->
 <view class="page">
-  <!-- 顶部简单标题 -->
   <view class="page-header">
-    <text class="page-title">👥 凑人</text>
-    <text class="page-sub">个人顶个人，找不到人赶紧来</text>
+    <text class="page-title">⚔️ 约战</text>
+    <text class="page-sub">球队对球队，挑战同水平球队</text>
   </view>
 
-  <!-- 筛选条 -->
   <view class="filter-bar">
     <view class="filter-item" bindtap="onFilterTap" data-key="distance">
       <text>📍 距离</text>
@@ -22,13 +20,12 @@
     </view>
   </view>
 
-  <!-- 信息流 -->
   <view class="lfg-list">
     <view class="lfg-card" wx:for="{{list}}" wx:key="id" bindtap="onItemTap" data-id="{{item.id}}">
       <view class="card-top">
-        <view class="card-type type-sub">
-          <text class="type-icon">🙋</text>
-          <text>凑人</text>
+        <view class="card-type type-war">
+          <text class="type-icon">⚔️</text>
+          <text>约战</text>
         </view>
         <text class="card-time">{{item.publishTime}}</text>
       </view>
@@ -36,7 +33,7 @@
       <view class="card-main">
         <view class="main-row">
           <text class="team-name">{{item.teamName}}</text>
-          <text class="need-num">缺 {{item.need}} 人</text>
+          <text class="need-num">{{item.needCount === 1 ? '寻找对手' : `缺 ${item.needCount} 人`}}</text>
         </view>
         <view class="main-info">
           <text class="info-item">📍 {{item.location}}</text>
@@ -49,21 +46,19 @@
       <view class="card-bottom">
         <text class="contact-info">💬 {{item.contact}}</text>
         <view class="action-btn" catchtap="onActionTap" data-id="{{item.id}}">
-          我要顶
+          接受挑战
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 浮动 + 按钮 -->
   <view class="fab" bindtap="onPublishTap">
     <text>+</text>
   </view>
 
-  <!-- 空状态 -->
   <view class="empty" wx:if="{{list.length === 0 && loaded}}">
-    <view class="empty-icon">⚽</view>
-    <text>暂无凑人信息</text>
-    <view class="empty-tip">点 + 发起一个凑人</view>
+    <view class="empty-icon">🏆</view>
+    <text>暂无约战信息</text>
+    <view class="empty-tip">点 + 发起一个约战</view>
   </view>
 </view>
