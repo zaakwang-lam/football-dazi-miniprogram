@@ -3,8 +3,8 @@
 const api = require('../../utils/api.js');
 
 const TYPE_CONFIG = {
-  sub: { icon: '🙋', cnName: '凑人', actionText: '我要顶' },
-  war: { icon: '⚔️', cnName: '约战', actionText: '接受挑战' }
+  sub: { icon: '🙋', cnName: '凑人', actionText: '我要加入', confirmTitle: '确认我要加入', confirmDesc: '队长会通过微信服务通知联系你' },
+  war: { icon: '⚔️', cnName: '约战', actionText: '接受挑战', confirmTitle: '确认接受挑战', confirmDesc: '队长会通过微信服务通知联系你' }
 };
 
 Page({
@@ -38,6 +38,8 @@ Page({
           icon: config.icon,
           typeLabel: config.cnName,
           actionText: config.actionText,
+          confirmTitle: config.confirmTitle,
+          confirmDesc: config.confirmDesc,
           teamName: detail.publisher?.nickname || detail.title,
           desc: detail.description || '',
           contact: detail.contact || '微信同名',
@@ -72,15 +74,15 @@ Page({
   onJoinTap() {
     const id = this.data.detail?.id;
     if (!id) return;
-    const action = this.data.detail?.actionText || '参与';
+    const detail = this.data.detail;
     wx.showModal({
-      title: `确认${action}`,
-      content: `${action}后将通过微信服务通知联系你`,
+      title: detail.confirmTitle || `确认${detail.actionText || '参与'}`,
+      content: detail.confirmDesc || '队长会通过微信服务通知联系你',
       success: async (res) => {
         if (res.confirm) {
           try {
             await api.joinLfg(id);
-            wx.showToast({ title: `已${action}成功！`, icon: 'success' });
+            wx.showToast({ title: `已${detail.actionText || '参与'}成功！`, icon: 'success' });
             setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
           } catch (e) {
             console.error(e);

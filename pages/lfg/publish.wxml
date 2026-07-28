@@ -15,10 +15,20 @@
   </view>
 
   <view class="form-group">
-    <view class="form-label">时间</view>
-    <view class="form-input" style="min-height:44rpx;padding:8rpx 0;" bindtap="onPickTime">
-      <text wx:if="{{form.timeText}}" style="color:#1A1A1A;font-weight:500;">{{form.timeText}}</text>
-      <text wx:else style="color:#999999;">点击选择时间</text>
+    <view class="form-label">比赛时间</view>
+    <view class="time-row">
+      <picker mode="date" value="{{form.dateValue}}" start="{{form.dateMin}}" end="{{form.dateMax}}" bindchange="onDateChange">
+        <view class="time-cell">
+          <text wx:if="{{form.dateText}}" style="color:#1A1A1A;font-weight:500;">{{form.dateText}}</text>
+          <text wx:else style="color:#999999;">选日期</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{form.timeValue}}" bindchange="onTimeChange">
+        <view class="time-cell">
+          <text wx:if="{{form.timeText}}" style="color:#1A1A1A;font-weight:500;">{{form.timeText}}</text>
+          <text wx:else style="color:#999999;">选时间</text>
+        </view>
+      </picker>
     </view>
   </view>
 

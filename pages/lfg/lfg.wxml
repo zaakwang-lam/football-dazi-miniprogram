@@ -40,7 +40,7 @@
         </view>
         <view class="main-info">
           <text class="info-item">📍 {{item.location}}</text>
-          <text class="info-item">🕐 {{item.time}}</text>
+          <text class="info-item">🕐 {{item.playTimeText}}</text>
           <text class="info-item" wx:if="{{item.matchTypesText}}">⚽️ {{item.matchTypesText}}</text>
           <text class="info-item" wx:if="{{item.fee !== null && item.fee !== undefined}}">💰 ¥{{item.fee}}</text>
         </view>
@@ -50,7 +50,7 @@
       <view class="card-bottom">
         <text class="contact-info">💬 {{item.contact}}</text>
         <view class="action-btn" catchtap="onActionTap" data-id="{{item.id}}">
-          我要顶
+          我要加入
         </view>
       </view>
     </view>

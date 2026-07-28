@@ -138,3 +138,14 @@
   display: block;
   width: 100%;
 }
+/* 时间选择器 2026-07-28 调整 */
+.time-row { display: flex; gap: 16rpx; }
+.time-cell {
+  flex: 1;
+  background: #F5F5F5;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  min-height: 40rpx;
+  text-align: center;
+}
