@@ -33,7 +33,7 @@
       <view class="card-main">
         <view class="main-row">
           <text class="team-name">{{item.teamName}}</text>
-          <text class="need-num">{{item.needCount === 1 ? '寻找对手' : `缺 ${item.needCount} 人`}}</text>
+          <text class="need-num">{{item.needCount === 1 ? '寻找对手' : '缺 ' + item.needCount + ' 人'}}</text>
         </view>
         <view class="main-info">
           <text class="info-item">📍 {{item.location}}</text>
