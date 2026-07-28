@@ -5,7 +5,7 @@
   <view class="form-section">
     <view class="form-label required">人制（多选）</view>
     <view class="checkbox-group">
-      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{teamTypes}}" wx:key="*this" bindtap="onTeamTypeToggle" data-value="{{item}}">
+      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{teamTypes}}" wx:key="index" catchtap="onTeamTypeToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
         <view class="checkbox {{form.matchTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.matchTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
         <text>{{item}}</text>
       </view>

@@ -116,6 +116,15 @@ function getMyTeams() {
 }
 
 /**
+ * 获取我的组队列表（2026-07-28 新增）
+ * type: 'created' | 'joined' | 'all'
+ * 后端: GET /api/user/me/lfg-posts?type=...
+ */
+function getMyLfgPosts(type = 'all') {
+  return request('/api/user/me/lfg-posts', 'GET', { type });
+}
+
+/**
  * 球场方发布空闲时段
  */
 function publishFreeSlots(courtId, slots) {
@@ -325,6 +334,7 @@ module.exports = {
   registerRole,
   getMyCourts,
   getMyTeams,
+  getMyLfgPosts,
 
   // 场地
   getNearbyCourts,

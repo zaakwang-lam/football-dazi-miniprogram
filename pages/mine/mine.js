@@ -117,7 +117,8 @@ Page({
         return;
       }
       if (type === 'join-team') {
-        wx.switchTab({ url: '/pages/lfg/lfg' });
+        // 2026-07-28 改：跳 my-teams?type=browse 浏览所有可加入的组队
+        wx.navigateTo({ url: '/pages/mine/my-teams?type=browse' });
         return;
       }
     }

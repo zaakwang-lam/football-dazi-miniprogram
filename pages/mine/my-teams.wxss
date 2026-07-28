@@ -1,0 +1,106 @@
+/* pages/mine/my-teams.wxss */
+.page { padding: 0 24rpx; padding-bottom: 200rpx; }
+
+/* Tab */
+.tabs {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  margin: 24rpx 0;
+  padding: 8rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.tab {
+  flex: 1;
+  padding: 20rpx 0;
+  text-align: center;
+  font-size: 28rpx;
+  color: #666;
+  border-radius: 12rpx;
+}
+.tab.active {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* 卡片 */
+.lfg-list { padding: 0 0 24rpx 0; }
+.lfg-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
+.card-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.card-type.type-sub { background: #E6F2FF; color: #007AFF; }
+.card-type.type-war { background: #FFE8D6; color: #FF6B00; }
+
+.card-role {
+  font-size: 20rpx;
+  color: #FF6B00;
+  background: #FFE8D6;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+.card-role.joiner {
+  color: #007AFF;
+  background: #E6F2FF;
+}
+.card-time { font-size: 22rpx; color: #999; }
+
+.card-main { margin-bottom: 16rpx; }
+.main-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
+.team-name { font-size: 32rpx; font-weight: 700; color: #333; }
+.need-num { font-size: 26rpx; color: #FF6B00; font-weight: 600; }
+.main-info { display: flex; flex-wrap: wrap; gap: 16rpx; margin-bottom: 12rpx; }
+.info-item { font-size: 24rpx; color: #666; }
+.main-desc { font-size: 24rpx; color: #999; line-height: 1.6; }
+
+.card-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 16rpx; border-top: 1rpx solid #F0F0F0; }
+.contact-info { font-size: 24rpx; color: #666; flex: 1; }
+.status-tag {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+}
+.status-tag.status-open { color: #2ECC71; background: #E8F8F0; }
+.status-tag.status-full { color: #FF6B00; background: #FFE8D6; }
+.status-tag.status-closed { color: #999; background: #F5F5F5; }
+
+/* 空状态 */
+.empty {
+  padding: 120rpx 32rpx;
+  text-align: center;
+}
+.empty-icon { font-size: 100rpx; margin-bottom: 24rpx; }
+.empty-text { font-size: 28rpx; color: #999; display: block; }
+.empty-tip { font-size: 24rpx; color: #FF6B00; margin-top: 8rpx; }
+
+/* 浮动 + 按钮 */
+.fab {
+  position: fixed;
+  bottom: 120rpx;
+  right: 32rpx;
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 50%;
+  background: #FF6B00;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(255,107,0,0.4);
+  z-index: 99;
+}
+.fab text { font-size: 64rpx; line-height: 1; }

@@ -42,7 +42,7 @@ Page({
       ...item,
       typeKey: TYPE_KEY[item.type] || 'sub',
       typeLabel: TYPE_LABEL[item.type] || '凑人',
-      teamName: item.publisher?.nickname || item.title || '招募中',
+      teamName: item.title || item.publisher?.nickname || '招募中',
       time: this.formatTime(item.playTime)
     }));
 

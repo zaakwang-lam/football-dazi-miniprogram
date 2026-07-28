@@ -37,8 +37,10 @@ Page({
   },
 
   onTeamTypeToggle(e) {
-    const value = e.currentTarget.dataset.value;
-    const list = [...this.data.form.matchTypes];
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
+    console.log('[mine/lfg-publish] onTeamTypeToggle, value=', value);
+    if (!value) return;
+    const list = [...(this.data.form.matchTypes || [])];
     const idx = list.indexOf(value);
     if (idx >= 0) {
       list.splice(idx, 1);

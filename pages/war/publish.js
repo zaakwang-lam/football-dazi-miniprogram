@@ -56,10 +56,15 @@ Page({
     this.setData({ 'form.level': level });
   },
 
-  // 人制多选 toggle
+  // 人制多选 toggle（2026-07-28 增强容错）
   onMatchTypeToggle(e) {
-    const value = e.currentTarget.dataset.value;
-    const list = [...this.data.form.matchTypes];
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
+    console.log('[war/publish] onMatchTypeToggle, value=', value, ', current=', this.data.form.matchTypes);
+    if (!value) {
+      console.warn('[war/publish] value is empty, ignore');
+      return;
+    }
+    const list = [...(this.data.form.matchTypes || [])];
     const idx = list.indexOf(value);
     if (idx >= 0) {
       list.splice(idx, 1);

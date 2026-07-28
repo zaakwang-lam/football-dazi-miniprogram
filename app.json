@@ -22,7 +22,8 @@
     "pages/nearby/nearby",
     "pages/mine/court-register",
     "pages/mine/lfg-publish",
-    "pages/mine/my-courts"
+    "pages/mine/my-courts",
+    "pages/mine/my-teams"
   ],
   "window": {
     "backgroundTextStyle": "light",
