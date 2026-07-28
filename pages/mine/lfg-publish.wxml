@@ -3,10 +3,13 @@
   <view class="form-tip">发起一个组队活动，其他个人可报名加入</view>
 
   <view class="form-section">
-    <view class="form-label required">组队类型</view>
-    <picker mode="selector" range="{{teamTypes}}" value="{{teamTypeIndex}}" bindchange="onTeamTypeChange">
-      <view class="form-picker">{{teamTypes[teamTypeIndex]}}</view>
-    </picker>
+    <view class="form-label required">人制（多选）</view>
+    <view class="checkbox-group">
+      <label class="checkbox-item" wx:for="{{teamTypes}}" wx:key="*this" bindtap="onTeamTypeToggle" data-value="{{item}}">
+        <view class="checkbox {{form.matchTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.matchTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
+        <text>{{item}}</text>
+      </label>
+    </view>
 
     <view class="form-label required">场地位置</view>
     <input class="form-input" placeholder="如：天河体育中心足球场" value="{{form.location}}" bindinput="onInput" data-field="location" />
@@ -24,8 +27,8 @@
       <text class="count-unit">人</text>
     </view>
 
-    <view class="form-label">人均费用（元）</view>
-    <input class="form-input" placeholder="如：30" value="{{form.costPerPerson}}" bindinput="onInput" data-field="costPerPerson" type="digit" />
+    <view class="form-label">人均费用（元，选填）</view>
+    <input class="form-input" placeholder="如：30" value="{{form.fee}}" bindinput="onInput" data-field="fee" type="digit" />
 
     <view class="form-label">联系方式</view>
     <input class="form-input" placeholder="如：微信昵称或手机号" value="{{form.contact}}" bindinput="onInput" data-field="contact" />

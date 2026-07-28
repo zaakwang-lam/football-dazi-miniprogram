@@ -21,6 +21,14 @@
       <text class="info-label">地点</text>
       <text class="info-value">{{detail.location}}</text>
     </view>
+    <view class="info-row" wx:if="{{detail.matchTypes && detail.matchTypes.length > 0}}">
+      <text class="info-label">人制</text>
+      <text class="info-value">{{detail.matchTypesText}}</text>
+    </view>
+    <view class="info-row" wx:if="{{detail.fee !== null && detail.fee !== undefined}}">
+      <text class="info-label">人均费用</text>
+      <text class="info-value fee">¥{{detail.fee}}</text>
+    </view>
     <view class="info-row">
       <text class="info-label">水平</text>
       <text class="info-value">{{detail.level}}</text>
@@ -48,6 +56,8 @@
 
   <view class="bottom-bar">
     <view class="btn-secondary" bindtap="onContactTap">联系队长</view>
-    <view class="btn-primary" bindtap="onJoinTap">我要{{detail.type === '找人顶' ? '顶' : '加入'}}</view>
+    <!-- 加入 / 退出按钮二选一（2026-07-28 新增） -->
+    <view class="btn-primary" wx:if="{{!detail.joined}}" bindtap="onJoinTap">我要{{detail.type === '找人顶' ? '顶' : '加入'}}</view>
+    <view class="btn-secondary btn-quit" wx:else bindtap="onQuitTap">退出组队</view>
   </view>
 </view>

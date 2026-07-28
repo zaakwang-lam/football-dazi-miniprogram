@@ -41,7 +41,8 @@
         <view class="main-info">
           <text class="info-item">📍 {{item.location}}</text>
           <text class="info-item">🕐 {{item.time}}</text>
-          <text class="info-item">⭐ {{item.level}}</text>
+          <text class="info-item" wx:if="{{item.matchTypesText}}">⚽️ {{item.matchTypesText}}</text>
+          <text class="info-item" wx:if="{{item.fee !== null && item.fee !== undefined}}">💰 ¥{{item.fee}}</text>
         </view>
         <view class="main-desc">{{item.desc}}</view>
       </view>

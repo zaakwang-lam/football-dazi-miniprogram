@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的球场",
+  "navigationBarBackgroundColor": "#FF6B00",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true
+}

@@ -30,7 +30,11 @@ Page({
         publishTime: this.formatTime(item.createdAt),
         level: item.level || '业余',
         desc: item.description || '',
-        need: item.needCount
+        need: item.needCount,
+        // 2026-07-28 新增字段格式化
+        matchTypesText: (item.matchTypes && item.matchTypes.length > 0)
+          ? item.matchTypes.join('/')
+          : ''
       }));
       this.setData({ list, loaded: true });
     } catch (e) {

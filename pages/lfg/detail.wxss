@@ -122,3 +122,9 @@
   flex: 1;
   text-align: center;
 }
+/* 退出按钮（2026-07-28 新增） */
+.btn-quit {
+  background: #fff !important;
+  color: #FF3B30 !important;
+  border: 2rpx solid #FF3B30 !important;
+}

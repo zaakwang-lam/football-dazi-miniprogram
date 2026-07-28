@@ -11,20 +11,28 @@
       <view class="form-picker">{{courtTypes[courtTypeIndex]}}</view>
     </picker>
 
-    <view class="form-label required">场地性质</view>
-    <picker mode="selector" range="{{surfaceTypes}}" value="{{surfaceTypeIndex}}" bindchange="onSurfaceChange">
-      <view class="form-picker">{{surfaceTypes[surfaceTypeIndex]}}</view>
+    <view class="form-label required">场地性质（多选）</view>
+    <view class="checkbox-group">
+      <label class="checkbox-item" wx:for="{{surfaceTypes}}" wx:key="*this" bindtap="onSurfaceToggle" data-value="{{item}}">
+        <view class="checkbox {{form.surfaceTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.surfaceTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
+        <text>{{item}}</text>
+      </label>
+    </view>
+
+    <view class="form-label required">行政区</view>
+    <picker mode="selector" range="{{districts}}" value="{{districtIndex}}" bindchange="onDistrictChange">
+      <view class="form-picker">{{districts[districtIndex] || '请选择行政区'}}</view>
     </picker>
 
     <view class="form-label required">球场地址</view>
-    <input class="form-input" placeholder="如：天河区体育西路" value="{{form.address}}" bindinput="onInput" data-field="address" />
+    <input class="form-input" placeholder="如：天河区体育西路 123 号" value="{{form.address}}" bindinput="onInput" data-field="address" />
 
-    <view class="form-label">经纬度</view>
+    <view class="form-label">经纬度（选填）</view>
     <view class="form-loc-row">
-      <input class="form-input loc-input" placeholder="经度" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
+      <input class="form-input loc-input" placeholder="经度（备案后接入地图可选点）" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
       <input class="form-input loc-input" placeholder="纬度" value="{{form.latitude}}" bindinput="onInput" data-field="latitude" type="digit" />
     </view>
-    <view class="loc-hint">📍 备案通过后接入腾讯地图 SDK 可一键选点定位</view>
+    <view class="loc-hint">📍 备案通过后接入腾讯地图 SDK 可一键选点定位（当前手动输入）</view>
 
     <view class="form-label">联系电话</view>
     <input class="form-input" placeholder="如：020-12345678" value="{{form.phone}}" bindinput="onInput" data-field="phone" type="number" />
@@ -32,15 +40,27 @@
     <view class="form-label">基础价格（元/场）</view>
     <input class="form-input" placeholder="如：300" value="{{form.price}}" bindinput="onInput" data-field="price" type="digit" />
 
-    <view class="form-label">开放时间</view>
-    <view class="form-time-row">
-      <picker mode="time" value="{{form.openTime}}" bindchange="onTimeChange" data-field="openTime">
-        <view class="form-picker">{{form.openTime}}</view>
-      </picker>
-      <text class="form-time-sep">至</text>
-      <picker mode="time" value="{{form.closeTime}}" bindchange="onTimeChange" data-field="closeTime">
-        <view class="form-picker">{{form.closeTime}}</view>
-      </picker>
+    <view class="form-label">开放时间（按周设置，可添加多个时段）</view>
+    <view class="open-hours-list">
+      <view class="open-hours-day" wx:for="{{weekDays}}" wx:key="key" wx:for-item="day">
+        <view class="day-header">
+          <text class="day-name">{{day.label}}</text>
+          <view class="add-slot" bindtap="onAddSlot" data-day="{{day.key}}">+ 添加时段</view>
+        </view>
+        <view wx:if="{{form.openHours[day.key] && form.openHours[day.key].length > 0}}">
+          <view class="time-row" wx:for="{{form.openHours[day.key]}}" wx:key="index" wx:for-item="slot" wx:for-index="slotIdx">
+            <picker mode="time" value="{{slot.start}}" bindchange="onSlotTimeChange" data-day="{{day.key}}" data-idx="{{slotIdx}}" data-field="start">
+              <view class="time-picker">{{slot.start || '开始'}}</view>
+            </picker>
+            <text class="time-sep">至</text>
+            <picker mode="time" value="{{slot.end}}" bindchange="onSlotTimeChange" data-day="{{day.key}}" data-idx="{{slotIdx}}" data-field="end">
+              <view class="time-picker">{{slot.end || '结束'}}</view>
+            </picker>
+            <view class="del-slot" bindtap="onDelSlot" data-day="{{day.key}}" data-idx="{{slotIdx}}">✕</view>
+          </view>
+        </view>
+        <view wx:else class="empty-slot">未开放</view>
+      </view>
     </view>
 
     <view class="form-label">球场简介</view>

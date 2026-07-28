@@ -21,7 +21,8 @@
     "pages/court/eval",
     "pages/nearby/nearby",
     "pages/mine/court-register",
-    "pages/mine/lfg-publish"
+    "pages/mine/lfg-publish",
+    "pages/mine/my-courts"
   ],
   "window": {
     "backgroundTextStyle": "light",

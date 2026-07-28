@@ -100,6 +100,14 @@ function registerRole(data) {
 }
 
 /**
+ * 获取我的球场列表（仅已审核通过的，按 createdAt DESC）
+ * 后端: GET /api/user/me/courts (2026-07-28 新增)
+ */
+function getMyCourts() {
+  return request('/api/user/me/courts', 'GET', {});
+}
+
+/**
  * 球场方发布空闲时段
  */
 function publishFreeSlots(courtId, slots) {
@@ -233,6 +241,13 @@ function joinLfg(id) {
 }
 
 /**
+ * 退出组队（2026-07-28 新增）
+ */
+function quitLfg(id) {
+  return request(`/api/v1/lfg/${id}/quit`, 'POST', null, { loadingText: '退出中...' });
+}
+
+/**
  * 关闭凑人
  */
 function closeLfg(id) {
@@ -300,6 +315,7 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   registerRole,
+  getMyCourts,
 
   // 场地
   getNearbyCourts,
@@ -322,6 +338,7 @@ module.exports = {
   publishLfg,
   getLfgDetail,
   joinLfg,
+  quitLfg,
   closeLfg,
 
   // 球队

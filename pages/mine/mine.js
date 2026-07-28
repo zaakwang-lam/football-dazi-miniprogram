@@ -107,6 +107,10 @@ Page({
 
     // 球场方专用
     if (userInfo.role === 'court') {
+      if (type === 'my-courts') {
+        wx.navigateTo({ url: '/pages/mine/my-courts' });
+        return;
+      }
       if (type === 'court-info') {
         wx.navigateTo({ url: '/pages/mine/court-info' });
         return;

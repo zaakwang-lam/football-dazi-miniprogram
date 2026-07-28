@@ -13,3 +13,22 @@
 .form-time-sep { color: #999; font-size: 24rpx; }
 .form-actions { margin-top: 48rpx; }
 .btn-submit { background: #FF6B00; color: #fff; border-radius: 12rpx; font-size: 32rpx; }
+
+/* 场地性质多选 */
+.checkbox-group { display: flex; gap: 20rpx; flex-wrap: wrap; }
+.checkbox-item { display: flex; align-items: center; gap: 8rpx; padding: 16rpx 24rpx; background: #F5F5F5; border-radius: 8rpx; font-size: 26rpx; }
+.checkbox { width: 36rpx; height: 36rpx; border: 2rpx solid #ccc; border-radius: 6rpx; display: flex; align-items: center; justify-content: center; font-size: 24rpx; color: #fff; background: #fff; }
+.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
+
+/* 开放时间多时段 */
+.open-hours-list { background: #FAFAFA; border-radius: 12rpx; padding: 16rpx; }
+.open-hours-day { margin-bottom: 16rpx; padding-bottom: 16rpx; border-bottom: 1rpx solid #eee; }
+.open-hours-day:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.day-name { font-size: 28rpx; font-weight: bold; color: #333; }
+.add-slot { font-size: 24rpx; color: #FF6B00; padding: 4rpx 12rpx; border: 1rpx solid #FF6B00; border-radius: 6rpx; }
+.time-row { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
+.time-picker { background: #fff; border: 1rpx solid #ddd; border-radius: 6rpx; padding: 12rpx 24rpx; font-size: 26rpx; min-width: 140rpx; text-align: center; }
+.time-sep { color: #999; font-size: 24rpx; }
+.del-slot { margin-left: auto; color: #FF3B30; font-size: 32rpx; padding: 4rpx 12rpx; }
+.empty-slot { font-size: 24rpx; color: #bbb; padding: 8rpx 0; }

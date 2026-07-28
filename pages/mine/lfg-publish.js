@@ -4,8 +4,7 @@ const api = require('../../utils/api.js');
 
 Page({
   data: {
-    teamTypes: ['11人场', '7人场', '5人场'],
-    teamTypeIndex: 0,
+    teamTypes: ['11人制', '7人制', '5人制'],
     // 未来 14 天的日期
     dateRange: [[], []],
     dateIndex: [0, 0],
@@ -13,9 +12,9 @@ Page({
       location: '',
       playTime: null,
       playTimeLabel: '请选择比赛时间',
-      type: '11人场',
+      matchTypes: [],  // 人制多选（2026-07-28 升级）
       needCount: 5,
-      costPerPerson: '',
+      fee: '',  // 人均费用（2026-07-28 升级：原 costPerPerson 改为 fee，与后端对齐）
       contact: '',
       description: ''
     }
@@ -37,12 +36,16 @@ Page({
     });
   },
 
-  onTeamTypeChange(e) {
-    const idx = Number(e.detail.value);
-    this.setData({
-      teamTypeIndex: idx,
-      'form.type': this.data.teamTypes[idx]
-    });
+  onTeamTypeToggle(e) {
+    const value = e.currentTarget.dataset.value;
+    const list = [...this.data.form.matchTypes];
+    const idx = list.indexOf(value);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+    } else {
+      list.push(value);
+    }
+    this.setData({ 'form.matchTypes': list });
   },
 
   onDateChange(e) {
@@ -75,18 +78,23 @@ Page({
     const f = this.data.form;
     if (!f.location) return wx.showToast({ title: '请填写场地位置', icon: 'none' });
     if (!f.playTime) return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
+    if (!f.matchTypes || f.matchTypes.length === 0) {
+      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    }
 
     wx.showLoading({ title: '发布中...' });
     try {
-      // type 映射：'11人场' → 'sub'（凑人）；'约战'才是 war
+      // type 映射：凑人为 'sub'（约战才是 war）
       const res = await api.publishLfg({
         type: 'sub',
-        title: `${f.location} ${f.type} 凑人`,
+        matchTypes: f.matchTypes,  // 人制多选（2026-07-28 升级）
+        title: `${f.location} ${f.matchTypes.join('/')} 凑人`,
         location: f.location,
+        fee: f.fee ? Number(f.fee) : null,  // 人均费用（2026-07-28 升级）
         playTime: f.playTime,
         needCount: f.needCount,
         contact: f.contact,
-        description: `${f.description}${f.costPerPerson ? '\n人均：¥' + f.costPerPerson : ''}`
+        description: f.description
       });
       wx.hideLoading();
 

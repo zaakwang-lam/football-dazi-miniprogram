@@ -10,7 +10,8 @@ const TYPE_CONFIG = {
 Page({
   data: {
     detail: null,
-    typeFromQuery: null
+    typeFromQuery: null,
+    currentUserId: null  // 当前登录用户 id（用于判断是否已加入）
   },
 
   onLoad(options) {
@@ -24,17 +25,27 @@ Page({
       const detail = res.data;
       const typeKey = detail.type || this.data.typeFromQuery || 'sub';
       const config = TYPE_CONFIG[typeKey] || TYPE_CONFIG.sub;
+      const userInfo = wx.getStorageSync('userInfo');
+      const currentUserId = userInfo?.id;
+      // 判断当前用户是否已加入
+      const joined = !!(detail.joins && detail.joins.find(j => j.userId === currentUserId));
       this.setData({
+        currentUserId,
         detail: {
           ...detail,
           typeKey,
+          joined,  // 2026-07-28 新增：是否已加入（控制按钮文案）
           icon: config.icon,
           typeLabel: config.cnName,
           actionText: config.actionText,
           teamName: detail.publisher?.nickname || detail.title,
           desc: detail.description || '',
           contact: detail.contact || '微信同名',
-          status: detail.status === 'open' ? '招募中' : (detail.status === 'full' ? '已满' : '已关闭')
+          status: detail.status === 'open' ? '招募中' : (detail.status === 'full' ? '已满' : '已关闭'),
+          // 2026-07-28 新增字段格式化
+          matchTypesText: (detail.matchTypes && detail.matchTypes.length > 0)
+            ? detail.matchTypes.join(' / ')
+            : '不限'
         }
       });
       wx.setNavigationBarTitle({
@@ -70,9 +81,32 @@ Page({
           try {
             await api.joinLfg(id);
             wx.showToast({ title: `已${action}成功！`, icon: 'success' });
+            setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
           } catch (e) {
             console.error(e);
             wx.showToast({ title: '操作失败', icon: 'none' });
+          }
+        }
+      }
+    });
+  },
+
+  // 退出组队（2026-07-28 新增）
+  onQuitTap() {
+    const id = this.data.detail?.id;
+    if (!id) return;
+    wx.showModal({
+      title: '确认退出',
+      content: '退出后将不再收到该组队的通知',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            await api.quitLfg(id);
+            wx.showToast({ title: '已退出组队', icon: 'success' });
+            setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
+          } catch (e) {
+            console.error(e);
+            wx.showToast({ title: e.message || '退出失败', icon: 'none' });
           }
         }
       }
