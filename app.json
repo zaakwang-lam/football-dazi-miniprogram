@@ -44,18 +44,6 @@
         "selectedIconPath": "images/tab/home_a.png"
       },
       {
-        "pagePath": "pages/lfg/lfg",
-        "text": "凑人",
-        "iconPath": "images/tab/lfg.png",
-        "selectedIconPath": "images/tab/lfg_a.png"
-      },
-      {
-        "pagePath": "pages/war/war",
-        "text": "约战",
-        "iconPath": "images/tab/war.png",
-        "selectedIconPath": "images/tab/war_a.png"
-      },
-      {
         "pagePath": "pages/team/team",
         "text": "球队",
         "iconPath": "images/tab/team.png",

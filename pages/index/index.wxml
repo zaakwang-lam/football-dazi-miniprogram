@@ -13,15 +13,13 @@
     </view>
   </view>
 
-  <!-- Banner 轮播 -->
-  <swiper class="banner" indicator-dots autoplay circular interval="3000">
-    <swiper-item wx:for="{{banners}}" wx:key="id" bindtap="onBannerTap" data-id="{{item.id}}">
-      <view class="banner-item" style="background: linear-gradient(135deg, {{item.color1}}, {{item.color2}});">
-        <view class="banner-title">{{item.title}}</view>
-        <view class="banner-sub">{{item.sub}}</view>
-      </view>
-    </swiper-item>
-  </swiper>
+  <!-- 顶部 Banner：固定页面（2026-07-28 改造，原 3 个轮播改为单个固定宣传页） -->
+  <view class="hero-banner" bindtap="onBannerTap" data-id="hero">
+    <view class="hero-content">
+      <view class="hero-title">一起踢球，一起FUNS</view>
+      <view class="hero-sub">广州业余球员专享球场 · 球队 · 约球平台</view>
+    </view>
+  </view>
 
   <!-- 3 个图标入口（取消赛事） -->
   <view class="entry-grid">
@@ -39,12 +37,14 @@
     </view>
   </view>
 
-  <!-- 附近球场点击入口（暂未集成腾讯地图 SDK，预留跳转） -->
+  <!-- 附近球场点击入口（2026-07-28 隐藏：腾讯地图 SDK 未接入，等备案后再启用） -->
+<block wx:if="{{false}}">
   <view class="nearby-entry" bindtap="onNearbyTap">
     <text class="nearby-icon">📍</text>
     <text class="nearby-text">查看附近球场</text>
     <text class="nearby-arrow">›</text>
   </view>
+</block>
 
   <!-- 进行中 -->
   <view class="section">

@@ -1,6 +1,13 @@
 // pages/war/publish.js
 // 发布约战（type='war' 球队对球队）
+// 2026-07-28 调整：时间改为日期 picker + 时间 picker，跟 lfg/publish 规则一致
 const api = require('../../utils/api.js');
+
+// 生成 picker 边界（今天 ~ 今天+60天）
+function pad(n) { return String(n).padStart(2, '0'); }
+function fmtDate(d) {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 Page({
   data: {
@@ -8,13 +15,29 @@ Page({
       type: 'war',
       teamName: '',
       location: '',
-      playTime: '',
+      dateValue: '',
+      dateText: '',
+      timeValue: '',
       timeText: '',
-      needCount: 1,
+      playTime: '',
+      playTimeLabel: '',
+      needCount: 1,  // 约战场景下：缺的人数（对方球队凑不齐时）
       level: '业余',
+      matchTypes: ['11人制'],  // 约战默认 11人制，可改
+      fee: '',  // 人均费用（可选）
       contact: '',
       description: ''
-    }
+    },
+    levelOptions: ['业余', '业余校队', '校队'],
+    matchTypeOptions: ['11人制', '7人制', '5人制'],
+    // picker 边界
+    dateMin: fmtDate(new Date()),
+    dateMax: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return fmtDate(d); })()
+  },
+
+  onLoad() {
+    // 默认 matchTypes 为 ['11人制']
+    this.setData({ 'form.matchTypes': ['11人制'] });
   },
 
   onInput(e) {
@@ -33,48 +56,71 @@ Page({
     this.setData({ 'form.level': level });
   },
 
-  onPickTime() {
-    wx.showActionSheet({
-      itemList: ['今晚 20:00', '明晚 20:00', '本周六 15:00', '本周日 15:00'],
-      success: (res) => {
-        const times = ['今晚 20:00', '明晚 20:00', '本周六 15:00', '本周日 15:00'];
-        const timeText = times[res.tapIndex];
-        const now = new Date();
-        let playTime = new Date(now);
-        if (res.tapIndex === 0) {
-          playTime.setHours(20, 0, 0, 0);
-        } else if (res.tapIndex === 1) {
-          playTime.setDate(playTime.getDate() + 1);
-          playTime.setHours(20, 0, 0, 0);
-        } else if (res.tapIndex === 2) {
-          const sat = 6 - now.getDay();
-          playTime.setDate(playTime.getDate() + (sat < 0 ? sat + 7 : sat));
-          playTime.setHours(15, 0, 0, 0);
-        } else {
-          const sun = 0 - now.getDay();
-          playTime.setDate(playTime.getDate() + (sun <= 0 ? sun + 7 : sun));
-          playTime.setHours(15, 0, 0, 0);
-        }
-        this.setData({
-          'form.timeText': timeText,
-          'form.playTime': playTime.toISOString()
-        });
-      }
+  // 人制多选 toggle
+  onMatchTypeToggle(e) {
+    const value = e.currentTarget.dataset.value;
+    const list = [...this.data.form.matchTypes];
+    const idx = list.indexOf(value);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+    } else {
+      list.push(value);
+    }
+    this.setData({ 'form.matchTypes': list });
+  },
+
+  // 日期选择
+  onDateChange(e) {
+    const dateStr = e.detail.value;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dateText = `${m}月${d}日`;
+    this.setData({
+      'form.dateValue': dateStr,
+      'form.dateText': dateText
+    });
+    this.recomposePlayTime(y, m, d, this.data.form.timeValue);
+  },
+
+  // 时间选择
+  onTimeChange(e) {
+    const timeStr = e.detail.value;
+    this.setData({
+      'form.timeValue': timeStr,
+      'form.timeText': timeStr
+    });
+    if (this.data.form.dateValue) {
+      const [y, m, d] = this.data.form.dateValue.split('-').map(Number);
+      this.recomposePlayTime(y, m, d, timeStr);
+    }
+  },
+
+  recomposePlayTime(y, m, d, timeStr) {
+    if (!y || !m || !d || !timeStr) return;
+    const [hh, mm] = timeStr.split(':').map(Number);
+    const dt = new Date(y, m - 1, d, hh, mm, 0, 0);
+    this.setData({
+      'form.playTime': dt.toISOString(),
+      'form.playTimeLabel': `${m}月${d}日 ${timeStr}`
     });
   },
 
   async onSubmit() {
-    const { teamName, location, playTime, contact } = this.data.form;
+    const { teamName, location, playTime, contact, dateValue, timeValue, matchTypes, fee } = this.data.form;
     if (!teamName) return wx.showToast({ title: '请输入队伍名称', icon: 'none' });
-    if (!location) return wx.showToast({ title: '请选择地点', icon: 'none' });
-    if (!playTime) return wx.showToast({ title: '请选择时间', icon: 'none' });
+    if (!location) return wx.showToast({ title: '请填写比赛地点', icon: 'none' });
+    if (!dateValue || !timeValue) return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
+    if (!matchTypes || matchTypes.length === 0) {
+      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    }
     if (!contact) return wx.showToast({ title: '请输入联系方式', icon: 'none' });
 
     try {
       const res = await api.publishLfg({
         type: 'war',  // 硬编码：约战发布
-        title: `${teamName} 约战`,
+        matchTypes,
+        title: `${teamName} ${matchTypes.join('/')} 约战`,
         location,
+        fee: fee ? Number(fee) : null,
         playTime,
         needCount: this.data.form.needCount,
         level: this.data.form.level,

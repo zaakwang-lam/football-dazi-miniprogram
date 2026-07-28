@@ -74,6 +74,34 @@
   opacity: 0.95;
 }
 
+/* 顶部固定 Hero Banner（2026-07-28 替换 3 个轮播） */
+.hero-banner {
+  margin: 24rpx;
+  height: 280rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #FF6B00 0%, #FF8C42 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 48rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 0, 0.25);
+}
+
+.hero-content {
+  color: #FFFFFF;
+}
+
+.hero-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 16rpx;
+  letter-spacing: 2rpx;
+}
+
+.hero-sub {
+  font-size: 26rpx;
+  opacity: 0.95;
+}
+
 /* 4 个入口 */
 .entry-grid {
   display: flex;

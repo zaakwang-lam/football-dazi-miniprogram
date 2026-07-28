@@ -27,10 +27,14 @@ Page({
         ...item,
         typeKey: 'war',
         teamName: item.publisher?.nickname || item.title || '海珠飓风队',
-        publishTime: this.formatTime(item.createdAt),
+        // 2026-07-28 同步 lfg 风格：发布时间绝对时间 + 比赛时间格式化
+        publishTime: this.formatPublishTime(item.createdAt),
+        playTimeText: this.formatPlayTime(item.playTime),
         level: item.level || '业余',
         desc: item.description || '',
-        time: this.formatPlayTime(item.playTime)
+        matchTypesText: (item.matchTypes && item.matchTypes.length > 0)
+          ? item.matchTypes.join('/')
+          : ''
       }));
       this.setData({ list, loaded: true });
     } catch (e) {
@@ -39,30 +43,29 @@ Page({
     }
   },
 
-  formatTime(dateStr) {
+  // 发布时间（与 lfg/lfg.js 同步）
+  formatPublishTime(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     const now = new Date();
     const diff = (now - date) / 1000;
     if (diff < 60) return '刚刚';
-    if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
-    if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
-    return Math.floor(diff / 86400) + '天前';
+    if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+    return `${date.getMonth() + 1}月${date.getDate()}日 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   },
 
-  formatPlayTime(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const target = new Date(d);
-    target.setHours(0, 0, 0, 0);
-    const diffDays = Math.round((target - today) / 86400000);
-    const hours = d.getHours().toString().padStart(2, '0');
-    const mins = d.getMinutes().toString().padStart(2, '0');
-    if (diffDays === 0) return `今晚 ${hours}:${mins}`;
-    if (diffDays === 1) return `明晚 ${hours}:${mins}`;
-    return `${d.getMonth() + 1}/${d.getDate()} ${hours}:${mins}`;
+  // 比赛时间
+  formatPlayTime(isoStr) {
+    if (!isoStr) return '待定';
+    const date = new Date(isoStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    const hm = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    if (isToday) return `今晚 ${hm}`;
+    if (isTomorrow) return `明晚 ${hm}`;
+    return `${date.getMonth() + 1}月${date.getDate()}日 ${hm}`;
   },
 
   onFilterTap(e) {

@@ -13,11 +13,7 @@ const COLORS = [
 Page({
   data: {
     city: '广州',
-    banners: [
-      { id: 1, title: '夜场8折起', sub: '广州业余球员专享', color1: '#FF6B00', color2: '#FF8C42' },
-      { id: 2, title: '新人首单立减20', sub: '加入球队再领10元', color1: '#007AFF', color2: '#4FACFE' },
-      { id: 3, title: '队长招募', sub: '免半年 SaaS 服务费', color1: '#2ECC71', color2: '#58D68D' }
-    ],
+    banners: [],  // 2026-07-28 隐藏轮播，改为顶部固定 hero-banner（wxml 硬编码）
     courts: [],
     teams: [],
     lfgList: []
@@ -84,8 +80,8 @@ Page({
   },
 
   onBannerTap(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.showToast({ title: `Banner ${id}`, icon: 'none' });
+    // 2026-07-28: hero-banner 点击仅弹 toast，待运营位填充后再调跳转
+    wx.showToast({ title: '一起踢球，一起FUNS', icon: 'none' });
   },
 
   onEntryTap(e) {
@@ -93,15 +89,14 @@ Page({
     // tabBar 加回 凑人/约战：lfg/war 都是 tab 页 → switchTab
     const map = {
       book: '/pages/court/list',
-      lfg: '/pages/lfg/lfg',         // 凑人 tab
-      war: '/pages/war/war'          // 约战 tab
+      // 2026-07-28: tabBar 删了凑人/约战 tab，走 navigateTo
+      lfg: '/pages/lfg/lfg',
+      war: '/pages/war/war'
     };
     const dest = map[type];
-    if (type === 'book') {
-      wx.navigateTo({ url: dest });
-    } else {
-      wx.switchTab({ url: dest });
-    }
+    if (!dest) return;
+    // 所有都走 navigateTo，因为凑人/约战已不在 tabBar
+    wx.navigateTo({ url: dest });
   },
 
   onNearbyTap() {
