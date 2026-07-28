@@ -26,7 +26,7 @@ Page({
       const list = (res.data?.list || []).map(item => ({
         ...item,
         typeKey: 'war',
-        teamName: item.publisher?.nickname || item.title || '海珠飓风队',
+        teamName: item.title || item.publisher?.nickname || '海珠飓风队',
         // 2026-07-28 同步 lfg 风格：发布时间绝对时间 + 比赛时间格式化
         publishTime: this.formatPublishTime(item.createdAt),
         playTimeText: this.formatPlayTime(item.playTime),

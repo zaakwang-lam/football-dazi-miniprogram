@@ -123,6 +123,12 @@
   color: #666;
 }
 
+.checkbox-item.active {
+  background: #FFE8D6;
+  color: #FF6B00;
+  font-weight: 600;
+}
+
 .checkbox-item .checkbox {
   width: 32rpx;
   height: 32rpx;

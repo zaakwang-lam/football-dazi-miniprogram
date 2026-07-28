@@ -33,31 +33,20 @@
   </view>
 
   <view class="form-group">
-    <view class="form-label">挑战人数（可选）</view>
-    <view class="num-row">
-      <view class="num-btn" bindtap="onNumChange" data-delta="-1">-</view>
-      <text class="num-val">{{form.needCount}}</text>
-      <view class="num-btn" bindtap="onNumChange" data-delta="1">+</view>
-      <text class="num-unit">人 / 缺的人数</text>
-    </view>
-  </view>
-
-  <view class="form-group">
     <view class="form-label required">人制（多选）</view>
     <view class="checkbox-group">
-      <label class="checkbox-item" wx:for="{{matchTypeOptions}}" wx:key="*this" bindtap="onMatchTypeToggle" data-value="{{item}}">
+      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{matchTypeOptions}}" wx:key="*this" bindtap="onMatchTypeToggle" data-value="{{item}}">
         <view class="checkbox {{form.matchTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.matchTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
         <text>{{item}}</text>
-      </label>
+      </view>
     </view>
   </view>
 
   <view class="form-group">
     <view class="form-label required">队伍水平</view>
     <view class="level-row">
-      <view class="level-item {{form.level === '业余' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余">业余</view>
-      <view class="level-item {{form.level === '业余校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余校队">业余校队</view>
-      <view class="level-item {{form.level === '校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="校队">校队</view>
+      <view class="level-item {{form.level === '养生' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="养生">养生</view>
+      <view class="level-item {{form.level === '竞技' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="竞技">竞技</view>
     </view>
   </view>
 

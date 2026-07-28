@@ -108,6 +108,14 @@ function getMyCourts() {
 }
 
 /**
+ * 获取我的球队列表（已加入的球队，按 joinedAt DESC）
+ * 后端: GET /api/user/me/teams (2026-07-28 新增)
+ */
+function getMyTeams() {
+  return request('/api/user/me/teams', 'GET', {});
+}
+
+/**
  * 球场方发布空闲时段
  */
 function publishFreeSlots(courtId, slots) {
@@ -316,6 +324,7 @@ module.exports = {
   updateUserProfile,
   registerRole,
   getMyCourts,
+  getMyTeams,
 
   // 场地
   getNearbyCourts,

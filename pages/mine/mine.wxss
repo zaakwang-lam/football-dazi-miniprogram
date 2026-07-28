@@ -243,3 +243,42 @@
 .icon-create, .icon-join, .icon-court, .icon-info, .icon-publish, .icon-list {
   background: #FFE8D6;
 }
+/* 我的球队 inline 列表（2026-07-28 新增） */
+.my-teams-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin: 24rpx;
+  padding: 24rpx 32rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
+}
+.my-team-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #F5F5F5;
+}
+.my-team-item:last-child { border-bottom: none; }
+.team-logo {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+.team-info { flex: 1; }
+.team-name { font-size: 30rpx; font-weight: 600; color: #1A1A1A; margin-bottom: 8rpx; }
+.team-meta { font-size: 24rpx; color: #999; }
+.team-role {
+  font-size: 22rpx;
+  color: #FF6B00;
+  background: #FFE8D6;
+  padding: 4rpx 12rpx;
+  border-radius: 999rpx;
+  margin-right: 16rpx;
+}

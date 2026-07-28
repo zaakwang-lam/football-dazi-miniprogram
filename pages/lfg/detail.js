@@ -40,14 +40,20 @@ Page({
           actionText: config.actionText,
           confirmTitle: config.confirmTitle,
           confirmDesc: config.confirmDesc,
-          teamName: detail.publisher?.nickname || detail.title,
+          teamName: detail.title || detail.publisher?.nickname || '未命名',
           desc: detail.description || '',
           contact: detail.contact || '微信同名',
           status: detail.status === 'open' ? '招募中' : (detail.status === 'full' ? '已满' : '已关闭'),
           // 2026-07-28 新增字段格式化
           matchTypesText: (detail.matchTypes && detail.matchTypes.length > 0)
             ? detail.matchTypes.join(' / ')
-            : '不限'
+            : '不限',
+          // 2026-07-28 修复：发布时间 + 比赛时间同步格式化
+          publishTime: this.formatPublishTime(detail.createdAt),
+          time: this.formatPlayTime(detail.playTime) || '待定',
+          // 2026-07-28 修复：缺人、已加入人数同步
+          need: detail.needCount || 0,
+          joinedCount: detail.joinedCount || 0
         }
       });
       wx.setNavigationBarTitle({
@@ -69,6 +75,31 @@ Page({
       data: contact,
       success: () => wx.showToast({ title: '已复制联系方式', icon: 'success' })
     });
+  },
+
+  // 发布时间格式化（与 lfg/lfg.js 同步，2026-07-28）
+  formatPublishTime(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = (now - date) / 1000;
+    if (diff < 60) return '刚刚';
+    if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+    return `${date.getMonth() + 1}月${date.getDate()}日 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  },
+
+  // 比赛时间格式化
+  formatPlayTime(isoStr) {
+    if (!isoStr) return '';
+    const date = new Date(isoStr);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    const hm = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    if (isToday) return `今天 ${hm}`;
+    if (isTomorrow) return `明天 ${hm}`;
+    return `${date.getMonth() + 1}月${date.getDate()}日 ${hm}`;
   },
 
   onJoinTap() {

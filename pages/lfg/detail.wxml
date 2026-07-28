@@ -35,7 +35,7 @@
     </view>
     <view class="info-row">
       <text class="info-label">缺人</text>
-      <text class="info-value need">{{detail.need}} 人</text>
+      <text class="info-value need">{{detail.joinedCount}} / {{detail.need}} 人</text>
     </view>
     <view class="info-row">
       <text class="info-label">联系</text>

@@ -26,7 +26,7 @@ Page({
       const list = (res.data?.list || []).map(item => ({
         ...item,
         typeKey: 'sub',
-        teamName: item.publisher?.nickname || item.title || '广州老炮',
+        teamName: item.title || item.publisher?.nickname || '广州老炮',
         // 2026-07-28 调整：发布时间优先绝对时间（年/月/日 + 分前），同时算比赛时间
         publishTime: this.formatPublishTime(item.createdAt),
         playTimeText: this.formatPlayTime(item.playTime),

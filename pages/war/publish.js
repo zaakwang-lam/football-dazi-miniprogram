@@ -21,14 +21,14 @@ Page({
       timeText: '',
       playTime: '',
       playTimeLabel: '',
-      needCount: 1,  // 约战场景下：缺的人数（对方球队凑不齐时）
-      level: '业余',
+      needCount: 1,  // 保留但 wxml 不显示（宏哥 11:13 要求去除挑战人数模块）
+      level: '养生',  // 2026-07-28 改：默认养生
       matchTypes: ['11人制'],  // 约战默认 11人制，可改
       fee: '',  // 人均费用（可选）
       contact: '',
       description: ''
     },
-    levelOptions: ['业余', '业余校队', '校队'],
+    levelOptions: ['养生', '竞技'],  // 2026-07-28 宏哥要求分为「养生」「竞技」
     matchTypeOptions: ['11人制', '7人制', '5人制'],
     // picker 边界
     dateMin: fmtDate(new Date()),

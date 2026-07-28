@@ -5,7 +5,8 @@ const api = require('../../utils/api.js');
 Page({
   data: {
     userInfo: null,
-    unread: 2
+    unread: 2,
+    myTeams: []  // 2026-07-28 改：我的球队改为 inline 渲染，不再跳 tab
   },
 
   onLoad() {
@@ -14,6 +15,22 @@ Page({
 
   onShow() {
     this.loadUser();
+    if (wx.getStorageSync('token') && this.data.userInfo?.role) {
+      this.loadMyTeams();
+    }
+  },
+
+  // 加载我的球队（2026-07-28 新增）
+  async loadMyTeams() {
+    try {
+      const res = await api.getMyTeams();
+      if (res.code === 0) {
+        this.setData({ myTeams: res.data?.list || [] });
+      }
+    } catch (e) {
+      console.warn('加载我的球队失败:', e);
+      this.setData({ myTeams: [] });
+    }
   },
 
   async loadUser() {
@@ -128,15 +145,26 @@ Page({
     // 通用菜单
     const map = {
       order: '/pages/order/list',
-      team: '/pages/team/team',
       msg: null,
       about: null
     };
+    if (type === 'team') {
+      // 2026-07-28 改：我的球队改为 inline 渲染，不再跳 tab
+      // 这里不需跳转，页面已显示 myTeams 列表
+      wx.showToast({ title: '请向上滚动查看', icon: 'none' });
+      return;
+    }
     if (map[type]) {
       wx.navigateTo({ url: map[type] });
     } else {
       wx.showToast({ title: '功能开发中', icon: 'none' });
     }
+  },
+
+  // 点击我的球队单项 → 跳详情（2026-07-28 新增）
+  onMyTeamTap(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({ url: `/pages/team/detail?id=${id}` });
   },
 
   onShareAppMessage() {
