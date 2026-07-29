@@ -9,6 +9,7 @@
     "pages/court/detail",
     "pages/court/book",
     "pages/order/list",
+    "pages/court-orders/list",
     "pages/order/detail",
     "pages/lfg/publish",
     "pages/lfg/detail",

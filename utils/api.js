@@ -223,6 +223,41 @@ function cancelOrder(id) {
   return request(`/api/v1/orders/${id}/cancel`, 'POST');
 }
 
+// ===== 球场方订单模块（2026-07-29 新增）=====
+
+/**
+ * 球场方订单列表（按法院场过滤）
+ * @param {Object} params - { status, page, pageSize }
+ */
+function getAdminOrders(params = {}) {
+  const query = Object.keys(params)
+    .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join('&');
+  return request('/admin/orders' + (query ? `?${query}` : ''));
+}
+
+/**
+ * 球场方订单详情
+ */
+function getAdminOrderDetail(id) {
+  return request(`/admin/orders/${id}`);
+}
+
+/**
+ * 球场方接单
+ */
+function acceptAdminOrder(id) {
+  return request(`/admin/orders/${id}/accept`, 'POST');
+}
+
+/**
+ * 球场方拒绝订单
+ */
+function cancelAdminOrder(id, reason = '') {
+  return request(`/admin/orders/${id}/cancel`, 'POST', { reason });
+}
+
 // ===== 凑人模块 =====
 
 /**
@@ -351,6 +386,12 @@ module.exports = {
   getOrderList,
   getOrderDetail,
   cancelOrder,
+
+  // 球场方订单（2026-07-29 新增）
+  getAdminOrders,
+  getAdminOrderDetail,
+  acceptAdminOrder,
+  cancelAdminOrder,
 
   // 凑人
   getLfgList,

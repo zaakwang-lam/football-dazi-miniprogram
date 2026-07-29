@@ -1,0 +1,61 @@
+<!-- pages/court-orders/list.wxml -->
+<view class="page">
+  <!-- 顶部状态 tabs -->
+  <view class="tabs">
+    <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onTabTap" data-status="all">全部 ({{total}})</view>
+    <view class="tab {{status === 'booked' ? 'active' : ''}}" bindtap="onTabTap" data-status="booked">已预订</view>
+    <view class="tab {{status === 'completed' ? 'active' : ''}}" bindtap="onTabTap" data-status="completed">已接单</view>
+    <view class="tab {{status === 'canceled' ? 'active' : ''}}" bindtap="onTabTap" data-status="canceled">已拒绝</view>
+  </view>
+
+  <view class="empty" wx:if="{{!loading && orders.length === 0}}">
+    <view class="empty-icon">📋</view>
+    <text>暂无订单</text>
+  </view>
+
+  <view wx:else>
+    <view class="order-card" wx:for="{{orders}}" wx:key="id">
+      <view class="order-head">
+        <view class="head-left">
+          <text class="order-no">{{item.orderNo}}</text>
+          <text class="user-nickname">{{item.user.nickname || '微信用户'}}</text>
+        </view>
+        <view class="status-tag status-{{item.statusInfo.cls}}">
+          {{item.statusInfo.icon}} {{item.statusInfo.label}}
+        </view>
+      </view>
+
+      <view class="order-body">
+        <view class="info-row">
+          <text class="info-label">球场</text>
+          <text class="info-val">{{item.court.name}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">时间</text>
+          <text class="info-val highlight">{{item.dateText}} {{item.timeText}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.contactName}}">
+          <text class="info-label">预订人</text>
+          <text class="info-val">{{item.contactName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.remark}}">
+          <text class="info-label">备注</text>
+          <text class="info-val">{{item.remark}}</text>
+        </view>
+      </view>
+
+      <view class="order-actions">
+        <!-- 一键拨号 CTA -->
+        <view class="btn btn-primary btn-call" bindtap="onPhoneTap" data-phone="{{item.contactPhone}}" wx:if="{{item.contactPhone && item.status === 'booked'}}">
+          📞 联系预订人
+        </view>
+        <view class="btn btn-secondary" bindtap="onAccept" data-id="{{item.id}}" data-no="{{item.orderNo}}" wx:if="{{item.status === 'booked'}}">
+          确认接单
+        </view>
+        <view class="btn btn-danger btn-outline" bindtap="onDecline" data-id="{{item.id}}" data-no="{{item.orderNo}}" wx:if="{{item.status === 'booked'}}">
+          拒绝
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
