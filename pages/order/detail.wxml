@@ -44,6 +44,12 @@
     <view class="btn-primary" bindtap="onPay">立即支付 ¥{{order.price}}</view>
   </view>
 
+  <!-- 2026-07-29 新增：免支付预订状态 -->
+  <view class="bottom-bar" wx:elif="{{order.status === '已预订'}}">
+    <view class="btn-secondary" bindtap="onCancelBook">取消预订</view>
+    <view class="btn-primary" bindtap="onContactCourt">联系球场方</view>
+  </view>
+
   <view class="bottom-bar" wx:elif="{{order.status === '已支付'}}">
     <view class="btn-secondary" bindtap="onRefund">申请退订</view>
     <view class="btn-primary" bindtap="onCheckin">到场打卡</view>

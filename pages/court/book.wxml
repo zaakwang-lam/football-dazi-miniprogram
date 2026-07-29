@@ -55,7 +55,11 @@
     </view>
   </view>
 
-  <view class="bottom-bar">
-    <view class="btn-primary full" bindtap="onSubmit">立即支付 ¥{{totalPrice}}</view>
+  <view class="bottom-bar" wx:if="{{form.slotIdx >= 0}}">
+    <view class="summary-left">
+      <text class="summary-price">¥{{totalPrice}}/场</text>
+      <text class="summary-tip">付款请到球场</text>
+    </view>
+    <view class="btn-primary" bindtap="onSubmit">立即预订</view>
   </view>
 </view>

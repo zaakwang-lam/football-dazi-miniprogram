@@ -121,77 +121,45 @@ Page({
     const court = this.data.court;
     const slot = this.data.daySlots[this.data.form.slotIdx];
 
-    wx.showLoading({ title: '下单中...' });
+    // 2026-07-29 改为免支付预订
+    // 先订阅消息订阅（让球场方能收到通知），不管成功与否都可以成单
+    wx.requestSubscribeMessage({
+      tmplIds: ['TEMPLATE_ID_PENDING_BOOK'], // 占位，宏哥拿到真实模板 ID 后在 .env + 此处同步替换
+      success: () => {},
+      fail: () => {}, // 拒绝不影响预订
+      complete: () => {
+        this.doBook(court, slot);
+      }
+    });
+  },
 
-    // 1. 创建订单
+  doBook(court, slot) {
+    wx.showLoading({ title: '预订中...' });
     api.createOrder({
       courtId: court.id,
-      scheduleId: slot.id,  // 排期 ID（从后端 schedule 接口返回）
+      scheduleId: slot.id,
       contactName: this.data.form.name,
       contactPhone: this.data.form.phone,
       remark: this.data.form.remark
     }).then(orderRes => {
-      if (orderRes.code !== 0) return;
-      const orderId = orderRes.data.orderId;
+      wx.hideLoading();
+      if (orderRes.code !== 0) {
+        return wx.showToast({ title: orderRes.message || '预订失败', icon: 'none' });
+      }
       const orderNo = orderRes.data.orderNo;
-      const amount = orderRes.data.amount;
-
-      // 2. 调起微信支付（需要 openid）
-      const app = getApp();
-      const openid = app.globalData.openid || '';
-
-      api.payOrder(orderId, openid).then(payRes => {
-        wx.hideLoading();
-        if (payRes.code !== 0) return;
-
-        const payParams = payRes.data.payParams;
-        // 3. 调起微信支付
-        wx.requestPayment({
-          timeStamp: payParams.timeStamp,
-          nonceStr: payParams.nonceStr,
-          package: payParams.package,
-          signType: payParams.signType,
-          paySign: payParams.paySign,
-          success: () => {
-            wx.showToast({ title: '支付成功', icon: 'success' });
-            setTimeout(() => {
-              wx.redirectTo({ url: `/pages/order/detail?id=${orderNo}` });
-            }, 1500);
-          },
-          fail: (err) => {
-            console.error('支付失败:', err);
-            wx.showModal({
-              title: '支付未完成',
-              content: '订单已创建，可在我的订单中继续支付',
-              confirmText: '去查看',
-              success: (r) => {
-                if (r.confirm) {
-                  wx.redirectTo({ url: '/pages/order/list' });
-                }
-              }
-            });
-          }
-        });
+      wx.showModal({
+        title: '预订成功',
+        content: '已通知球场方，请保持电话畅通。支付请到球场现场办理。',
+        showCancel: false,
+        confirmText: '查看订单',
+        success: () => {
+          wx.redirectTo({ url: `/pages/order/detail?id=${orderNo}` });
+        }
       });
     }).catch(err => {
       wx.hideLoading();
-      console.error('下单失败:', err);
-    });
-  },
-
-  mockPay(orderId) {
-    // 保留兼容：开发模式下后端未启动时可模拟
-    wx.showModal({
-      title: '模拟支付',
-      content: '点击确定模拟微信支付成功（仅开发环境）',
-      success: (res) => {
-        if (res.confirm) {
-          wx.showToast({ title: '支付成功！', icon: 'success' });
-          setTimeout(() => {
-            wx.redirectTo({ url: `/pages/order/detail?id=${orderId}` });
-          }, 1500);
-        }
-      }
+      console.error('预订失败:', err);
+      wx.showToast({ title: '网络异常，请重试', icon: 'none' });
     });
   }
 });

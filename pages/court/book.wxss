@@ -163,9 +163,29 @@
   background: #FFFFFF;
   border-top: 2rpx solid #F5F7FA;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
 }
 
-.btn-primary.full {
-  display: block;
-  width: 100%;
+.summary-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.summary-left .summary-price {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.summary-tip {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.bottom-bar .btn-primary {
+  flex: 1;
+  /* 让「立即预订」按钮占有剩余空间 */
 }

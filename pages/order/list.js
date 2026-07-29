@@ -1,9 +1,10 @@
 // pages/order/list.js
 const api = require('../../utils/api.js');
 
-// 后端 status: pending/paid/refunded/canceled/completed → 中文显示 + WXSS 类名 key
+// 后端 status: pending/booked/paid/refunded/canceled/completed → 中文显示 + WXSS 类名 key
 const CN_MAP = {
   pending: '待支付',
+  booked: '已预订',  // 2026-07-29 新增：免支付预订
   paid: '已支付',
   refunded: '已退款',
   canceled: '已取消',
@@ -11,6 +12,7 @@ const CN_MAP = {
 };
 const STATUS_KEY_MAP = {
   '待支付': 'pending',
+  '已预订': 'booked',  // 2026-07-29 新增
   '已支付': 'paid',
   '已完成': 'done',
   '已退款': 'done',
@@ -20,6 +22,7 @@ const STATUS_KEY_MAP = {
 const TAB_TO_EN = {
   all: 'all',
   '待支付': 'pending',
+  '已预订': 'booked',  // 2026-07-29 新增
   '已支付': 'paid',
   '已完成': 'completed',
   '已取消': 'canceled'
