@@ -4,7 +4,7 @@ const api = require('../../utils/api.js');
 
 Page({
   data: {
-    teamTypes: ['11人制', '7人制', '5人制'],
+    teamTypes: ['11人制', '8人制', '7人制', '5人制', '3人制'],  // 2026-07-30 增加 8 人制 + 3 人制
     // 未来 14 天的日期
     dateRange: [[], []],
     dateIndex: [0, 0],

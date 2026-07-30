@@ -44,9 +44,9 @@
   <view class="form-group">
     <view class="form-label">水平</view>
     <view class="level-selector">
-      <view class="level-item {{form.level === '新手友好' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="新手友好">新手友好</view>
+      <view class="level-item {{form.level === '养生' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="养生">养生</view>
       <view class="level-item {{form.level === '业余' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余">业余</view>
-      <view class="level-item {{form.level === '业余校队' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="业余校队">业余校队</view>
+      <view class="level-item {{form.level === '竞技' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="竞技">竞技</view>
       <view class="level-item {{form.level === '职业' ? 'active' : ''}}" bindtap="onLevelSelect" data-level="职业">职业</view>
     </view>
   </view>

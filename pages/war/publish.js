@@ -29,7 +29,7 @@ Page({
       description: ''
     },
     levelOptions: ['养生', '竞技'],  // 2026-07-28 宏哥要求分为「养生」「竞技」
-    matchTypeOptions: ['11人制', '7人制', '5人制'],
+    matchTypeOptions: ['11人制', '8人制', '7人制', '5人制', '3人制'],  // 2026-07-30 增加 8 人制 + 3 人制
     // picker 边界
     dateMin: fmtDate(new Date()),
     dateMax: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return fmtDate(d); })()

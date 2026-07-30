@@ -23,7 +23,7 @@ Page({
       playTime: '',          // 最终 ISO 字符串（提交用）
       playTimeLabel: '',     // 完整中文显示，如 "7月30 18:30"
       needCount: 2,
-      level: '业余',
+      level: '业余',  // 2026-07-30：选项改为「养生/业余/竞技/职业」（中间为默认）
       contact: '',
       description: ''
     },
