@@ -24,21 +24,34 @@ App({
    * 静默登录（拿 openid 缓存到 globalData，调用支付时用）
    */
   silentLogin() {
-    if (this.globalData.openid) return;  // 已获取过
+    // 2026-07-30 修复：token 默认 2h 过期 → silentLogin 重新拿 token，避免需要鉴权的请求 401
+    // 检查本地 token 是否在有效期
+    const existingToken = wx.getStorageSync('token');
+    if (existingToken && this.globalData.openid) return;
     wx.login({
       success: (res) => {
         if (!res.code) return;
-        // 缓存 code 给支付时用（或者直接调后端 code2Session）
         this.globalData.wxCode = res.code;
-        // 可选：立即调后端静默登录拿 openid（不需要用户授权）
         wx.request({
           url: this.globalData.apiBase + '/api/user/login',
           method: 'POST',
-          data: { code: res.code },
+          data: { code: res.code },  // 不传 userInfo → 后端只拿 openid，不覆盖昵称
           success: (loginRes) => {
             if (loginRes.data?.code === 0) {
-              this.globalData.openid = loginRes.data.data.openid;
+              const { accessToken, user } = loginRes.data.data;
+              this.globalData.openid = user.openid || '';
+              this.globalData.token = accessToken;
+              wx.setStorageSync('token', accessToken);
+              // 只在没有 userInfo 时才用后端返回的（避免覆盖 wx.getUserProfile 的真实昵称）
+              if (!wx.getStorageSync('userInfo')) {
+                wx.setStorageSync('userInfo', user);
+                this.globalData.userInfo = user;
+              }
+              console.log('[silentLogin] token refreshed, userId=', user.id);
             }
+          },
+          fail: (err) => {
+            console.warn('[silentLogin] fail:', err);
           }
         });
       }

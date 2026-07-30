@@ -117,7 +117,9 @@ Page({
             setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
           } catch (e) {
             console.error(e);
-            wx.showToast({ title: '操作失败', icon: 'none' });
+            // 2026-07-30 修复：显示真实错误信息（之前被吞了）
+            const errMsg = (e && e.message) || (e && e.data && e.data.message) || '操作失败';
+            wx.showToast({ title: errMsg.length > 14 ? errMsg.substring(0, 14) + '…' : errMsg, icon: 'none', duration: 2500 });
           }
         }
       }
