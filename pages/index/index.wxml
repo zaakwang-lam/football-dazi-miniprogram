@@ -14,9 +14,11 @@
   </view>
 
   <!-- 顶部 Banner：固定页面（2026-07-28 改造，原 3 个轮播改为单个固定宣传页） -->
+  <!-- 2026-07-30 改造：橙色渐变色块 → 真草背景图 + 白色文字 -->
   <view class="hero-banner" bindtap="onBannerTap" data-id="hero">
+    <image class="hero-bg" src="/images/hero/bg.png" mode="aspectFill"></image>
     <view class="hero-content">
-      <view class="hero-title">一起踢球，一起FUNS</view>
+      <view class="hero-title">一起踢球，<text class="hero-title-space">　　</text>一起FUNS</view>
       <view class="hero-sub">广州业余球员专享球场 · 球队 · 约球平台</view>
     </view>
   </view>
