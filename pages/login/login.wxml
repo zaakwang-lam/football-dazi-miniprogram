@@ -10,7 +10,7 @@
     <view class="login-title">微信一键登录</view>
     <view class="login-desc">登录后享受完整功能：订场、组队、约战</view>
 
-    <button class="btn-primary full" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+    <button class="btn-primary full" bindtap="onLoginTap">
       微信授权登录
     </button>
 

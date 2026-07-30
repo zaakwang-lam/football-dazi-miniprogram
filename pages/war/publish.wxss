@@ -154,6 +154,25 @@
   color: #fff;
 }
 
+/* 2026-07-30 单选用 radio 样式（与 checkbox 同位置复用） */
+.checkbox-item .radio {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #DDD;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: transparent;
+}
+
+.checkbox-item .radio.checked {
+  border-color: #FF6B00;
+  color: #FF6B00;
+}
+
 /* 水平选择 */
 .level-row {
   display: flex;

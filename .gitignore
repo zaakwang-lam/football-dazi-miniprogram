@@ -76,3 +76,7 @@ desktop.ini
 # *.jpeg
 # *.gif
 # *.webpimages/tab/_backup_*/
+
+# 微信上传密钥
+*.key
+private.*.key

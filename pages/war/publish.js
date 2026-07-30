@@ -23,7 +23,7 @@ Page({
       playTimeLabel: '',
       needCount: 1,  // 保留但 wxml 不显示（宏哥 11:13 要求去除挑战人数模块）
       level: '养生',  // 2026-07-28 改：默认养生
-      matchTypes: ['11人制'],  // 约战默认 11人制，可改
+      matchType: '11人制',  // 2026-07-30 改：单选（原来 matchTypes 多选）
       fee: '',  // 人均费用（可选）
       contact: '',
       description: ''
@@ -36,8 +36,8 @@ Page({
   },
 
   onLoad() {
-    // 默认 matchTypes 为 ['11人制']
-    this.setData({ 'form.matchTypes': ['11人制'] });
+    // 默认 matchType 为 '11人制'
+    this.setData({ 'form.matchType': '11人制' });
   },
 
   onInput(e) {
@@ -56,22 +56,12 @@ Page({
     this.setData({ 'form.level': level });
   },
 
-  // 人制多选 toggle（2026-07-28 增强容错）
-  onMatchTypeToggle(e) {
+  // 人制单选 select（2026-07-30 宏哥改为单选）
+  onMatchTypeSelect(e) {
     const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
-    console.log('[war/publish] onMatchTypeToggle, value=', value, ', current=', this.data.form.matchTypes);
-    if (!value) {
-      console.warn('[war/publish] value is empty, ignore');
-      return;
-    }
-    const list = [...(this.data.form.matchTypes || [])];
-    const idx = list.indexOf(value);
-    if (idx >= 0) {
-      list.splice(idx, 1);
-    } else {
-      list.push(value);
-    }
-    this.setData({ 'form.matchTypes': list });
+    if (!value) return;
+    console.log('[war/publish] onMatchTypeSelect, value=', value);
+    this.setData({ 'form.matchType': value });
   },
 
   // 日期选择
@@ -110,20 +100,20 @@ Page({
   },
 
   async onSubmit() {
-    const { teamName, location, playTime, contact, dateValue, timeValue, matchTypes, fee } = this.data.form;
+    const { teamName, location, playTime, contact, dateValue, timeValue, matchType, fee } = this.data.form;
     if (!teamName) return wx.showToast({ title: '请输入队伍名称', icon: 'none' });
     if (!location) return wx.showToast({ title: '请填写比赛地点', icon: 'none' });
     if (!dateValue || !timeValue) return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
-    if (!matchTypes || matchTypes.length === 0) {
-      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    if (!matchType) {
+      return wx.showToast({ title: '请选择人制', icon: 'none' });
     }
     if (!contact) return wx.showToast({ title: '请输入联系方式', icon: 'none' });
 
     try {
       const res = await api.publishLfg({
         type: 'war',  // 硬编码：约战发布
-        matchTypes,
-        title: `${teamName} ${matchTypes.join('/')} 约战`,
+        matchTypes: [matchType],  // 2026-07-30 后端还是存数组
+        title: `${teamName} ${matchType} 约战`,
         location,
         fee: fee ? Number(fee) : null,
         playTime,

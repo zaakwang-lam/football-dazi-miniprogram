@@ -33,10 +33,10 @@
   </view>
 
   <view class="form-group">
-    <view class="form-label required">人制（多选）</view>
+    <view class="form-label required">人制（单选）</view>
     <view class="checkbox-group">
-      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{matchTypeOptions}}" wx:key="index" bindtap="onMatchTypeToggle" data-value="{{item}}" data-index="{{index}}" hover-class="checkbox-item-hover" hover-stay-time="100">
-        <view class="checkbox {{form.matchTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.matchTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
+      <view class="checkbox-item {{form.matchType === item ? 'active' : ''}}" wx:for="{{matchTypeOptions}}" wx:key="index" bindtap="onMatchTypeSelect" data-value="{{item}}" data-index="{{index}}" hover-class="checkbox-item-hover" hover-stay-time="100">
+        <view class="radio {{form.matchType === item ? 'checked' : ''}}">{{form.matchType === item ? '●' : ''}}</view>
         <text>{{item}}</text>
       </view>
     </view>

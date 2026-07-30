@@ -6,14 +6,17 @@
     <view class="form-label required">球场名称</view>
     <input class="form-input" placeholder="如：天河体育中心足球场" value="{{form.name}}" bindinput="onInput" data-field="name" />
 
-    <view class="form-label required">场地类型</view>
-    <picker mode="selector" range="{{courtTypes}}" value="{{courtTypeIndex}}" bindchange="onTypeChange">
-      <view class="form-picker">{{courtTypes[courtTypeIndex]}}</view>
-    </picker>
+    <view class="form-label required">支持人制（多选）</view>
+    <view class="checkbox-group">
+      <view class="checkbox-item {{form.types.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{courtTypes}}" wx:key="index" bindtap="onCourtTypeToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
+        <view class="checkbox {{form.types.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.types.indexOf(item) >= 0 ? '✓' : ''}}</view>
+        <text>{{item}}</text>
+      </view>
+    </view>
 
     <view class="form-label required">场地性质（多选）</view>
     <view class="checkbox-group">
-      <label class="checkbox-item" wx:for="{{surfaceTypes}}" wx:key="*this" bindtap="onSurfaceToggle" data-value="{{item}}">
+      <label class="checkbox-item {{form.surfaceTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{surfaceTypes}}" wx:key="*this" bindtap="onSurfaceToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
         <view class="checkbox {{form.surfaceTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.surfaceTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
         <text>{{item}}</text>
       </label>

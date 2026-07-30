@@ -15,7 +15,7 @@ const WEEK_DAYS = [
 
 Page({
   data: {
-    courtTypes: ['11人制', '7人制', '5人制'],
+    courtTypes: ['11人制', '8人制', '7人制', '5人制', '3人制'],  // 2026-07-30 增加 8 人制 + 3 人制
     surfaceTypes: ['人工草地', '天然草地', '硬地'],
     districts: DISTRICTS,
     weekDays: WEEK_DAYS,
@@ -24,7 +24,7 @@ Page({
     districtIndex: -1,  // -1 表示未选
     form: {
       name: '',
-      type: '11人制',
+      types: [],  // 2026-07-30 改：支持人制多选（原来 type 单选）
       surfaceTypes: [],  // 多选
       district: '',
       address: '',
@@ -42,12 +42,17 @@ Page({
     this.setData({ [`form.${field}`]: e.detail.value });
   },
 
-  onTypeChange(e) {
-    const idx = Number(e.detail.value);
-    this.setData({
-      courtTypeIndex: idx,
-      'form.type': this.data.courtTypes[idx]
-    });
+  // 支持人制多选 toggle（2026-07-30 宏哥要求多选）
+  onCourtTypeToggle(e) {
+    const value = e.currentTarget.dataset.value;
+    const list = [...(this.data.form.types || [])];
+    const idx = list.indexOf(value);
+    if (idx >= 0) {
+      list.splice(idx, 1);
+    } else {
+      list.push(value);
+    }
+    this.setData({ 'form.types': list });
   },
 
   // 场地性质多选 toggle
@@ -110,6 +115,9 @@ Page({
     if (!f.name) return wx.showToast({ title: '请填写球场名称', icon: 'none' });
     if (!f.address) return wx.showToast({ title: '请填写球场地址', icon: 'none' });
     if (!f.district) return wx.showToast({ title: '请选择行政区', icon: 'none' });
+    if (!f.types || f.types.length === 0) {
+      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    }
     if (!f.surfaceTypes || f.surfaceTypes.length === 0) {
       return wx.showToast({ title: '请至少选择一种场地性质', icon: 'none' });
     }
@@ -120,7 +128,8 @@ Page({
         role: 'court',
         courtInfo: {
           name: f.name,
-          type: f.type,
+          types: f.types,  // 2026-07-30 多选人制
+          type: f.types[0],  // 兼容后端单 type 字段
           district: f.district,
           surfaceTypes: f.surfaceTypes,
           // 兼容旧字段（取多选第一个作 fallback，避免后端报错）
