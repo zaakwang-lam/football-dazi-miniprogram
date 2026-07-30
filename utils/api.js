@@ -26,6 +26,7 @@ function request(url, method = 'GET', data = {}, options = {}) {
       url: API_BASE + url,
       method,
       data,
+      timeout: 15000,  // 2026-07-30: Cloudflare Tunnel 首次连接 ~7s，原默认 6s 超时
       header: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : ''

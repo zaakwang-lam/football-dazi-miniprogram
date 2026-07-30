@@ -18,23 +18,24 @@
   <view class="hero-banner" bindtap="onBannerTap" data-id="hero">
     <image class="hero-bg" src="/images/hero/bg.png" mode="aspectFill"></image>
     <view class="hero-content">
-      <view class="hero-title">一起踢球，<text class="hero-title-space">　　</text>一起FUNS</view>
+      <view class="hero-title">一起踢球，　　一起FUNS</view>
       <view class="hero-sub">广州业余球员专享球场 · 球队 · 约球平台</view>
     </view>
   </view>
 
   <!-- 3 个图标入口（取消赛事） -->
+  <!-- 2026-07-30 改造：emoji → icons 文件夹图标（订场/凑人/约战） -->
   <view class="entry-grid">
     <view class="entry-item" bindtap="onEntryTap" data-type="book">
-      <view class="entry-icon book">⚽</view>
+      <image class="entry-icon-img" src="/images/tab/book.png" mode="aspectFit"></image>
       <text class="entry-label">订场</text>
     </view>
     <view class="entry-item" bindtap="onEntryTap" data-type="lfg">
-      <view class="entry-icon lfg">👥</view>
+      <image class="entry-icon-img" src="/images/tab/lfg.png" mode="aspectFit"></image>
       <text class="entry-label">凑人</text>
     </view>
     <view class="entry-item" bindtap="onEntryTap" data-type="war">
-      <view class="entry-icon war">🏆</view>
+      <image class="entry-icon-img" src="/images/tab/war.png" mode="aspectFit"></image>
       <text class="entry-label">约战</text>
     </view>
   </view>

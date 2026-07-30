@@ -153,6 +153,13 @@
   margin-bottom: 12rpx;
 }
 
+/* 2026-07-30 新增：首页入口图标用真实图标代替 emoji */
+.entry-icon-img {
+  width: 96rpx;
+  height: 96rpx;
+  margin-bottom: 12rpx;
+}
+
 .entry-icon.book {
   background: linear-gradient(135deg, #FF6B00, #FF8C42);
 }
