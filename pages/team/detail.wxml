@@ -27,6 +27,7 @@
   </view>
 
   <view class="section-title">最近比赛</view>
+  <!-- 2026-07-30 宏哥要求：不显示比分（match-score） -->
   <view class="match-list">
     <view class="match-item">
       <view class="match-date">07-20</view>
@@ -34,7 +35,6 @@
         <text class="match-title">vs 海珠飓风队</text>
         <text class="match-loc">📍 海珠7人场</text>
       </view>
-      <view class="match-score win">3:1</view>
     </view>
     <view class="match-item">
       <view class="match-date">07-13</view>
@@ -42,7 +42,6 @@
         <text class="match-title">vs 天河新星队</text>
         <text class="match-loc">📍 天河体育中心</text>
       </view>
-      <view class="match-score draw">2:2</view>
     </view>
     <view class="match-item">
       <view class="match-date">07-06</view>
@@ -50,7 +49,6 @@
         <text class="match-title">vs 白云之鹰队</text>
         <text class="match-loc">📍 白云山体育公园</text>
       </view>
-      <view class="match-score loss">1:2</view>
     </view>
   </view>
 

@@ -136,6 +136,9 @@
 </view>
 
 <!-- 通用菜单 -->
+<!-- 2026-07-30 宏哥要求：去掉整个"通用"模块（我的订单、我的球队、消息中心、关于我们）-->
+<!-- 我的球队已在 my-teams-card 中独立显示，订单/消息/关于先隐藏 -->
+<block wx:if="{{false}}>
   <view class="menu-card" wx:if="{{userInfo}}">
     <view class="menu-section-title">通用</view>
     <view class="menu-row" bindtap="onMenuTap" data-type="order">
@@ -160,4 +163,5 @@
       <text class="menu-arrow">›</text>
     </view>
   </view>
+</block>
 </view>

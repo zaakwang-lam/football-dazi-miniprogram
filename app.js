@@ -32,7 +32,7 @@ App({
         this.globalData.wxCode = res.code;
         // 可选：立即调后端静默登录拿 openid（不需要用户授权）
         wx.request({
-          url: 'http://localhost:3000/api/user/login',
+          url: this.globalData.apiBase + '/api/user/login',
           method: 'POST',
           data: { code: res.code },
           success: (loginRes) => {
@@ -52,7 +52,7 @@ App({
     wxCode: '',          // 临时 wx.login code
     systemInfo: null,
     navBarHeight: 64,
-    apiBase: 'http://43.136.84.244',  // 后端地址（灰度期用云服务器IP，上线后改HTTPS域名）
+    apiBase: 'https://intelligent-emails-supporters-tribunal.trycloudflare.com',  // 与 utils/api.js 一致（Cloudflare Tunnel HTTPS 临时域名）
     city: '广州',
     // 兼容旧代码（部分页面可能仍引用）
     mockData: {}
