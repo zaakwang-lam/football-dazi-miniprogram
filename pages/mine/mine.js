@@ -6,7 +6,10 @@ Page({
   data: {
     userInfo: null,
     unread: 2,
-    myTeams: []  // 2026-07-28 改：我的球队改为 inline 渲染，不再跳 tab
+    myTeams: [],  // 2026-07-28 改：我的球队改为 inline 渲染，不再跳 tab
+    currentRole: 'user',  // 【2026-08-04 #22】当前操作角色
+    hasUser: false,       // 【2026-08-04 #22】多身份 - 是否有 user 身份
+    hasCourt: false       // 【2026-08-04 #22】多身份 - 是否有 court 身份
   },
 
   onLoad() {
@@ -38,7 +41,7 @@ Page({
     let userInfo = wx.getStorageSync('userInfo');
     if (userInfo) this.setData({ userInfo });
 
-    // 后台异步拉取最新（含 role / courtId）
+    // 后台异步拉取最新（含 role / roles / courtId）
     if (wx.getStorageSync('token')) {
       try {
         const res = await api.getUserProfile();
@@ -47,10 +50,19 @@ Page({
           const merged = {
             ...userInfo,
             ...res.data,
-            nickName: res.data.nickname || userInfo?.nickName || ''
+            nickName: res.data.nickname || userInfo?.nickName || '',
+            // 【2026-08-04 #22】多身份 roles 数组同步
+            roles: res.data.roles || []
           };
           wx.setStorageSync('userInfo', merged);
-          this.setData({ userInfo: merged });
+          // 计算多身份开关
+          const roles = merged.roles || [];
+          this.setData({
+            userInfo: merged,
+            hasUser: roles.includes('user') || merged.role === 'user',
+            hasCourt: roles.includes('court') || merged.role === 'court',
+            currentRole: merged.role || 'user'
+          });
         }
       } catch (e) {
         console.warn('拉取用户信息失败，使用本地缓存:', e);
@@ -58,8 +70,50 @@ Page({
     }
   },
 
+  /**
+   * 【2026-08-04 #22】切换身份 (本地操作, 不用调接口)
+   * roles 数组本身不变, 只是切换当前显示的角色 + 操作上下文
+   */
+  onSwitchRole() {
+    const { userInfo, currentRole, hasUser, hasCourt } = this.data;
+    if (!hasUser || !hasCourt) {
+      wx.showToast({ title: '当前仅一种身份', icon: 'none' });
+      return;
+    }
+
+    // 切换逻辑: user ⇄ court
+    const newRole = currentRole === 'user' ? 'court' : 'user';
+    // 同步 storage
+    userInfo.role = newRole;
+    wx.setStorageSync('userInfo', userInfo);
+    this.setData({
+      userInfo,
+      currentRole: newRole
+    });
+    wx.showToast({
+      title: `已切换到${newRole === 'user' ? '个人用户' : '球场方'}`,
+      icon: 'success'
+    });
+  },
+
   onLogin() {
     wx.navigateTo({ url: '/pages/login/login' });
+  },
+
+  /**
+   * 【2026-08-04 #22】同步 storage roles 数组 (court-register 页面调用)
+   * court-register 注册成功后回跳 mine, 调用此方法同步状态
+   */
+  syncRolesFromStorage() {
+    const userInfo = wx.getStorageSync('userInfo');
+    if (!userInfo) return;
+    const roles = userInfo.roles || [];
+    this.setData({
+      userInfo,
+      hasUser: roles.includes('user') || userInfo.role === 'user',
+      hasCourt: roles.includes('court') || userInfo.role === 'court',
+      currentRole: userInfo.role || 'user'
+    });
   },
 
   /**
@@ -80,7 +134,9 @@ Page({
           wx.showToast({ title: '注册成功', icon: 'success' });
           // 更新本地 + 刷新
           const userInfo = wx.getStorageSync('userInfo');
-          userInfo.role = 'user';
+          userInfo.role = 'user';  // 【兼容期】兑底同步
+          // 【2026-08-04 #22】从后端响应取真实 roles
+          userInfo.roles = res.data?.roles || ['user'];
           userInfo.courtId = null;
           wx.setStorageSync('userInfo', userInfo);
           this.loadUser();
@@ -102,8 +158,8 @@ Page({
     const type = e.currentTarget.dataset.type;
     const userInfo = this.data.userInfo || {};
 
-    // 个人用户专用
-    if (userInfo.role === 'user') {
+    // 个人用户专用 【2026-08-03 改：hasRole 支持多身份】
+    if (api.hasRole(userInfo, 'user')) {
       if (type === 'my-teams') {
         wx.navigateTo({ url: '/pages/mine/my-teams?type=created' });
         return;
@@ -123,8 +179,8 @@ Page({
       }
     }
 
-    // 球场方专用
-    if (userInfo.role === 'court') {
+    // 球场方专用 【2026-08-03 改：hasRole 支持多身份】
+    if (api.hasRole(userInfo, 'court')) {
       if (type === 'my-courts') {
         wx.navigateTo({ url: '/pages/mine/my-courts' });
         return;

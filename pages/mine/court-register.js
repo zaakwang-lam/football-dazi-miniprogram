@@ -150,6 +150,12 @@ Page({
       wx.hideLoading();
 
       if (res.code === 0) {
+        // 【2026-08-04 #22】同步 storage - 多身份数组
+        const userInfo = wx.getStorageSync('userInfo') || {};
+        userInfo.role = 'court';
+        userInfo.roles = res.data?.roles || ['user', 'court'];
+        userInfo.courtId = res.data?.courtId || null;
+        wx.setStorageSync('userInfo', userInfo);
         wx.showModal({
           title: '提交成功',
           content: '球场信息已提交，请等待管理员审核（1-3 个工作日）',

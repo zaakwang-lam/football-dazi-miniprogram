@@ -60,6 +60,12 @@
       <text class="menu-label">加入已发起组队</text>
       <text class="menu-arrow">›</text>
     </view>
+    <!-- #22 多身份切换 -->
+    <view class="menu-row" wx:if="{{hasCourt}}" bindtap="onSwitchRole">
+      <view class="menu-icon icon-switch">🔄</view>
+      <text class="menu-label">切换到球场方</text>
+      <text class="menu-arrow">›</text>
+    </view>
   </view>
 
   <!-- 球场方菜单 -->
@@ -95,6 +101,12 @@
     <view class="menu-row" bindtap="onMenuTap" data-type="my-slots">
       <view class="menu-icon icon-list">📋</view>
       <text class="menu-label">我发布的空闲</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <!-- #22 多身份切换 -->
+    <view class="menu-row" wx:if="{{hasUser}}" bindtap="onSwitchRole">
+      <view class="menu-icon icon-switch">🔄</view>
+      <text class="menu-label">切换到个人用户</text>
       <text class="menu-arrow">›</text>
     </view>
   </view>
