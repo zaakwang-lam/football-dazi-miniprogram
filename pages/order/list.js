@@ -77,13 +77,21 @@ Page({
     wx.navigateTo({ url: `/pages/order/detail?id=${id}` });
   },
 
-  onPay() {
-    wx.showToast({ title: '请在订单详情页支付', icon: 'none' });
+  onPay(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) {
+      wx.showToast({ title: '订单ID缺失', icon: 'none' });
+      return;
+    }
+    wx.navigateTo({ url: `/pages/order/detail?id=${id}` });
   },
 
-  onCancel() {
-    const id = this.data.list.find(o => o.status === '待支付')?.id;
-    if (!id) return;
+  onCancel(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) {
+      wx.showToast({ title: '订单ID缺失', icon: 'none' });
+      return;
+    }
     wx.showModal({
       title: '确认取消',
       content: '取消后定金将原路退回',
@@ -93,15 +101,21 @@ Page({
             await api.cancelOrder(id);
             wx.showToast({ title: '已取消', icon: 'success' });
             this.loadData();
-          } catch (e) {
-            console.error(e);
+          } catch (err) {
+            console.error(err);
+            wx.showToast({ title: err.message || '取消失败', icon: 'none' });
           }
         }
       }
     });
   },
 
-  onRefund() {
+  onRefund(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) {
+      wx.showToast({ title: '订单ID缺失', icon: 'none' });
+      return;
+    }
     wx.showModal({
       title: '申请退订',
       content: '提前 24h 全额退款，是否继续？',

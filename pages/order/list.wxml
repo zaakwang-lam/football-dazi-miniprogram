@@ -21,9 +21,9 @@
       <view class="order-bottom">
         <text class="order-price">¥{{item.price}}</text>
         <view class="order-actions">
-          <view class="action-btn secondary" wx:if="{{item.status === '待支付'}}" catchtap="onCancel">取消</view>
-          <view class="action-btn primary" wx:if="{{item.status === '待支付'}}" catchtap="onPay">支付</view>
-          <view class="action-btn secondary" wx:if="{{item.status === '已支付'}}" catchtap="onRefund">退订</view>
+          <view class="action-btn secondary" wx:if="{{item.status === '待支付'}}" catchtap="onCancel" data-id="{{item.id}}">取消</view>
+          <view class="action-btn primary" wx:if="{{item.status === '待支付'}}" catchtap="onPay" data-id="{{item.id}}">支付</view>
+          <view class="action-btn secondary" wx:if="{{item.status === '已支付'}}" catchtap="onRefund" data-id="{{item.id}}">退订</view>
         </view>
       </view>
     </view>
