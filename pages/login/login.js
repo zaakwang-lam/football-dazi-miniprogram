@@ -135,6 +135,7 @@ Page({
    * 登录成功后的统一处理
    */
   _afterLoginSuccess(user, token, userProfile) {
+    console.log('[login] _afterLoginSuccess, user=', user, 'token=', token?.slice(0, 20));
     // 保存 token
     wx.setStorageSync('token', token);
     app.globalData.token = token;
@@ -150,17 +151,24 @@ Page({
     app.globalData.userInfo = userInfo;
     app.globalData.openid = user.openid || '';
 
+    console.log('[login] storage updated, pages=', getCurrentPages().map(p => p.route));
     wx.showToast({ title: '登录成功', icon: 'success' });
 
-    // 跳回上一页（mine）
+    // 强刷跳转 - switchTab 到 mine (mine 是 tabBar 页)
+    // 重要: switchTab 会触发 mine.onShow → loadUser() → 拉最新 storage
     setTimeout(() => {
-      const pages = getCurrentPages();
-      if (pages.length > 1) {
-        wx.navigateBack();
-      } else {
-        // 没有上一页，跳转到我的 tab
-        wx.switchTab({ url: '/pages/mine/mine' });
-      }
+      console.log('[login] switchTab to mine');
+      wx.switchTab({
+        url: '/pages/mine/mine',
+        fail: (err) => {
+          console.error('[login] switchTab fail:', err);
+          // 兑底 - reLaunch (可以用于 tabBar 页,但文档说不行, 试试)
+          wx.reLaunch({
+            url: '/pages/mine/mine',
+            fail: (err2) => console.error('[login] reLaunch fail:', err2)
+          });
+        }
+      });
     }, 1000);
   }
 });
