@@ -80,6 +80,17 @@ function wxLogin(code, userInfo = null) {
 }
 
 /**
+ * 手机号一键登录（2026-08-05 新增）
+ * @param {string} code wx.login 拿到的 code
+ * @param {string} phoneCode button getPhoneNumber 拿到的 phoneCode
+ */
+function phoneLogin(code, phoneCode) {
+  return request('/api/user/login-phone', 'POST', { code, phoneCode }, {
+    loadingText: '登录中...'
+  });
+}
+
+/**
  * 获取用户个人资料
  */
 function getUserProfile() {
@@ -380,6 +391,7 @@ module.exports = {
 
   // 用户
   wxLogin,
+  phoneLogin,  // 【2026-08-05】手机号一键登录
   getUserProfile,
   updateUserProfile,
   registerRole,

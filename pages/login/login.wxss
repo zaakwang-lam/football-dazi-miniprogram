@@ -49,6 +49,53 @@
   margin-bottom: 32rpx;
 }
 
+/* 微信登录按钮（绿色） */
+.btn-wechat.full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  width: 100%;
+  background: #07C160;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  padding: 24rpx 0;
+  margin-bottom: 20rpx;
+  border: none;
+}
+
+.btn-wechat::after {
+  border: none;
+}
+
+/* 手机号登录按钮（橙色品牌色） */
+.btn-phone.full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  width: 100%;
+  background: #FF6B00;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  padding: 24rpx 0;
+  border: none;
+}
+
+.btn-phone::after {
+  border: none;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+/* 兼容旧样式 */
 .btn-primary.full {
   display: block;
   width: 100%;
@@ -57,7 +104,7 @@
 .agreement {
   display: flex;
   align-items: center;
-  margin-top: 24rpx;
+  margin-top: 32rpx;
   font-size: 24rpx;
   color: #666666;
 }
