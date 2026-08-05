@@ -12,8 +12,8 @@
       <view class="user-phone">{{userInfo.phone || '未绑定手机'}}</view>
       <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
       <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方（{{userInfo.courtInfo.name}}）</view>
-      <!-- 【2026-08-05 改】仅在未授权时才显示"完善资料"按钮，授权一次后不再显示 -->
-      <view class="login-btn" wx:if="{{needAuth}}" bindtap="onRelogin" style="margin-top:12rpx;font-size:24rpx;">📝 完善资料（点击授权微信）</view>
+      <!-- 【2026-08-05 改】昵称为"微信用户"时 - 提供修改昵称入口 -->
+      <view class="login-btn" wx:if="{{userInfo.nickName === '微信用户'}}" bindtap="onEditNickname" style="margin-top:12rpx;font-size:24rpx;">✏️ 修改昵称</view>
       <!-- 【2026-08-05 新增】退出登录按钮 -->
       <view class="logout-btn" bindtap="onLogout" wx:if="{{userInfo.authorized || userInfo.phone}}" style="margin-top:12rpx;font-size:24rpx;">退出登录</view>
     </view>

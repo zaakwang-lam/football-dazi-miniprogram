@@ -1,0 +1,66 @@
+<view class="page">
+  <view class="doc-content">
+    <view class="doc-title">隐私政策</view>
+    <view class="doc-meta">最后更新：2026-08-05</view>
+
+    <view class="doc-subtitle">一、信息收集</view>
+    <view class="doc-section">
+      为提供完整服务，本服务会在您授权后收集以下信息：
+      1. 微信 openid（用于识别您的身份）
+      2. 微信昵称、头像（用于在平台显示您的身份）
+      3. 地理位置（用于推荐附近球场，需您主动授权）
+    </view>
+
+    <view class="doc-subtitle">二、信息使用</view>
+    <view class="doc-section">
+      收集的信息仅用于：
+      1. 为您提供组队、约战、球场查询等核心功能
+      2. 在平台内展示您的昵称和头像
+      3. 不会用于推送广告或出售给第三方
+    </view>
+
+    <view class="doc-subtitle">三、信息存储</view>
+    <view class="doc-section">
+      1. 您的个人信息存储在中华人民共和国境内的服务器
+      2. 本服务采用业界标准的加密技术保护您的数据
+      3. 数据保留期限为您最后一次使用本服务后的 12 个月
+    </view>
+
+    <view class="doc-subtitle">四、信息共享</view>
+    <view class="doc-section">
+      除以下情况外，本服务不会与第三方共享您的个人信息：
+      1. 获得您的明确同意
+      2. 根据法律法规或政府主管部门要求
+      3. 为完成组队、AA收款等必要功能（如微信支付）
+    </view>
+
+    <view class="doc-subtitle">五、您的权利</view>
+    <view class="doc-section">
+      您有权：
+      1. 查看、更正您的个人信息
+      2. 注销账号并删除个人信息
+      3. 撤回对地理位置等敏感信息的授权
+      4. 投诉或举报违规使用行为
+    </view>
+
+    <view class="doc-subtitle">六、Cookie 与本地存储</view>
+    <view class="doc-section">
+      本服务使用微信小程序提供的本地缓存（wx.setStorageSync）保存您的登录状态和偏好设置，以便您下次打开时无需重新登录。
+    </view>
+
+    <view class="doc-subtitle">七、未成年人保护</view>
+    <view class="doc-section">
+      本服务面向成年人。如您是未成年人，请在监护人指导下使用本服务。
+    </view>
+
+    <view class="doc-subtitle">八、政策变更</view>
+    <view class="doc-section">
+      本服务可能根据业务调整修改本政策，修改后的政策将在本页面公布。
+    </view>
+
+    <view class="doc-subtitle">九、联系我们</view>
+    <view class="doc-section">
+      如您对本政策有任何疑问，可通过小程序内反馈渠道联系我们。
+    </view>
+  </view>
+</view>

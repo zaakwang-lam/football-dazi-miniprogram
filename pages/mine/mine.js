@@ -294,6 +294,45 @@ Page({
   },
 
   /**
+   * 【2026-08-05 新增】手动修改昵称
+   * 用于微信默认昵称"微信用户"时,用户自己设置一个名字
+   */
+  onEditNickname() {
+    wx.showModal({
+      title: '修改昵称',
+      editable: true,
+      placeholderText: '请输入新昵称(最多20字)',
+      content: '',
+      confirmText: '保存',
+      cancelText: '取消',
+      success: async (m) => {
+        if (!m.confirm || !m.content) return;
+        const newName = m.content.trim().slice(0, 20);
+        if (!newName) return wx.showToast({ title: '昵称不能为空', icon: 'none' });
+
+        wx.showLoading({ title: '保存中...' });
+        try {
+          const res = await api.updateUserProfile({ nickname: newName });
+          wx.hideLoading();
+          if (res.code === 0) {
+            // 更新本地
+            const userInfo = { ...this.data.userInfo, nickname: newName, nickName: newName };
+            wx.setStorageSync('userInfo', userInfo);
+            app.globalData.userInfo = userInfo;
+            this.setData({ userInfo });
+            wx.showToast({ title: '昵称已更新', icon: 'success' });
+          } else {
+            wx.showToast({ title: res.message || '保存失败', icon: 'none' });
+          }
+        } catch (e) {
+          wx.hideLoading();
+          wx.showToast({ title: '网络错误', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  /**
    * 【2026-08-05 新增】退出登录
    * 1. 二次确认
    * 2. 清本地 storage + globalData

@@ -11,6 +11,16 @@ Page({
     this.setData({ agreed: !this.data.agreed });
   },
 
+  // 【2026-08-05 新增】点击《用户协议》可查看
+  onAgreementTap() {
+    wx.navigateTo({ url: '/pages/agreement/user-agreement' });
+  },
+
+  // 【2026-08-05 新增】点击《隐私政策》可查看
+  onPrivacyTap() {
+    wx.navigateTo({ url: '/pages/agreement/privacy-policy' });
+  },
+
   /**
    * 微信一键登录（2026-08-05 简化 - 只保留微信）
    * 复用 wx.getUserProfile + wx.login 拿 code + userInfo
