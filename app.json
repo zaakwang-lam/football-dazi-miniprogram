@@ -19,6 +19,7 @@
     "pages/team/checkin",
     "pages/team/aa",
     "pages/login/login",
+    "pages/role-select/role-select",
     "pages/court/eval",
     "pages/nearby/nearby",
     "pages/mine/court-register",
@@ -29,7 +30,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#FF6B00",
-    "navigationBarTitleText": "足球搭子",
+    "navigationBarTitleText": "\u8db3\u7403\u642d\u5b50",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F5F5F5"
   },
@@ -41,19 +42,19 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页",
+        "text": "\u9996\u9875",
         "iconPath": "images/tab/home.png",
         "selectedIconPath": "images/tab/home_a.png"
       },
       {
         "pagePath": "pages/team/team",
-        "text": "球队",
+        "text": "\u7403\u961f",
         "iconPath": "images/tab/team.png",
         "selectedIconPath": "images/tab/team_a.png"
       },
       {
         "pagePath": "pages/mine/mine",
-        "text": "我的",
+        "text": "\u6211\u7684",
         "iconPath": "images/tab/mine.png",
         "selectedIconPath": "images/tab/mine_a.png"
       }

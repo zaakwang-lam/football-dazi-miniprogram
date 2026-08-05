@@ -1,0 +1,76 @@
+/* pages/role-select/role-select.wxss */
+.page {
+  min-height: 100vh;
+  background: #F5F7FA;
+  padding: 60rpx 32rpx;
+}
+.hero {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+.hero-logo {
+  font-size: 100rpx;
+  margin-bottom: 20rpx;
+}
+.hero-name {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 12rpx;
+}
+.hero-sub {
+  font-size: 26rpx;
+  color: #999999;
+}
+.role-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 16rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.role-option {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 32rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+.role-option:last-child {
+  border-bottom: none;
+}
+.role-option:active {
+  background: #F8F8F8;
+}
+.role-icon {
+  font-size: 64rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 20rpx;
+  background: #FFE8D6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+.role-info {
+  flex: 1;
+}
+.role-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 8rpx;
+}
+.role-desc {
+  font-size: 24rpx;
+  color: #999999;
+}
+.role-arrow {
+  font-size: 40rpx;
+  color: #CCCCCC;
+}
+.tip {
+  text-align: center;
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 40rpx;
+}

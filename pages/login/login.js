@@ -12,13 +12,15 @@ Page({
   },
 
   /**
-   * 微信一键登录（2026-07-30 改用 wx.getUserProfile 新 API）
-   * 原因：旧的 open-type="getUserInfo" 已被微信废弃
+   * 微信一键登录（2026-08-05 简化 - 只保留微信）
+   * 复用 wx.getUserProfile + wx.login 拿 code + userInfo
    */
   onWechatLoginTap() {
     if (!this.data.agreed) {
       return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
     }
+
+    console.log('[login] onWechatLoginTap start');
 
     // wx.getUserProfile 必须用户主动点击才会返回真实昵称
     wx.getUserProfile({
@@ -35,40 +37,8 @@ Page({
       },
       fail: (err) => {
         console.warn('[login] wx.getUserProfile fail:', err);
-        wx.showToast({ title: '需要您的授权才能登录', icon: 'none' });
-      }
-    });
-  },
-
-  /**
-   * 手机号一键登录（2026-08-05 新增）
-   * 复用 button open-type="getPhoneNumber" 拿 phoneCode
-   * 后端用 phonenumber.getPhoneNumber API 换真实手机号
-   */
-  onPhoneLoginTap(e) {
-    if (!this.data.agreed) {
-      return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
-    }
-
-    const { encryptedData, iv, code: phoneCode } = e.detail;
-    if (!phoneCode) {
-      return wx.showToast({
-        title: '未获取到手机号授权，请用微信登录',
-        icon: 'none',
-        duration: 3000
-      });
-    }
-
-    // 同时拿 wx.login code
-    wx.login({
-      success: (loginRes) => {
-        if (!loginRes.code) {
-          return wx.showToast({ title: '微信登录失败', icon: 'none' });
-        }
-        this._doPhoneLogin(loginRes.code, phoneCode);
-      },
-      fail: () => {
-        wx.showToast({ title: '微信登录失败', icon: 'none' });
+        // 用户拒绝授权,直接静默登录
+        this._doWxLogin(null);
       }
     });
   },
@@ -113,62 +83,43 @@ Page({
   },
 
   /**
-   * 手机号登录：调 /api/user/login-phone
-   */
-  _doPhoneLogin(wxCode, phoneCode) {
-    wx.showLoading({ title: '登录中...' });
-    api.phoneLogin(wxCode, phoneCode).then(res => {
-      wx.hideLoading();
-      if (res.code === 0) {
-        this._afterLoginSuccess(res.data.user, res.data.accessToken, null);
-      } else {
-        wx.showToast({ title: res.message || '登录失败', icon: 'none' });
-      }
-    }).catch(err => {
-      wx.hideLoading();
-      console.error(err);
-      wx.showToast({ title: '网络错误', icon: 'none' });
-    });
-  },
-
-  /**
    * 登录成功后的统一处理
+   * - 保存 token / userInfo
+   * - 强制跳转到角色选择页（强制用户选个人 vs 球场方）
+   * - 不依赖 navigateBack,直接 switchTab
    */
   _afterLoginSuccess(user, token, userProfile) {
-    console.log('[login] _afterLoginSuccess, user=', user, 'token=', token?.slice(0, 20));
+    console.log('[login] _afterLoginSuccess, userId=', user.id, 'role=', user.role);
+
     // 保存 token
     wx.setStorageSync('token', token);
     app.globalData.token = token;
 
-    // 保存用户信息（微信登录用 userProfile 优先，手机号登录用后端返回）
+    // 保存用户信息（微信登录用 userProfile 优先）
+    // 【关键】即使微信昵称是"微信用户",也保存,不要默认覆盖
     const userInfo = {
       ...user,
-      nickName: userProfile?.nickName || user.nickname || `手机用户${user.phone?.slice(-4) || ''}`,
-      nickname: userProfile?.nickName || user.nickname || `手机用户${user.phone?.slice(-4) || ''}`,
-      avatarUrl: userProfile?.avatarUrl || user.avatarUrl || ''
+      nickName: userProfile?.nickName || user.nickname || '',
+      nickname: userProfile?.nickName || user.nickname || '',
+      avatarUrl: userProfile?.avatarUrl || user.avatarUrl || '',
+      authorized: !!userProfile
     };
     wx.setStorageSync('userInfo', userInfo);
     app.globalData.userInfo = userInfo;
     app.globalData.openid = user.openid || '';
 
-    console.log('[login] storage updated, pages=', getCurrentPages().map(p => p.route));
     wx.showToast({ title: '登录成功', icon: 'success' });
 
-    // 强刷跳转 - switchTab 到 mine (mine 是 tabBar 页)
-    // 重要: switchTab 会触发 mine.onShow → loadUser() → 拉最新 storage
+    // 【2026-08-05】统一 redirectTo 到 role-select
+    // 选了角色后,onSelectRole 自己 switchTab 到 mine
     setTimeout(() => {
-      console.log('[login] switchTab to mine');
-      wx.switchTab({
-        url: '/pages/mine/mine',
-        fail: (err) => {
-          console.error('[login] switchTab fail:', err);
-          // 兑底 - reLaunch (可以用于 tabBar 页,但文档说不行, 试试)
-          wx.reLaunch({
-            url: '/pages/mine/mine',
-            fail: (err2) => console.error('[login] reLaunch fail:', err2)
-          });
+      console.log('[login] redirectTo to role-select, current role=', user.role);
+      wx.redirectTo({
+        url: '/pages/role-select/role-select',
+        fail: () => {
+          wx.switchTab({ url: '/pages/mine/mine' });
         }
       });
-    }, 1000);
+    }, 800);
   }
 });

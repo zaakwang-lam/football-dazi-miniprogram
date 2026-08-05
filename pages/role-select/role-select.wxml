@@ -1,0 +1,30 @@
+<!-- pages/role-select/role-select.wxml -->
+<view class="page">
+  <view class="hero">
+    <view class="hero-logo">⚽</view>
+    <view class="hero-name">选择您的身份</view>
+    <view class="hero-sub">选择后可使用完整功能</view>
+  </view>
+
+  <view class="role-card">
+    <view class="role-option" bindtap="onSelectRole" data-role="user">
+      <view class="role-icon">👤</view>
+      <view class="role-info">
+        <view class="role-name">个人用户</view>
+        <view class="role-desc">发起组队、加入约战、订场报名</view>
+      </view>
+      <view class="role-arrow">›</view>
+    </view>
+
+    <view class="role-option" bindtap="onSelectRole" data-role="court">
+      <view class="role-icon">🏟</view>
+      <view class="role-info">
+        <view class="role-name">球场方</view>
+        <view class="role-desc">登记球场、发布空闲时段、招录球员</view>
+      </view>
+      <view class="role-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="tip">选择后可随时在"我的"页面切换身份</view>
+</view>
