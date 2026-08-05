@@ -58,7 +58,7 @@ Page({
           wx.setStorageSync('userInfo', merged);
           // 计算多身份开关
           const roles = merged.roles || [];
-          // 【2026-08-05】检测是否需要重新授权（昵称为默认值 / 头像为空）
+          // 【2026-08-05】检测是否需要重新授权（昵称为默认值 / 头像为空 / 后端未标记 authorized）
           const nick = merged.nickName || merged.nickname || '';
           const needAuth = !nick || nick === '微信用户' || nick === '广州老炮' || !merged.avatarUrl;
           this.setData({
@@ -68,6 +68,21 @@ Page({
             currentRole: merged.role || 'user',
             needAuth
           });
+          // 【2026-08-05】首次进入若无授权 → 提示后跳 login 页（参考大众点评）
+          if (needAuth && !this.data._authPrompted) {
+            this.setData({ _authPrompted: true });
+            wx.showModal({
+              title: '完善资料获得更好体验',
+              content: '点击"微信一键登录"获取你的微信头像和昵称',
+              confirmText: '去登录',
+              cancelText: '稍后',
+              success: (m) => {
+                if (m.confirm) {
+                  wx.navigateTo({ url: '/pages/login/login' });
+                }
+              }
+            });
+          }
         }
       } catch (e) {
         console.warn('拉取用户信息失败，使用本地缓存:', e);
