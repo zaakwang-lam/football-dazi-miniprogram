@@ -5,9 +5,9 @@
 const app = getApp();
 
 // 后端 API 基础地址
-// 灰度期：https://intelligent-emails-supporters-tribunal.trycloudflare.com（Cloudflare Tunnel）
-// 备注：Cloudflare Tunnel 免费临时域名，重启会变，备案后改 footballdazi.cn
-const API_BASE = 'https://intelligent-emails-supporters-tribunal.trycloudflare.com';
+// 2026-08-03 备案 + SSL 已完成，正式切到 https://footballdazi.cn
+// Cloudflare Tunnel 临时域名保留作为容灾，但不再作为主入口
+const API_BASE = 'https://footballdazi.cn';
 
 /**
  * 通用请求方法
@@ -98,6 +98,21 @@ function updateUserProfile(data) {
  */
 function registerRole(data) {
   return request('/api/user/register-role', 'POST', data);
+}
+
+/**
+ * 检查用户是否拥有某身份
+ * 兼容旧 role 字段 + 新 roles 数组
+ * 【2026-08-03 新增】多身份支持
+ */
+function hasRole(userInfo, roleName) {
+  if (!userInfo) return false;
+  // 优先读 roles 数组（多身份）
+  if (Array.isArray(userInfo.roles) && userInfo.roles.length > 0) {
+    return userInfo.roles.includes(roleName);
+  }
+  // 兑底：读旧 role 字段
+  return userInfo.role === roleName;
 }
 
 /**
@@ -368,6 +383,7 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   registerRole,
+  hasRole,  // 【2026-08-03 新增】多身份判断
   getMyCourts,
   getMyTeams,
   getMyLfgPosts,

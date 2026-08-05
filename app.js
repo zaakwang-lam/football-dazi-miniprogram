@@ -65,7 +65,7 @@ App({
     wxCode: '',          // 临时 wx.login code
     systemInfo: null,
     navBarHeight: 64,
-    apiBase: 'https://intelligent-emails-supporters-tribunal.trycloudflare.com',  // 与 utils/api.js 一致（Cloudflare Tunnel HTTPS 临时域名）
+    apiBase: 'https://footballdazi.cn',  // 2026-08-05 备案通过，正式域名（Cloudflare Tunnel 已停）
     city: '广州',
     // 兼容旧代码（部分页面可能仍引用）
     mockData: {}
