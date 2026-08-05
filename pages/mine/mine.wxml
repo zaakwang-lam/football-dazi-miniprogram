@@ -12,6 +12,8 @@
       <view class="user-phone">{{userInfo.phone || '未绑定'}}</view>
       <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
       <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方（{{userInfo.courtInfo.name}}）</view>
+      <!-- 【2026-08-05】昵称为默认值时显示"完善资料"按钮 -->
+      <view class="login-btn" wx:if="{{needAuth}}" bindtap="onRelogin" style="margin-top:12rpx;font-size:24rpx;">📝 完善资料（点击授权微信）</view>
     </view>
     <view class="user-info" wx:else>
       <view class="user-name">未登录</view>

@@ -9,7 +9,8 @@ Page({
     myTeams: [],  // 2026-07-28 改：我的球队改为 inline 渲染，不再跳 tab
     currentRole: 'user',  // 【2026-08-04 #22】当前操作角色
     hasUser: false,       // 【2026-08-04 #22】多身份 - 是否有 user 身份
-    hasCourt: false       // 【2026-08-04 #22】多身份 - 是否有 court 身份
+    hasCourt: false,      // 【2026-08-04 #22】多身份 - 是否有 court 身份
+    needAuth: false       // 【2026-08-05】昵称为默认值时为 true,显示"完善资料"按钮
   },
 
   onLoad() {
@@ -57,11 +58,15 @@ Page({
           wx.setStorageSync('userInfo', merged);
           // 计算多身份开关
           const roles = merged.roles || [];
+          // 【2026-08-05】检测是否需要重新授权（昵称为默认值 / 头像为空）
+          const nick = merged.nickName || merged.nickname || '';
+          const needAuth = !nick || nick === '微信用户' || nick === '广州老炮' || !merged.avatarUrl;
           this.setData({
             userInfo: merged,
             hasUser: roles.includes('user') || merged.role === 'user',
             hasCourt: roles.includes('court') || merged.role === 'court',
-            currentRole: merged.role || 'user'
+            currentRole: merged.role || 'user',
+            needAuth
           });
         }
       } catch (e) {
@@ -98,6 +103,62 @@ Page({
 
   onLogin() {
     wx.navigateTo({ url: '/pages/login/login' });
+  },
+
+  /**
+   * 【2026-08-05】重新授权（昵称是默认值时手动触发）
+   * 直接调 wx.getUserProfile → 拿到真实昵称/头像 → 重写后端 → 刷新本页
+   */
+  onRelogin() {
+    wx.getUserProfile({
+      desc: '用于完善会员资料',
+      success: (profileRes) => {
+        const userProfile = profileRes.userInfo;
+        if (!userProfile || !userProfile.nickName) {
+          return wx.showToast({ title: '授权失败，请重试', icon: 'none' });
+        }
+
+        wx.showLoading({ title: '更新中...' });
+        wx.login({
+          success: (loginRes) => {
+            if (!loginRes.code) {
+              wx.hideLoading();
+              return wx.showToast({ title: '微信登录失败', icon: 'none' });
+            }
+            api.wxLogin(loginRes.code, userProfile).then(res => {
+              wx.hideLoading();
+              if (res.code === 0) {
+                const userInfo = {
+                  ...res.data.user,
+                  nickName: userProfile.nickName || res.data.user.nickname,
+                  nickname: userProfile.nickName || res.data.user.nickname,
+                  avatarUrl: userProfile.avatarUrl || res.data.user.avatarUrl
+                };
+                wx.setStorageSync('userInfo', userInfo);
+                wx.setStorageSync('token', res.data.accessToken);
+                app.globalData.userInfo = userInfo;
+                app.globalData.token = res.data.accessToken;
+                app.globalData.openid = userInfo.openid || '';
+                this.setData({
+                  userInfo,
+                  needAuth: false
+                });
+                wx.showToast({ title: '资料已更新', icon: 'success' });
+              } else {
+                wx.showToast({ title: res.message || '更新失败', icon: 'none' });
+              }
+            }).catch(err => {
+              wx.hideLoading();
+              wx.showToast({ title: '网络错误', icon: 'none' });
+              console.error(err);
+            });
+          }
+        });
+      },
+      fail: () => {
+        wx.showToast({ title: '已取消授权', icon: 'none' });
+      }
+    });
   },
 
   /**
