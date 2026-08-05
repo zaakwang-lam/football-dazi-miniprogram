@@ -10,10 +10,13 @@
     <view class="login-title">微信一键登录</view>
     <view class="login-desc">登录后享受完整功能：订场、组队、约战</view>
 
-    <!-- 微信一键登录 -->
-    <button class="btn-wechat full" bindtap="onWechatLoginTap">
-      <text class="btn-icon">💬</text>
-      <text>微信一键登录</text>
+    <!-- 微信登录按钮 -->
+    <button class="btn-wechat full" bindtap="onLoginTap" disabled="{{loading}}">
+      <text wx:if="{{loading}}">登录中...</text>
+      <block wx:else>
+        <text class="btn-icon">💬</text>
+        <text>微信一键登录</text>
+      </block>
     </button>
 
     <view class="agreement" bindtap="onAgreeTap">

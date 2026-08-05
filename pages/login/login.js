@@ -1,118 +1,92 @@
 // pages/login/login.js
+// 【2026-08-05 重构 v2.0】简化登录流程
+// 设计原则（参考微信官方推荐 + 美团/大众点评）：
+// 1. 不强制 wx.getUserProfile（用户拒绝也能用）
+// 2. 登录只取 wx.login code → 后端换 openid + token
+// 3. 昵称/头像显示默认"微信用户",用户可在 mine 页手动修改
+// 4. 登录后: 有 role → mine; 无 role → role-select
+// 5. 不再每次都跳 role-select（user.role 已存则跳过）
 const api = require('../../utils/api.js');
 const app = getApp();
 
 Page({
   data: {
-    agreed: false
+    agreed: false,
+    loading: false
   },
 
   onAgreeTap() {
     this.setData({ agreed: !this.data.agreed });
   },
 
-  // 【2026-08-05 新增】点击《用户协议》可查看
   onAgreementTap() {
     wx.navigateTo({ url: '/pages/agreement/user-agreement' });
   },
 
-  // 【2026-08-05 新增】点击《隐私政策》可查看
   onPrivacyTap() {
     wx.navigateTo({ url: '/pages/agreement/privacy-policy' });
   },
 
   /**
-   * 微信一键登录（2026-08-05 简化 - 只保留微信）
-   * 复用 wx.getUserProfile + wx.login 拿 code + userInfo
+   * 一键登录 - 简化版
+   * 1. wx.login 拿 code
+   * 2. 调后端 /api/user/login
+   * 3. 后端返回 token + user（包含 role）
+   * 4. 有 role → switchTab mine
+   *    无 role → redirectTo role-select
    */
-  onWechatLoginTap() {
+  onLoginTap() {
     if (!this.data.agreed) {
       return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
     }
+    if (this.data.loading) return;
+    this.setData({ loading: true });
 
-    console.log('[login] onWechatLoginTap start');
-
-    // wx.getUserProfile 必须用户主动点击才会返回真实昵称
-    wx.getUserProfile({
-      desc: '用于完善会员资料',
-      success: (profileRes) => {
-        const userProfile = profileRes.userInfo;
-        console.log('[login] wx.getUserProfile success, nickName=', userProfile.nickName);
-
-        if (!userProfile || !userProfile.nickName) {
-          return wx.showToast({ title: '授权失败，请重试', icon: 'none' });
-        }
-
-        this._doWxLogin(userProfile);
-      },
-      fail: (err) => {
-        console.warn('[login] wx.getUserProfile fail:', err);
-        // 用户拒绝授权,直接静默登录
-        this._doWxLogin(null);
-      }
-    });
-  },
-
-  /**
-   * 微信登录：调 /api/user/login
-   */
-  _doWxLogin(userProfile) {
-    wx.showLoading({ title: '登录中...' });
     wx.login({
       success: (loginRes) => {
         if (!loginRes.code) {
-          wx.hideLoading();
+          this.setData({ loading: false });
           return wx.showToast({ title: '微信登录失败', icon: 'none' });
         }
-        api.wxLogin(loginRes.code, userProfile).then(res => {
-          wx.hideLoading();
+
+        // 调后端（不传 userInfo,后端给默认昵称）
+        api.wxLogin(loginRes.code, null).then(res => {
+          this.setData({ loading: false });
+
           if (res.code === 0) {
-            this._afterLoginSuccess(res.data.user, res.data.accessToken, userProfile);
+            this._afterLoginSuccess(res.data.user, res.data.accessToken);
           } else {
             wx.showToast({ title: res.message || '登录失败', icon: 'none' });
           }
         }).catch(err => {
-          wx.hideLoading();
+          this.setData({ loading: false });
           console.error(err);
-          if (err && err.errMsg && err.errMsg.includes('url not in domain list')) {
-            wx.showToast({
-              title: '请先在开发者工具勾选"不校验合法域名"',
-              icon: 'none',
-              duration: 3000
-            });
-          } else {
-            wx.showToast({ title: '网络错误', icon: 'none' });
-          }
+          wx.showToast({ title: '网络错误', icon: 'none' });
         });
       },
       fail: () => {
-        wx.hideLoading();
+        this.setData({ loading: false });
         wx.showToast({ title: '微信登录失败', icon: 'none' });
       }
     });
   },
 
   /**
-   * 登录成功后的统一处理
-   * - 保存 token / userInfo
-   * - 强制跳转到角色选择页（强制用户选个人 vs 球场方）
-   * - 不依赖 navigateBack,直接 switchTab
+   * 登录成功后处理
+   * 保存 token + userInfo
+   * 有 role → mine; 无 role → role-select
    */
-  _afterLoginSuccess(user, token, userProfile) {
-    console.log('[login] _afterLoginSuccess, userId=', user.id, 'role=', user.role);
-
+  _afterLoginSuccess(user, token) {
     // 保存 token
     wx.setStorageSync('token', token);
     app.globalData.token = token;
 
-    // 保存用户信息（微信登录用 userProfile 优先）
-    // 【关键】即使微信昵称是"微信用户",也保存,不要默认覆盖
+    // 保存 userInfo
     const userInfo = {
       ...user,
-      nickName: userProfile?.nickName || user.nickname || '',
-      nickname: userProfile?.nickName || user.nickname || '',
-      avatarUrl: userProfile?.avatarUrl || user.avatarUrl || '',
-      authorized: !!userProfile
+      nickName: user.nickname || '微信用户',
+      nickname: user.nickname || '微信用户',
+      avatarUrl: user.avatarUrl || ''
     };
     wx.setStorageSync('userInfo', userInfo);
     app.globalData.userInfo = userInfo;
@@ -120,16 +94,15 @@ Page({
 
     wx.showToast({ title: '登录成功', icon: 'success' });
 
-    // 【2026-08-05】统一 redirectTo 到 role-select
-    // 选了角色后,onSelectRole 自己 switchTab 到 mine
+    // 判断跳转
     setTimeout(() => {
-      console.log('[login] redirectTo to role-select, current role=', user.role);
-      wx.redirectTo({
-        url: '/pages/role-select/role-select',
-        fail: () => {
-          wx.switchTab({ url: '/pages/mine/mine' });
-        }
-      });
+      if (user.role) {
+        // 已注册角色 → mine
+        wx.switchTab({ url: '/pages/mine/mine' });
+      } else {
+        // 未注册角色 → role-select
+        wx.redirectTo({ url: '/pages/role-select/role-select' });
+      }
     }, 800);
   }
 });

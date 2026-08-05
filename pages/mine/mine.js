@@ -62,35 +62,16 @@ Page({
 
           const roles = merged.roles || [];
 
-          // 【2026-08-05 改】needAuth 检测: nickname 是默认默认值 且 未授权过
-          const nick = merged.nickName || merged.nickname || '';
-          // 用户登录过的标志（onRelogin / onWechatLoginTap 会设置 authorized=true）
-          const isAuthorized = merged.authorized === true;
-
-          // 【重要】如果已经授权过,即使是"微信用户"也认，不再显示"完善资料"按钮
-          // 只有授权过 = false 且昵称是默认值时,才显示
-          const needAuth = !isAuthorized;
-
-          // 【2026-08-05 新增】检查是否需要显示"请选择身份"提示
-          // 用户没选过角色 + 已经登录 → 提示一次（不是强弹窗）
-          const showRoleHint = !merged.role && nick && nick.length > 0;
+          // 【2026-08-05 v2.0 简化】总显示昵称 - 不再弹"完善资料"
+          // 用户可以主动点"修改昵称"按钮
 
           this.setData({
             userInfo: merged,
             hasUser: roles.includes('user') || merged.role === 'user',
             hasCourt: roles.includes('court') || merged.role === 'court',
             currentRole: merged.role || 'user',
-            needAuth,
-            showRoleHint
+            needAuth: false  // 【v2.0】从不弹"完善资料"
           });
-
-          // 【2026-08-05 改】不再强制弹窗，只在需要时显示轻量提示
-          // 如果 needAuth + 未提示过 → 用 showActionSheet 让用户选择去登录或稍后
-          if (needAuth && !this.data._authPrompted) {
-            this.setData({ _authPrompted: true });
-            // 不主动弹模态，避免"重复弹出"问题
-            // 用户在 mine.wxml 看到"完善资料"按钮,自行点击即可
-          }
         }
       } catch (e) {
         console.warn('拉取用户信息失败，使用本地缓存:', e);
