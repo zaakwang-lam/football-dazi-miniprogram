@@ -1,42 +1,47 @@
 <!-- pages/mine/mine.wxml -->
 <view class="page">
-  <!-- 用户信息 -->
-  <view class="user-card">
-    <view class="user-avatar" wx:if="{{userInfo}}">
+  <!-- 未登录：简洁登录入口 -->
+  <view class="login-entry" wx:if="{{!userInfo}}" bindtap="onLogin">
+    <view class="login-entry-avatar">⚽</view>
+    <view class="login-entry-info">
+      <view class="login-entry-title">登录足球搭子</view>
+      <view class="login-entry-desc">微信一键登录，开始组队、约战、订场</view>
+    </view>
+    <text class="login-entry-arrow">›</text>
+  </view>
+
+  <!-- 已登录：用户信息 -->
+  <view class="user-card" wx:else>
+    <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}">
       <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
     </view>
     <view class="user-avatar placeholder" wx:else>👤</view>
 
-    <view class="user-info" wx:if="{{userInfo}}">
-      <view class="user-name">{{userInfo.nickName || '微信用户'}}</view>
-      <!-- 【2026-08-06 PRD】取消"未绑定手机"提示 - 不需要展示手机号状态 -->
+    <view class="user-info">
+      <view class="user-name">{{userInfo.nickName || userInfo.nickname || '微信用户'}}</view>
       <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
-      <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方（{{userInfo.courtInfo.name}}）</view>
-      <!-- 【2026-08-05 v2.0】修改昵称 - 不再区分"未授权"状态 -->
-      <view class="login-btn" bindtap="onEditNickname" style="margin-top:12rpx;font-size:24rpx;">✏️ 修改昵称</view>
-      <!-- 【2026-08-05】退出登录按钮 - 只在已登录时显示 -->
-      <view class="logout-btn" bindtap="onLogout" style="margin-top:12rpx;font-size:24rpx;">退出登录</view>
-    </view>
-    <view class="user-info" wx:else>
-      <view class="user-name">未登录</view>
-      <view class="login-btn" bindtap="onLogin">点击登录</view>
+      <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方</view>
+      <view class="user-actions">
+        <view class="login-btn" bindtap="onEditNickname">✏️ 修改昵称</view>
+        <view class="logout-btn" bindtap="onLogout">退出登录</view>
+      </view>
     </view>
   </view>
 
-  <!-- 注册类型选择（首次登录未注册时显示） -->
+  <!-- 已登录但尚未选择身份 -->
   <view class="register-card" wx:if="{{userInfo && !userInfo.role}}">
-    <view class="register-title">请选择您的身份</view>
-    <view class="register-sub">注册后可使用完整功能</view>
+    <view class="register-title">选择您的身份</view>
+    <view class="register-sub">选择后才能使用完整功能</view>
     <view class="register-options">
       <view class="register-option" bindtap="onRegisterTap" data-role="user">
         <view class="register-icon">👤</view>
         <view class="register-name">个人用户</view>
-        <view class="register-desc">发起组队、加入约战</view>
+        <view class="register-desc">发起组队、加入约战、订场</view>
       </view>
       <view class="register-option" bindtap="onRegisterTap" data-role="court">
         <view class="register-icon">🏟</view>
         <view class="register-name">球场方</view>
-        <view class="register-desc">登记球场、招录报名</view>
+        <view class="register-desc">登记球场、发布空闲时段</view>
       </view>
     </view>
   </view>
@@ -64,7 +69,6 @@
       <text class="menu-label">加入已发起组队</text>
       <text class="menu-arrow">›</text>
     </view>
-    <!-- #22 多身份切换 -->
     <view class="menu-row" wx:if="{{hasCourt}}" bindtap="onSwitchRole">
       <view class="menu-icon icon-switch">🔄</view>
       <text class="menu-label">切换到球场方</text>
@@ -75,16 +79,11 @@
   <!-- 球场方菜单 -->
   <view class="menu-card" wx:if="{{userInfo && userInfo.role === 'court'}}">
     <view class="menu-section-title">球场管理</view>
-    <view class="menu-row" wx:if="{{userInfo.courtInfo.status === 1}}">
+    <view class="menu-row" wx:if="{{userInfo.courtInfo}}">
       <view class="menu-icon icon-court">🏟</view>
-      <text class="menu-label">{{userInfo.courtInfo.name}}</text>
-      <view class="status-tag status-ok">营业中</view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" wx:if="{{userInfo.courtInfo.status === 2}}">
-      <view class="menu-icon icon-court">🏟</view>
-      <text class="menu-label">{{userInfo.courtInfo.name}}</text>
-      <view class="status-tag status-pending">审核中</view>
+      <text class="menu-label">{{userInfo.courtInfo.name || '我的球场'}}</text>
+      <view class="status-tag status-ok" wx:if="{{userInfo.courtInfo.status === 1}}">营业中</view>
+      <view class="status-tag status-pending" wx:if="{{userInfo.courtInfo.status === 2}}">审核中</view>
       <text class="menu-arrow">›</text>
     </view>
     <view class="menu-row" bindtap="onMenuTap" data-type="my-courts">
@@ -107,7 +106,6 @@
       <text class="menu-label">我发布的空闲</text>
       <text class="menu-arrow">›</text>
     </view>
-    <!-- #22 多身份切换 -->
     <view class="menu-row" wx:if="{{hasUser}}" bindtap="onSwitchRole">
       <view class="menu-icon icon-switch">🔄</view>
       <text class="menu-label">切换到个人用户</text>
@@ -115,69 +113,17 @@
     </view>
   </view>
 
-  <!-- 数据统计（2026-07-28 宏哥要求删除：出勤/进球/助攻/MVP） -->
-<block wx:if="{{false}}">
-  <view class="stats-row" wx:if="{{userInfo && userInfo.role === 'user'}}">
-    <view class="stat-item">
-      <text class="stat-num">50</text>
-      <text class="stat-label">出勤</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-num">12</text>
-      <text class="stat-label">进球</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-num">8</text>
-      <text class="stat-label">助攻</text>
-    </view>
-    <view class="stat-item">
-      <text class="stat-num">3</text>
-      <text class="stat-label">MVP</text>
-    </view>
-  </view>
-</block>
-
-  <!-- 我的球队 inline 列表（2026-07-28 新增） -->
-<view class="my-teams-card" wx:if="{{userInfo && userInfo.role === 'user' && myTeams.length > 0}}">
-  <view class="menu-section-title">我的球队</view>
-  <view class="my-team-item" wx:for="{{myTeams}}" wx:key="id" bindtap="onMyTeamTap" data-id="{{item.id}}">
-    <view class="team-logo">{{item.name[0] || '⚽'}}</view>
-    <view class="team-info">
-      <view class="team-name">{{item.name}}</view>
-      <view class="team-meta">{{item.district || '广州'}} · {{item.memberCount || 1}} 人 · {{item.attendance || 0}} 场出勤</view>
-    </view>
-    <view class="team-role" wx:if="{{item.role === 'captain'}}">队长</view>
-    <text class="menu-arrow">›</text>
-  </view>
-</view>
-
-<!-- 通用菜单 -->
-<!-- 2026-07-30 宏哥要求：去掉整个"通用"模块（我的订单、我的球队、消息中心、关于我们）-->
-<!-- 我的球队已在 my-teams-card 中独立显示，订单/消息/关于先隐藏 -->
-<block wx:if="{{false}}">
-  <view class="menu-card" wx:if="{{userInfo}}">
-    <view class="menu-section-title">通用</view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="order">
-      <view class="menu-icon icon-order">📋</view>
-      <text class="menu-label">我的订单</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="team">
-      <view class="menu-icon icon-team">⚽</view>
-      <text class="menu-label">我的球队</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="msg">
-      <view class="menu-icon icon-msg">💬</view>
-      <text class="menu-label">消息中心</text>
-      <view class="badge" wx:if="{{unread > 0}}">{{unread}}</view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="about">
-      <view class="menu-icon icon-about">ℹ️</view>
-      <text class="menu-label">关于我们</text>
+  <!-- 我的球队 -->
+  <view class="my-teams-card" wx:if="{{userInfo && userInfo.role === 'user' && myTeams.length > 0}}">
+    <view class="menu-section-title">我的球队</view>
+    <view class="my-team-item" wx:for="{{myTeams}}" wx:key="id" bindtap="onMyTeamTap" data-id="{{item.id}}">
+      <view class="team-logo">{{item.name[0] || '⚽'}}</view>
+      <view class="team-info">
+        <view class="team-name">{{item.name}}</view>
+        <view class="team-meta">{{item.district || '广州'}} · {{item.memberCount || 1}} 人 · {{item.attendance || 0}} 场出勤</view>
+      </view>
+      <view class="team-role" wx:if="{{item.role === 'captain'}}">队长</view>
       <text class="menu-arrow">›</text>
     </view>
   </view>
-</block>
 </view>
