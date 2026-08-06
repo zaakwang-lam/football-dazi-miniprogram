@@ -9,7 +9,7 @@
 
     <view class="user-info" wx:if="{{userInfo}}">
       <view class="user-name">{{userInfo.nickName || '微信用户'}}</view>
-      <view class="user-phone">{{userInfo.phone || '未绑定手机'}}</view>
+      <!-- 【2026-08-06 PRD】取消"未绑定手机"提示 - 不需要展示手机号状态 -->
       <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
       <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方（{{userInfo.courtInfo.name}}）</view>
       <!-- 【2026-08-05 v2.0】修改昵称 - 不再区分"未授权"状态 -->

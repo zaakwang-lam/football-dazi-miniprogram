@@ -1,11 +1,9 @@
 // pages/login/login.js
-// 【2026-08-05 重构 v2.0】简化登录流程
-// 设计原则（参考微信官方推荐 + 美团/大众点评）：
-// 1. 不强制 wx.getUserProfile（用户拒绝也能用）
-// 2. 登录只取 wx.login code → 后端换 openid + token
-// 3. 昵称/头像显示默认"微信用户",用户可在 mine 页手动修改
-// 4. 登录后: 有 role → mine; 无 role → role-select
-// 5. 不再每次都跳 role-select（user.role 已存则跳过）
+// 【2026-08-06 PRD v2.0】首次登录必须授权拿微信昵称/头像
+// 设计原则（参考 PRD 文档）：
+// 1. 首次登录强制调 wx.getUserProfile → 拿昵称+头像
+// 2. 拒绝授权：仍然能登录，但显示"点击授权"按钮，用户可主动改昵称
+// 3. 登录后逻辑：user.role 存在 → mine; 无 → role-select
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -28,12 +26,8 @@ Page({
   },
 
   /**
-   * 一键登录 - 简化版
-   * 1. wx.login 拿 code
-   * 2. 调后端 /api/user/login
-   * 3. 后端返回 token + user（包含 role）
-   * 4. 有 role → switchTab mine
-   *    无 role → redirectTo role-select
+   * 微信登录 - 强制授权拿昵称
+   * 流程：wx.login (code) → wx.getUserProfile (昵称/头像) → 后端 /api/user/login
    */
   onLoginTap() {
     if (!this.data.agreed) {
@@ -42,17 +36,75 @@ Page({
     if (this.data.loading) return;
     this.setData({ loading: true });
 
+    // Step 1: 强制 wx.getUserProfile 拿昵称+头像
+    wx.getUserProfile({
+      desc: '用于完善会员资料',
+      success: (profileRes) => {
+        const userProfile = profileRes.userInfo;
+        console.log('[login] wx.getUserProfile success, nickName=', userProfile.nickName);
+
+        if (!userProfile || !userProfile.nickName) {
+          this.setData({ loading: false });
+          return wx.showToast({ title: '授权失败，请重试', icon: 'none' });
+        }
+
+        // Step 2: 调 wx.login 拿 code
+        wx.login({
+          success: (loginRes) => {
+            if (!loginRes.code) {
+              this.setData({ loading: false });
+              return wx.showToast({ title: '微信登录失败', icon: 'none' });
+            }
+
+            // Step 3: 调后端登录（带 userInfo）
+            api.wxLogin(loginRes.code, userProfile).then(res => {
+              this.setData({ loading: false });
+              if (res.code === 0) {
+                this._afterLoginSuccess(res.data.user, res.data.accessToken);
+              } else {
+                wx.showToast({ title: res.message || '登录失败', icon: 'none' });
+              }
+            }).catch(err => {
+              this.setData({ loading: false });
+              console.error(err);
+              wx.showToast({ title: '网络错误', icon: 'none' });
+            });
+          },
+          fail: () => {
+            this.setData({ loading: false });
+            wx.showToast({ title: '微信登录失败', icon: 'none' });
+          }
+        });
+      },
+      fail: (err) => {
+        // 用户拒绝授权 → 仍然静默登录（无昵称），之后在 mine 页提示授权
+        this.setData({ loading: false });
+        console.warn('[login] wx.getUserProfile fail:', err);
+        wx.showToast({
+          title: '授权后可显示微信昵称',
+          icon: 'none',
+          duration: 1500
+        });
+        // 仍然静默登录
+        this._silentLoginWithoutProfile();
+      }
+    });
+  },
+
+  /**
+   * 拒绝授权时的静默登录（不带昵称）
+   */
+  _silentLoginWithoutProfile() {
+    if (this.data.loading) return;
+    this.setData({ loading: true });
     wx.login({
       success: (loginRes) => {
         if (!loginRes.code) {
           this.setData({ loading: false });
           return wx.showToast({ title: '微信登录失败', icon: 'none' });
         }
-
-        // 调后端（不传 userInfo,后端给默认昵称）
         api.wxLogin(loginRes.code, null).then(res => {
           this.setData({ loading: false });
-
           if (res.code === 0) {
             this._afterLoginSuccess(res.data.user, res.data.accessToken);
           } else {
@@ -60,28 +112,25 @@ Page({
           }
         }).catch(err => {
           this.setData({ loading: false });
-          console.error(err);
           wx.showToast({ title: '网络错误', icon: 'none' });
         });
       },
       fail: () => {
         this.setData({ loading: false });
-        wx.showToast({ title: '微信登录失败', icon: 'none' });
       }
     });
   },
 
   /**
    * 登录成功后处理
-   * 保存 token + userInfo
-   * 有 role → mine; 无 role → role-select
    */
   _afterLoginSuccess(user, token) {
     // 保存 token
     wx.setStorageSync('token', token);
     app.globalData.token = token;
 
-    // 保存 userInfo
+    // 保存 userInfo（完整保留后端返回的 user）
+    // 注意：user 里可能包含 nickname/avatarUrl（如果 wx.getUserProfile 成功）
     const userInfo = {
       ...user,
       nickName: user.nickname || '微信用户',
@@ -97,10 +146,8 @@ Page({
     // 判断跳转
     setTimeout(() => {
       if (user.role) {
-        // 已注册角色 → mine
         wx.switchTab({ url: '/pages/mine/mine' });
       } else {
-        // 未注册角色 → role-select
         wx.redirectTo({ url: '/pages/role-select/role-select' });
       }
     }, 800);
