@@ -1,9 +1,5 @@
 // pages/login/login.js
-// 【2026-08-06】“我的”登录流程：微信登录 → 选择身份 → 按身份完成资料
-// 1. 点击“微信一键登录”先完成微信身份认证
-// 2. 首次登录进入“选择身份”
-// 3. 个人用户：选择后调用 wx.getUserProfile 获取昵称/头像，再完成注册
-// 4. 球场方：选择后进入球场方注册页
+// 登录流程：我的 → 微信登录 → 选择身份 → 完成对应注册
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -26,9 +22,11 @@ Page({
   },
 
   /**
-   * 微信一键登录
-   * 注意：这里不提前索取昵称/头像授权。
-   * 登录成功后再让用户选择“个人用户/球场方”，符合“我的 → 微信登录 → 选择身份”的流程。
+   * 微信登录：只完成微信身份认证，不提前索取昵称/头像。
+   * 后端通过 roles 数组判断用户是否已经完成身份注册：
+   * roles=[]          → 首次登录，进入身份选择
+   * roles=[user]      → 已注册个人用户
+   * roles=[user,court] → 已注册个人+球场方
    */
   onLoginTap() {
     if (!this.data.agreed) {
@@ -46,7 +44,6 @@ Page({
         }
 
         try {
-          // 先完成微信身份登录，不索取个人资料授权
           const res = await api.wxLogin(loginRes.code, null);
           this.setData({ loading: false });
 
@@ -54,19 +51,20 @@ Page({
             return wx.showToast({ title: res.message || '登录失败', icon: 'none' });
           }
 
-          this._saveLoginState(res.data.user, res.data.accessToken);
+          const user = res.data?.user || {};
+          const roles = Array.isArray(user.roles) ? user.roles : [];
+          this._saveLoginState(user, res.data?.accessToken);
 
-          // 已经选择过身份的用户直接进入“我的”
-          if (res.data.user && res.data.user.role) {
-            wx.showToast({ title: '登录成功', icon: 'success' });
-            setTimeout(() => {
-              wx.switchTab({ url: '/pages/mine/mine' });
-            }, 500);
+          // 不能使用 user.role 判断首次登录，因为后端 users.role 有默认值 user。
+          if (roles.length === 0) {
+            wx.redirectTo({ url: '/pages/role-select/role-select' });
             return;
           }
 
-          // 新用户：进入身份选择
-          wx.redirectTo({ url: '/pages/role-select/role-select' });
+          wx.showToast({ title: '登录成功', icon: 'success' });
+          setTimeout(() => {
+            wx.switchTab({ url: '/pages/mine/mine' });
+          }, 500);
         } catch (err) {
           this.setData({ loading: false });
           console.error('[login] wx login error:', err);
@@ -82,19 +80,19 @@ Page({
   },
 
   _saveLoginState(user, token) {
-    wx.setStorageSync('token', token || '');
-    app.globalData.token = token || '';
-
     const oldUser = wx.getStorageSync('userInfo') || {};
     const userInfo = {
       ...oldUser,
       ...(user || {}),
+      roles: Array.isArray(user?.roles) ? user.roles : [],
       nickName: user?.nickname || oldUser.nickName || '微信用户',
       nickname: user?.nickname || oldUser.nickname || '微信用户',
       avatarUrl: user?.avatarUrl || oldUser.avatarUrl || ''
     };
 
+    wx.setStorageSync('token', token || '');
     wx.setStorageSync('userInfo', userInfo);
+    app.globalData.token = token || '';
     app.globalData.userInfo = userInfo;
     app.globalData.openid = userInfo.openid || '';
   }
