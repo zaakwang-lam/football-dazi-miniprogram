@@ -25,6 +25,7 @@
     "pages/mine/court-register",
     "pages/mine/lfg-publish",
     "pages/mine/my-courts",
+    "pages/mine/publish-slot",
     "pages/mine/my-teams",
     "pages/agreement/user-agreement",
     "pages/agreement/privacy-policy"
