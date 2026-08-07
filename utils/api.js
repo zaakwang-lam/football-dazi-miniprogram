@@ -10,6 +10,18 @@ const app = getApp();
 const API_BASE = 'https://footballdazi.cn';
 
 /**
+ * 从 wx.request 响应中提取业务 body。
+ * 后端 BizError 常以 HTTP 400/403/500 + { code, message } 返回，
+ * 不能只在 statusCode===200 时才读 message，否则真机会只看到「提交失败，请重试」。
+ */
+function extractBody(res) {
+  if (!res) return null;
+  const body = res.data;
+  if (body && typeof body === 'object' && typeof body.code === 'number') return body;
+  return null;
+}
+
+/**
  * 通用请求方法
  * 自动注入 Authorization Header
  */
@@ -33,36 +45,47 @@ function request(url, method = 'GET', data = {}, options = {}) {
       },
       success: (res) => {
         if (showLoading) wx.hideLoading();
-        if (res.statusCode === 200) {
-          if (res.data.code === 0) {
-            resolve(res.data);
-          } else if (res.data.code === 401) {
-            // Token 失效
+        const body = extractBody(res);
+
+        // 优先认业务 body（无论 HTTP 200 还是 4xx/5xx）
+        if (body) {
+          if (body.code === 0) {
+            resolve(body);
+            return;
+          }
+          if (body.code === 401) {
             wx.removeStorageSync('token');
             wx.removeStorageSync('userInfo');
             app.globalData.token = '';
             app.globalData.userInfo = null;
-            wx.showToast({ title: '请先登录', icon: 'none' });
+            wx.showToast({ title: body.message || '请先登录', icon: 'none' });
             setTimeout(() => wx.navigateTo({ url: '/pages/login/login' }), 1500);
-            reject(res.data);
-          } else {
-            wx.showToast({ title: res.data.message || '操作失败', icon: 'none' });
-            reject(res.data);
+            reject(body);
+            return;
           }
-        } else {
-          wx.showToast({ title: `网络错误 ${res.statusCode}`, icon: 'none' });
-          reject(res);
+          const msg = body.message || '操作失败';
+          if (options.silent !== true) {
+            wx.showToast({ title: msg, icon: 'none', duration: 2500 });
+          }
+          reject(body);
+          return;
         }
+
+        const status = res.statusCode || 0;
+        const fallback = status ? `网络错误 ${status}` : '网络错误';
+        if (options.silent !== true) {
+          wx.showToast({ title: fallback, icon: 'none' });
+        }
+        reject({ code: status || -1, message: fallback, raw: res });
       },
       fail: (err) => {
         if (showLoading) wx.hideLoading();
         console.error('API 请求失败:', url, err);
-        wx.showToast({
-          title: '网络连接失败，请检查后端是否启动',
-          icon: 'none',
-          duration: 2000
-        });
-        reject(err);
+        const msg = '网络连接失败，请检查后端是否启动';
+        if (options.silent !== true) {
+          wx.showToast({ title: msg, icon: 'none', duration: 2000 });
+        }
+        reject({ code: -1, message: msg, raw: err });
       }
     });
   });
@@ -122,7 +145,7 @@ function hasRole(userInfo, roleName) {
   if (Array.isArray(userInfo.roles) && userInfo.roles.length > 0) {
     return userInfo.roles.includes(roleName);
   }
-  // 兑底：读旧 role 字段
+  // 兜底：读旧 role 字段
   return userInfo.role === roleName;
 }
 
