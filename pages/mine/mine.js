@@ -52,6 +52,13 @@ Page({
         ? serverUser.role
         : (cached?.role && roles.includes(cached.role) ? cached.role : (roles[0] || ''));
       if (!roles.length) currentRole = '';
+      // 若本地已有临时预览头像且服务端仍为空，保留本地预览，避免被刷掉
+      const localAvatar = cached?.avatarUrl || '';
+      const serverAvatar = serverUser.avatarUrl || '';
+      const avatarUrl = serverAvatar
+        || (localAvatar && !/^https?:\/\//i.test(localAvatar) ? localAvatar : '')
+        || localAvatar
+        || '';
       const merged = {
         ...cached,
         ...serverUser,
@@ -59,7 +66,7 @@ Page({
         role: currentRole,
         nickName: serverUser.nickname || cached?.nickName || cached?.nickname || '微信用户',
         nickname: serverUser.nickname || cached?.nickname || cached?.nickName || '微信用户',
-        avatarUrl: serverUser.avatarUrl || cached?.avatarUrl || ''
+        avatarUrl
       };
       wx.setStorageSync('userInfo', merged);
       app.globalData.userInfo = merged;
@@ -96,7 +103,6 @@ Page({
 
   onLogin() { wx.navigateTo({ url: '/pages/login/login' }); },
 
-  /** 点击头像：打开资料面板（chooseAvatar / 相册 / 改昵称） */
   onAvatarTap() {
     if (!this.data.userInfo) return this.onLogin();
     this.setData({
@@ -109,19 +115,15 @@ Page({
     this.setData({ showProfilePanel: false });
   },
 
-  /**
-   * 微信官方头像选择器（open-type=chooseAvatar）
-   * 不再使用已失效的 getUserProfile 假资料。
-   */
+  /** 微信官方 chooseAvatar：先本地预览，再上传服务器 */
   onChooseWechatAvatar(e) {
-    const avatarUrl = e.detail?.avatarUrl;
-    if (!avatarUrl) {
+    const localPath = e.detail?.avatarUrl;
+    if (!localPath) {
       return wx.showToast({ title: '未获取到头像', icon: 'none' });
     }
-    this._uploadLocalAvatar(avatarUrl);
+    this._previewAndUploadAvatar(localPath);
   },
 
-  /** 从相册/拍摄选择头像 */
   onChooseLocalAvatar() {
     wx.chooseMedia({
       count: 1,
@@ -131,20 +133,33 @@ Page({
       success: (chooseRes) => {
         const tempPath = chooseRes.tempFiles?.[0]?.tempFilePath;
         if (!tempPath) return wx.showToast({ title: '未选择图片', icon: 'none' });
-        this._uploadLocalAvatar(tempPath);
+        this._previewAndUploadAvatar(tempPath);
       },
       fail: () => wx.showToast({ title: '未选择图片', icon: 'none' })
     });
   },
 
+  /** 立即用本地路径刷新 UI（不依赖域名），再异步上传 */
+  _previewAndUploadAvatar(localPath) {
+    const previewUser = {
+      ...this.data.userInfo,
+      avatarUrl: localPath
+    };
+    this.setData({ userInfo: previewUser });
+    wx.setStorageSync('userInfo', previewUser);
+    app.globalData.userInfo = previewUser;
+    this._uploadLocalAvatar(localPath);
+  },
+
   _uploadLocalAvatar(tempPath) {
     wx.showLoading({ title: '上传头像...', mask: true });
-    const upload = (filePath) => {
+    const doUpload = (filePath) => {
       wx.getFileSystemManager().readFile({
         filePath,
         encoding: 'base64',
         success: async (fileRes) => {
           try {
+            if (!fileRes.data) throw new Error('读取图片数据为空');
             const res = await api.request(
               '/api/v1/user/avatar',
               'POST',
@@ -154,12 +169,10 @@ Page({
             if (res.code !== 0) throw new Error(res.message || '头像上传失败');
             const avatarUrl = res.data?.avatarUrl;
             if (!avatarUrl) throw new Error('服务器未返回头像地址');
-            const saved = await api.updateUserProfile({ avatarUrl });
-            if (saved.code !== 0) throw new Error(saved.message || '头像保存失败');
-            const savedUrl = saved.data?.avatarUrl || avatarUrl;
+            // 服务端 uploadAvatar 已落库，无需再调 profile；避免把空值写回
             const userInfo = {
               ...this.data.userInfo,
-              avatarUrl: savedUrl,
+              avatarUrl,
               nickName: this.data.userInfo?.nickName || this.data.userInfo?.nickname || '微信用户',
               nickname: this.data.userInfo?.nickname || this.data.userInfo?.nickName || '微信用户'
             };
@@ -169,22 +182,23 @@ Page({
             wx.showToast({ title: '头像已更新', icon: 'success' });
           } catch (e) {
             console.error('[mine] avatar upload error:', e);
-            wx.showToast({ title: e.message || '头像上传失败', icon: 'none' });
+            wx.showToast({ title: e.message || '头像上传失败', icon: 'none', duration: 2500 });
           } finally {
             wx.hideLoading();
           }
         },
-        fail: () => {
+        fail: (err) => {
           wx.hideLoading();
-          wx.showToast({ title: '读取图片失败', icon: 'none' });
+          console.error('[mine] readFile fail:', err);
+          wx.showToast({ title: '读取图片失败，请重试', icon: 'none' });
         }
       });
     };
     wx.compressImage({
       src: tempPath,
-      quality: 75,
-      success: (r) => upload(r.tempFilePath),
-      fail: () => upload(tempPath)
+      quality: 80,
+      success: (r) => doUpload(r.tempFilePath || tempPath),
+      fail: () => doUpload(tempPath)
     });
   },
 
