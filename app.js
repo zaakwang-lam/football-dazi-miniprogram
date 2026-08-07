@@ -1,7 +1,6 @@
 // app.js
 App({
   onLaunch() {
-    // 启动时获取本地缓存的用户信息 + token
     const userInfo = wx.getStorageSync('userInfo');
     const token = wx.getStorageSync('token');
     if (userInfo) {
@@ -11,28 +10,19 @@ App({
       this.globalData.token = token;
     }
 
-    // 获取系统信息
     const systemInfo = wx.getSystemInfoSync();
     this.globalData.systemInfo = systemInfo;
     this.globalData.navBarHeight = (systemInfo.statusBarHeight || 20) + 44;
 
-    // 后台静默获取 openid（不需要用户授权，仅 wx.login）
+    // 仅刷新 token / openid，不自动当成「已选个人身份」
     this.silentLogin();
-
-    // 【2026-08-05】检测是否是首次打开（无真实微信昵称）→ 调起授权
-    // 参考大众点评:首次启动后,主页静默登录,但个人中心页会提示授权获取完整资料
-    // 不在 onLaunch 主动弹 wx.getUserProfile（微信限制必须用户点击触发）
-    // 由 mine 页检测后显示"完善资料"按钮
   },
 
   /**
-   * 静默登录（拿 openid 缓存到 globalData，调用支付时用）
+   * 静默登录：只拿 openid + token。
+   * PRD：身份必须用户手动选择；roles 为空时不得把用户写成个人方。
    */
   silentLogin() {
-    // 2026-07-30 修复：token 默认 2h 过期 → silentLogin 重新拿 token，避免需要鉴权的请求 401
-    // 检查本地 token 是否在有效期
-    const existingToken = wx.getStorageSync('token');
-    if (existingToken && this.globalData.openid) return;
     wx.login({
       success: (res) => {
         if (!res.code) return;
@@ -40,20 +30,49 @@ App({
         wx.request({
           url: this.globalData.apiBase + '/api/user/login',
           method: 'POST',
-          data: { code: res.code },  // 不传 userInfo → 后端只拿 openid，不覆盖昵称
+          data: { code: res.code },
           success: (loginRes) => {
-            if (loginRes.data?.code === 0) {
-              const { accessToken, user } = loginRes.data.data;
-              this.globalData.openid = user.openid || '';
-              this.globalData.token = accessToken;
-              wx.setStorageSync('token', accessToken);
-              // 只在没有 userInfo 时才用后端返回的（避免覆盖 wx.getUserProfile 的真实昵称）
-              if (!wx.getStorageSync('userInfo')) {
-                wx.setStorageSync('userInfo', user);
-                this.globalData.userInfo = user;
-              }
-              console.log('[silentLogin] token refreshed, userId=', user.id);
+            if (loginRes.data?.code !== 0) return;
+            const { accessToken, user } = loginRes.data.data || {};
+            if (!accessToken) return;
+
+            this.globalData.openid = user?.openid || this.globalData.openid || '';
+            this.globalData.token = accessToken;
+            wx.setStorageSync('token', accessToken);
+
+            const roles = Array.isArray(user?.roles) ? user.roles.filter(Boolean) : [];
+            const existing = wx.getStorageSync('userInfo') || {};
+
+            if (roles.length > 0) {
+              // 已选过身份：合并服务端资料
+              const role = (user.role && roles.includes(user.role)) ? user.role : roles[0];
+              const merged = {
+                ...existing,
+                ...user,
+                roles,
+                role,
+                nickName: user.nickname || existing.nickName || existing.nickname || '微信用户',
+                nickname: user.nickname || existing.nickname || existing.nickName || '微信用户',
+                avatarUrl: user.avatarUrl || existing.avatarUrl || ''
+              };
+              wx.setStorageSync('userInfo', merged);
+              this.globalData.userInfo = merged;
+            } else {
+              // 未选身份：只保留微信身份壳，role 置空，供登录后跳转身份选择
+              const shell = {
+                id: user?.id || existing.id,
+                openid: user?.openid || existing.openid || '',
+                nickname: user?.nickname || existing.nickname || '微信用户',
+                nickName: user?.nickname || existing.nickName || '微信用户',
+                avatarUrl: user?.avatarUrl || existing.avatarUrl || '',
+                roles: [],
+                role: '',
+                registered: false
+              };
+              wx.setStorageSync('userInfo', shell);
+              this.globalData.userInfo = shell;
             }
+            console.log('[silentLogin] token refreshed, roles=', roles);
           },
           fail: (err) => {
             console.warn('[silentLogin] fail:', err);
@@ -66,17 +85,15 @@ App({
   globalData: {
     userInfo: null,
     token: '',
-    openid: '',          // 微信 openid（用于支付）
-    wxCode: '',          // 临时 wx.login code
+    openid: '',
+    wxCode: '',
     systemInfo: null,
     navBarHeight: 64,
-    apiBase: 'https://footballdazi.cn',  // 2026-08-05 备案通过，正式域名（Cloudflare Tunnel 已停）
+    apiBase: 'https://footballdazi.cn',
     city: '广州',
-    // 兼容旧代码（部分页面可能仍引用）
     mockData: {}
   },
 
-  // 通用请求方法
   request(url, method = 'GET', data = {}) {
     return new Promise((resolve, reject) => {
       wx.request({
