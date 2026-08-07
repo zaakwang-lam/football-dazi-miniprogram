@@ -44,6 +44,52 @@
   padding:8rpx 20rpx; border-radius:999rpx; font-size:23rpx; border:1rpx solid rgba(255,255,255,.38);
 }
 
+/* 资料编辑面板 */
+.profile-mask {
+  position: fixed; left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(0,0,0,.45); z-index: 1000;
+}
+.profile-panel {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 1001;
+  background: #FFFFFF; border-radius: 28rpx 28rpx 0 0;
+  padding: 36rpx 32rpx calc(36rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 32rpx rgba(0,0,0,.08);
+}
+.profile-panel-title { font-size: 32rpx; font-weight: 700; color: #1A1A1A; text-align: center; }
+.profile-panel-sub { font-size: 24rpx; color: #999; text-align: center; margin: 10rpx 0 28rpx; }
+.profile-avatar-row { display: flex; align-items: center; gap: 20rpx; margin-bottom: 28rpx; }
+.avatar-choose-btn {
+  flex: 1; margin: 0; padding: 20rpx; background: #FFF8F2; border-radius: 20rpx;
+  border: 2rpx solid #FFE0C8; display: flex; flex-direction: column; align-items: center;
+  line-height: 1.2;
+}
+.avatar-choose-btn::after { border: none; }
+.avatar-preview {
+  width: 96rpx; height: 96rpx; border-radius: 50%; overflow: hidden;
+  background: #FFE8D6; margin-bottom: 12rpx;
+}
+.avatar-preview.placeholder {
+  display: flex; align-items: center; justify-content: center; font-size: 42rpx;
+}
+.avatar-choose-text { font-size: 24rpx; color: #FF6B00; font-weight: 600; }
+.avatar-album-btn {
+  flex: 1; height: 148rpx; border-radius: 20rpx; background: #F5F6F8;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26rpx; color: #333; font-weight: 600; border: 2rpx solid #EEEEEE;
+}
+.profile-nick-label { font-size: 24rpx; color: #666; margin-bottom: 12rpx; }
+.profile-nick-input {
+  height: 80rpx; padding: 0 24rpx; background: #F5F6F8; border-radius: 16rpx;
+  font-size: 28rpx; color: #1A1A1A; margin-bottom: 28rpx;
+}
+.profile-actions { display: flex; gap: 20rpx; }
+.profile-btn {
+  flex: 1; height: 80rpx; border-radius: 999rpx; display: flex;
+  align-items: center; justify-content: center; font-size: 28rpx; font-weight: 600;
+}
+.profile-btn.cancel { background: #F5F6F8; color: #666; }
+.profile-btn.primary { background: #FF6B00; color: #FFFFFF; }
+
 /* 身份选择 */
 .register-card {
   background:#FFFFFF; border-radius:26rpx; padding:30rpx 24rpx; margin-bottom:20rpx;
