@@ -1,0 +1,29 @@
+<view class="page">
+  <view class="card">
+    <view class="label">选择球场</view>
+    <picker mode="selector" range="{{courts}}" range-key="name" value="{{courtIndex}}" bindchange="onCourtChange">
+      <view class="picker-val">{{courts[courtIndex].name || '请选择'}}</view>
+    </picker>
+
+    <view class="label">日期</view>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="picker-val">{{date}}</view>
+    </picker>
+
+    <view class="label">时段（如 18:00-20:00）</view>
+    <input class="input" value="{{timeSlot}}" bindinput="onTimeInput" placeholder="18:00-20:00" />
+
+    <view class="label">价格（元）</view>
+    <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="300" />
+
+    <view class="btn-primary" bindtap="onPublish">发布空闲时段</view>
+  </view>
+
+  <view class="card" wx:if="{{slots.length}}">
+    <view class="section-title">已发布空闲</view>
+    <view class="slot-row" wx:for="{{slots}}" wx:key="id">
+      <text>{{item.date}} {{item.timeSlot}}</text>
+      <text class="price">¥{{item.price}}</text>
+    </view>
+  </view>
+</view>
