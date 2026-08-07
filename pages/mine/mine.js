@@ -1,7 +1,12 @@
 // pages/mine/mine.js
-// “我的”统一用户态：roles = 已注册身份，role = 当前使用身份。
+// PRD：roles = 已注册身份；role = 当前使用身份。roles 为空必须先选身份。
 const app = getApp();
 const api = require('../../utils/api.js');
+
+function normalizeRoles(raw) {
+  if (Array.isArray(raw)) return raw.filter(Boolean);
+  return [];
+}
 
 Page({
   data: {
@@ -11,9 +16,8 @@ Page({
     currentRole: '',
     hasUser: false,
     hasCourt: false,
+    needSelectRole: false,
     needAuth: false,
-    _authPrompted: true,
-    showRoleHint: false,
     showProfilePanel: false,
     draftNickname: ''
   },
@@ -21,8 +25,6 @@ Page({
   onLoad() { this.loadUser(); },
   onShow() {
     this.loadUser();
-    if (wx.getStorageSync('token') && api.hasRole(this.data.userInfo, 'user')) this.loadMyTeams();
-    else this.setData({ myTeams: [] });
   },
 
   async loadMyTeams() {
@@ -36,34 +38,48 @@ Page({
   },
 
   async loadUser() {
-    const cached = wx.getStorageSync('userInfo');
-    if (cached) this.applyUserState(cached);
-    else this.setData({ userInfo: null, hasUser: false, hasCourt: false, currentRole: '', myTeams: [] });
     const token = wx.getStorageSync('token');
-    if (!token) return;
+    const cached = wx.getStorageSync('userInfo');
+
+    if (!token) {
+      this.setData({
+        userInfo: null,
+        hasUser: false,
+        hasCourt: false,
+        currentRole: '',
+        needSelectRole: false,
+        myTeams: []
+      });
+      return;
+    }
+
+    if (cached) this.applyUserState(cached);
+
     try {
       const res = await api.getUserProfile();
       if (res.code !== 0 || !res.data) return;
       const serverUser = res.data;
-      const serverRoles = Array.isArray(serverUser.roles) ? serverUser.roles : null;
-      const cachedRoles = Array.isArray(cached?.roles) ? cached.roles : null;
-      const roles = serverRoles !== null ? serverRoles : (cachedRoles !== null ? cachedRoles : (serverUser.role ? [serverUser.role] : []));
-      let currentRole = serverUser.role && roles.includes(serverUser.role)
-        ? serverUser.role
-        : (cached?.role && roles.includes(cached.role) ? cached.role : (roles[0] || ''));
-      if (!roles.length) currentRole = '';
-      // 若本地已有临时预览头像且服务端仍为空，保留本地预览，避免被刷掉
+      const roles = normalizeRoles(serverUser.roles);
+      let currentRole = '';
+      if (roles.length) {
+        currentRole = (serverUser.role && roles.includes(serverUser.role))
+          ? serverUser.role
+          : (cached?.role && roles.includes(cached.role) ? cached.role : roles[0]);
+      }
+
       const localAvatar = cached?.avatarUrl || '';
       const serverAvatar = serverUser.avatarUrl || '';
       const avatarUrl = serverAvatar
         || (localAvatar && !/^https?:\/\//i.test(localAvatar) ? localAvatar : '')
         || localAvatar
         || '';
+
       const merged = {
         ...cached,
         ...serverUser,
         roles,
         role: currentRole,
+        registered: roles.length > 0,
         nickName: serverUser.nickname || cached?.nickName || cached?.nickname || '微信用户',
         nickname: serverUser.nickname || cached?.nickname || cached?.nickName || '微信用户',
         avatarUrl
@@ -71,21 +87,42 @@ Page({
       wx.setStorageSync('userInfo', merged);
       app.globalData.userInfo = merged;
       this.applyUserState(merged);
+
+      // 有 token 但未选身份 → 去身份选择页（PRD 首次登录）
+      if (roles.length === 0) {
+        wx.redirectTo({ url: '/pages/role-select/role-select' });
+        return;
+      }
+
+      if (roles.includes('user') && currentRole === 'user') {
+        this.loadMyTeams();
+      } else {
+        this.setData({ myTeams: [] });
+      }
     } catch (e) {
       console.warn('拉取用户信息失败，使用本地缓存:', e);
+      const roles = normalizeRoles(cached?.roles);
+      if (token && roles.length === 0) {
+        wx.redirectTo({ url: '/pages/role-select/role-select' });
+      }
     }
   },
 
   applyUserState(userInfo) {
-    const roles = Array.isArray(userInfo?.roles) ? userInfo.roles : (userInfo?.role ? [userInfo.role] : []);
-    const currentRole = userInfo?.role && roles.includes(userInfo.role) ? userInfo.role : (roles[0] || '');
-    const normalized = userInfo ? { ...userInfo, roles, role: currentRole } : null;
+    // 只认 roles，绝不把 DB 默认 role=user 当成已选个人
+    const roles = normalizeRoles(userInfo?.roles);
+    const currentRole = roles.length
+      ? ((userInfo?.role && roles.includes(userInfo.role)) ? userInfo.role : roles[0])
+      : '';
+    const normalized = userInfo
+      ? { ...userInfo, roles, role: currentRole, registered: roles.length > 0 }
+      : null;
     this.setData({
       userInfo: normalized,
       hasUser: roles.includes('user'),
       hasCourt: roles.includes('court'),
       currentRole,
-      needAuth: false,
+      needSelectRole: !!wx.getStorageSync('token') && roles.length === 0,
       draftNickname: normalized?.nickName || normalized?.nickname || ''
     });
   },
@@ -99,12 +136,18 @@ Page({
     app.globalData.userInfo = nextUser;
     this.setData({ userInfo: nextUser, currentRole: newRole });
     wx.showToast({ title: `已切换到${newRole === 'user' ? '个人用户' : '球场方'}`, icon: 'success' });
+    if (newRole === 'user') this.loadMyTeams();
+    else this.setData({ myTeams: [] });
   },
 
   onLogin() { wx.navigateTo({ url: '/pages/login/login' }); },
 
+  onSelectRolePage() {
+    wx.navigateTo({ url: '/pages/role-select/role-select' });
+  },
+
   onAvatarTap() {
-    if (!this.data.userInfo) return this.onLogin();
+    if (!this.data.userInfo || !this.data.currentRole) return this.onLogin();
     this.setData({
       showProfilePanel: true,
       draftNickname: this.data.userInfo.nickName || this.data.userInfo.nickname || ''
@@ -115,12 +158,9 @@ Page({
     this.setData({ showProfilePanel: false });
   },
 
-  /** 微信官方 chooseAvatar：先本地预览，再上传服务器 */
   onChooseWechatAvatar(e) {
     const localPath = e.detail?.avatarUrl;
-    if (!localPath) {
-      return wx.showToast({ title: '未获取到头像', icon: 'none' });
-    }
+    if (!localPath) return wx.showToast({ title: '未获取到头像', icon: 'none' });
     this._previewAndUploadAvatar(localPath);
   },
 
@@ -139,12 +179,8 @@ Page({
     });
   },
 
-  /** 立即用本地路径刷新 UI（不依赖域名），再异步上传 */
   _previewAndUploadAvatar(localPath) {
-    const previewUser = {
-      ...this.data.userInfo,
-      avatarUrl: localPath
-    };
+    const previewUser = { ...this.data.userInfo, avatarUrl: localPath };
     this.setData({ userInfo: previewUser });
     wx.setStorageSync('userInfo', previewUser);
     app.globalData.userInfo = previewUser;
@@ -169,7 +205,6 @@ Page({
             if (res.code !== 0) throw new Error(res.message || '头像上传失败');
             const avatarUrl = res.data?.avatarUrl;
             if (!avatarUrl) throw new Error('服务器未返回头像地址');
-            // 服务端 uploadAvatar 已落库，无需再调 profile；避免把空值写回
             const userInfo = {
               ...this.data.userInfo,
               avatarUrl,
@@ -248,7 +283,8 @@ Page({
       const userInfo = {
         ...current,
         roles: Array.isArray(res.data?.roles) ? res.data.roles : ['user'],
-        role: 'user'
+        role: 'user',
+        registered: true
       };
       wx.setStorageSync('userInfo', userInfo);
       app.globalData.userInfo = userInfo;
@@ -316,6 +352,7 @@ Page({
           hasUser: false,
           hasCourt: false,
           currentRole: '',
+          needSelectRole: false,
           showProfilePanel: false
         });
         wx.showToast({ title: '已退出', icon: 'success' });
