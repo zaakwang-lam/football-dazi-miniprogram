@@ -1,5 +1,4 @@
 // pages/mine/mine.js
-// PRD：roles = 已注册身份；role = 当前使用身份。roles 为空必须先选身份。
 const app = getApp();
 const api = require('../../utils/api.js');
 
@@ -23,16 +22,13 @@ Page({
   },
 
   onLoad() { this.loadUser(); },
-  onShow() {
-    this.loadUser();
-  },
+  onShow() { this.loadUser(); },
 
   async loadMyTeams() {
     try {
       const res = await api.getMyTeams();
       if (res.code === 0) this.setData({ myTeams: res.data?.list || [] });
     } catch (e) {
-      console.warn('加载我的球队失败:', e);
       this.setData({ myTeams: [] });
     }
   },
@@ -42,14 +38,7 @@ Page({
     const cached = wx.getStorageSync('userInfo');
 
     if (!token) {
-      this.setData({
-        userInfo: null,
-        hasUser: false,
-        hasCourt: false,
-        currentRole: '',
-        needSelectRole: false,
-        myTeams: []
-      });
+      this.setData({ userInfo: null, hasUser: false, hasCourt: false, currentRole: '', needSelectRole: false, myTeams: [] });
       return;
     }
 
@@ -82,34 +71,27 @@ Page({
         registered: roles.length > 0,
         nickName: serverUser.nickname || cached?.nickName || cached?.nickname || '微信用户',
         nickname: serverUser.nickname || cached?.nickname || cached?.nickName || '微信用户',
-        avatarUrl
+        avatarUrl,
+        courtInfo: serverUser.court || cached?.courtInfo || null
       };
       wx.setStorageSync('userInfo', merged);
       app.globalData.userInfo = merged;
       this.applyUserState(merged);
 
-      // 有 token 但未选身份 → 去身份选择页（PRD 首次登录）
       if (roles.length === 0) {
         wx.redirectTo({ url: '/pages/role-select/role-select' });
         return;
       }
 
-      if (roles.includes('user') && currentRole === 'user') {
-        this.loadMyTeams();
-      } else {
-        this.setData({ myTeams: [] });
-      }
+      if (roles.includes('user') && currentRole === 'user') this.loadMyTeams();
+      else this.setData({ myTeams: [] });
     } catch (e) {
-      console.warn('拉取用户信息失败，使用本地缓存:', e);
       const roles = normalizeRoles(cached?.roles);
-      if (token && roles.length === 0) {
-        wx.redirectTo({ url: '/pages/role-select/role-select' });
-      }
+      if (token && roles.length === 0) wx.redirectTo({ url: '/pages/role-select/role-select' });
     }
   },
 
   applyUserState(userInfo) {
-    // 只认 roles，绝不把 DB 默认 role=user 当成已选个人
     const roles = normalizeRoles(userInfo?.roles);
     const currentRole = roles.length
       ? ((userInfo?.role && roles.includes(userInfo.role)) ? userInfo.role : roles[0])
@@ -141,22 +123,13 @@ Page({
   },
 
   onLogin() { wx.navigateTo({ url: '/pages/login/login' }); },
-
-  onSelectRolePage() {
-    wx.navigateTo({ url: '/pages/role-select/role-select' });
-  },
+  onSelectRolePage() { wx.navigateTo({ url: '/pages/role-select/role-select' }); },
 
   onAvatarTap() {
     if (!this.data.userInfo || !this.data.currentRole) return this.onLogin();
-    this.setData({
-      showProfilePanel: true,
-      draftNickname: this.data.userInfo.nickName || this.data.userInfo.nickname || ''
-    });
+    this.setData({ showProfilePanel: true, draftNickname: this.data.userInfo.nickName || this.data.userInfo.nickname || '' });
   },
-
-  onCloseProfilePanel() {
-    this.setData({ showProfilePanel: false });
-  },
+  onCloseProfilePanel() { this.setData({ showProfilePanel: false }); },
 
   onChooseWechatAvatar(e) {
     const localPath = e.detail?.avatarUrl;
@@ -166,10 +139,7 @@ Page({
 
   onChooseLocalAvatar() {
     wx.chooseMedia({
-      count: 1,
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      sizeType: ['compressed'],
+      count: 1, mediaType: ['image'], sourceType: ['album', 'camera'], sizeType: ['compressed'],
       success: (chooseRes) => {
         const tempPath = chooseRes.tempFiles?.[0]?.tempFilePath;
         if (!tempPath) return wx.showToast({ title: '未选择图片', icon: 'none' });
@@ -191,71 +161,41 @@ Page({
     wx.showLoading({ title: '上传头像...', mask: true });
     const doUpload = (filePath) => {
       wx.getFileSystemManager().readFile({
-        filePath,
-        encoding: 'base64',
+        filePath, encoding: 'base64',
         success: async (fileRes) => {
           try {
-            if (!fileRes.data) throw new Error('读取图片数据为空');
-            const res = await api.request(
-              '/api/v1/user/avatar',
-              'POST',
-              { base64: fileRes.data, mimeType: 'image/jpeg' },
-              { loadingText: '保存头像...', showLoading: false, silent: true }
-            );
+            const res = await api.request('/api/v1/user/avatar', 'POST', { base64: fileRes.data, mimeType: 'image/jpeg' }, { showLoading: false, silent: true });
             if (res.code !== 0) throw new Error(res.message || '头像上传失败');
             const avatarUrl = res.data?.avatarUrl;
             if (!avatarUrl) throw new Error('服务器未返回头像地址');
-            const userInfo = {
-              ...this.data.userInfo,
-              avatarUrl,
-              nickName: this.data.userInfo?.nickName || this.data.userInfo?.nickname || '微信用户',
-              nickname: this.data.userInfo?.nickname || this.data.userInfo?.nickName || '微信用户'
-            };
+            const userInfo = { ...this.data.userInfo, avatarUrl };
             wx.setStorageSync('userInfo', userInfo);
             app.globalData.userInfo = userInfo;
             this.setData({ userInfo, showProfilePanel: false });
             wx.showToast({ title: '头像已更新', icon: 'success' });
           } catch (e) {
-            console.error('[mine] avatar upload error:', e);
-            wx.showToast({ title: e.message || '头像上传失败', icon: 'none', duration: 2500 });
+            wx.showToast({ title: e.message || '头像上传失败', icon: 'none' });
           } finally {
             wx.hideLoading();
           }
         },
-        fail: (err) => {
-          wx.hideLoading();
-          console.error('[mine] readFile fail:', err);
-          wx.showToast({ title: '读取图片失败，请重试', icon: 'none' });
-        }
+        fail: () => { wx.hideLoading(); wx.showToast({ title: '读取图片失败', icon: 'none' }); }
       });
     };
-    wx.compressImage({
-      src: tempPath,
-      quality: 80,
-      success: (r) => doUpload(r.tempFilePath || tempPath),
-      fail: () => doUpload(tempPath)
-    });
+    wx.compressImage({ src: tempPath, quality: 80, success: (r) => doUpload(r.tempFilePath || tempPath), fail: () => doUpload(tempPath) });
   },
 
-  onDraftNicknameInput(e) {
-    this.setData({ draftNickname: e.detail.value || '' });
-  },
+  onDraftNicknameInput(e) { this.setData({ draftNickname: e.detail.value || '' }); },
 
   async onSaveNickname() {
     const newName = String(this.data.draftNickname || '').trim().slice(0, 20);
     if (!newName) return wx.showToast({ title: '昵称不能为空', icon: 'none' });
-    if (newName === '微信用户') {
-      return wx.showToast({ title: '请填写真实昵称', icon: 'none' });
-    }
+    if (newName === '微信用户') return wx.showToast({ title: '请填写真实昵称', icon: 'none' });
     wx.showLoading({ title: '保存中...', mask: true });
     try {
       const res = await api.updateUserProfile({ nickname: newName });
       if (res.code !== 0) throw new Error(res.message || '保存失败');
-      const userInfo = {
-        ...this.data.userInfo,
-        nickname: res.data?.nickname || newName,
-        nickName: res.data?.nickname || newName
-      };
+      const userInfo = { ...this.data.userInfo, nickname: res.data?.nickname || newName, nickName: res.data?.nickname || newName };
       wx.setStorageSync('userInfo', userInfo);
       app.globalData.userInfo = userInfo;
       this.setData({ userInfo, showProfilePanel: false, draftNickname: userInfo.nickName });
@@ -280,19 +220,13 @@ Page({
       const res = await api.registerRole({ role: 'user' });
       if (res.code !== 0) throw new Error(res.message || '注册失败');
       const current = wx.getStorageSync('userInfo') || {};
-      const userInfo = {
-        ...current,
-        roles: Array.isArray(res.data?.roles) ? res.data.roles : ['user'],
-        role: 'user',
-        registered: true
-      };
+      const userInfo = { ...current, roles: Array.isArray(res.data?.roles) ? res.data.roles : ['user'], role: 'user', registered: true };
       wx.setStorageSync('userInfo', userInfo);
       app.globalData.userInfo = userInfo;
       this.applyUserState(userInfo);
       wx.showToast({ title: '注册成功', icon: 'success' });
       this.loadUser();
     } catch (e) {
-      console.error('[mine] register user error:', e);
       wx.showToast({ title: e.message || '注册失败', icon: 'none' });
     } finally {
       wx.hideLoading();
@@ -309,14 +243,12 @@ Page({
       if (type === 'join-team') return wx.navigateTo({ url: '/pages/mine/my-teams?type=browse' });
     }
     if (api.hasRole(userInfo, 'court')) {
-      if (type === 'my-courts') return wx.navigateTo({ url: '/pages/mine/my-courts' });
-      if (type === 'court-info') return wx.navigateTo({ url: '/pages/mine/court-info' });
-      if (type === 'publish-slot') return wx.navigateTo({ url: '/pages/mine/publish-slot' });
-      if (type === 'my-slots') return wx.navigateTo({ url: '/pages/mine/my-slots' });
+      // 统一入口：球场信息（含编辑）
+      if (type === 'court-info' || type === 'my-courts') return wx.navigateTo({ url: '/pages/mine/my-courts' });
+      if (type === 'publish-slot' || type === 'my-slots') return wx.navigateTo({ url: '/pages/mine/publish-slot' });
+      if (type === 'court-orders') return wx.navigateTo({ url: '/pages/court-orders/list' });
     }
-    const map = { order: '/pages/order/list', msg: null, about: null };
-    if (type === 'team') return wx.showToast({ title: '请向上滚动查看', icon: 'none' });
-    if (map[type]) return wx.navigateTo({ url: map[type] });
+    if (type === 'order') return wx.navigateTo({ url: '/pages/order/list' });
     wx.showToast({ title: '功能开发中', icon: 'none' });
   },
 
@@ -325,10 +257,7 @@ Page({
   },
 
   onEditNickname() {
-    this.setData({
-      showProfilePanel: true,
-      draftNickname: this.data.userInfo?.nickName || this.data.userInfo?.nickname || ''
-    });
+    this.setData({ showProfilePanel: true, draftNickname: this.data.userInfo?.nickName || this.data.userInfo?.nickname || '' });
   },
 
   onLogout() {
@@ -345,16 +274,7 @@ Page({
         app.globalData.token = '';
         app.globalData.userInfo = null;
         app.globalData.openid = '';
-        this.setData({
-          userInfo: null,
-          myTeams: [],
-          needAuth: false,
-          hasUser: false,
-          hasCourt: false,
-          currentRole: '',
-          needSelectRole: false,
-          showProfilePanel: false
-        });
+        this.setData({ userInfo: null, myTeams: [], hasUser: false, hasCourt: false, currentRole: '', needSelectRole: false, showProfilePanel: false });
         wx.showToast({ title: '已退出', icon: 'success' });
         setTimeout(() => wx.navigateTo({ url: '/pages/login/login' }), 800);
       }
