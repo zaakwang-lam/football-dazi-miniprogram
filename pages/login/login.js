@@ -1,5 +1,5 @@
 // pages/login/login.js
-// 登录流程：我的 → 微信登录 → 选择身份 → 完成对应注册
+// PRD：我的 → 微信登录 → 选择身份 → 完成对应注册
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -22,11 +22,8 @@ Page({
   },
 
   /**
-   * 微信登录：只完成微信身份认证，不提前索取昵称/头像。
-   * 后端通过 roles 数组判断用户是否已经完成身份注册：
-   * roles=[]          → 首次登录，进入身份选择
-   * roles=[user]      → 已注册个人用户
-   * roles=[user,court] → 已注册个人+球场方
+   * 微信登录：只完成微信身份认证。
+   * roles=[] → 身份选择；roles 有值 → 我的
    */
   onLoginTap() {
     if (!this.data.agreed) {
@@ -52,10 +49,9 @@ Page({
           }
 
           const user = res.data?.user || {};
-          const roles = Array.isArray(user.roles) ? user.roles : [];
-          this._saveLoginState(user, res.data?.accessToken);
+          const roles = Array.isArray(user.roles) ? user.roles.filter(Boolean) : [];
+          this._saveLoginState(user, res.data?.accessToken, roles);
 
-          // 不能使用 user.role 判断首次登录，因为后端 users.role 有默认值 user。
           if (roles.length === 0) {
             wx.redirectTo({ url: '/pages/role-select/role-select' });
             return;
@@ -79,12 +75,19 @@ Page({
     });
   },
 
-  _saveLoginState(user, token) {
+  _saveLoginState(user, token, roles) {
     const oldUser = wx.getStorageSync('userInfo') || {};
+    const safeRoles = Array.isArray(roles) ? roles : [];
+    const role = safeRoles.length
+      ? ((user?.role && safeRoles.includes(user.role)) ? user.role : safeRoles[0])
+      : '';
+
     const userInfo = {
       ...oldUser,
       ...(user || {}),
-      roles: Array.isArray(user?.roles) ? user.roles : [],
+      roles: safeRoles,
+      role,
+      registered: safeRoles.length > 0,
       nickName: user?.nickname || oldUser.nickName || '微信用户',
       nickname: user?.nickname || oldUser.nickname || '微信用户',
       avatarUrl: user?.avatarUrl || oldUser.avatarUrl || ''
