@@ -1,82 +1,61 @@
 // pages/mine/court-register.js
-// 球场信息登记表单（2026-07-28 升级：行政区 + 多选场地性质 + 按周多时段）
+// 球场信息登记表单：行政区 + 多选场地性质 + 按周多时段
 const api = require('../../utils/api.js');
 
 const DISTRICTS = ['天河', '海珠', '越秀', '荔湾', '白云', '黄埔', '番禺', '花都', '南沙', '从化', '增城'];
 const WEEK_DAYS = [
-  { key: '周一', label: '周一' },
-  { key: '周二', label: '周二' },
-  { key: '周三', label: '周三' },
-  { key: '周四', label: '周四' },
-  { key: '周五', label: '周五' },
-  { key: '周六', label: '周六' },
+  { key: '周一', label: '周一' }, { key: '周二', label: '周二' }, { key: '周三', label: '周三' },
+  { key: '周四', label: '周四' }, { key: '周五', label: '周五' }, { key: '周六', label: '周六' },
   { key: '周日', label: '周日' }
 ];
 
 Page({
   data: {
-    courtTypes: ['11人制', '8人制', '7人制', '5人制', '3人制'],  // 2026-07-30 增加 8 人制 + 3 人制
-    surfaceTypes: ['人工草地', '天然草地', '硬地'],
+    courtTypes: [
+      { value: '11人制', selected: false }, { value: '8人制', selected: false },
+      { value: '7人制', selected: false }, { value: '5人制', selected: false }, { value: '3人制', selected: false }
+    ],
+    surfaceTypes: [
+      { value: '人工草地', selected: false }, { value: '天然草地', selected: false }, { value: '硬地', selected: false }
+    ],
     districts: DISTRICTS,
     weekDays: WEEK_DAYS,
-    courtTypeIndex: 0,
-    surfaceTypeIndex: 0,
-    districtIndex: -1,  // -1 表示未选
+    districtIndex: -1,
     form: {
-      name: '',
-      types: [],  // 2026-07-30 改：支持人制多选（原来 type 单选）
-      surfaceTypes: [],  // 多选
-      district: '',
-      address: '',
-      longitude: '',
-      latitude: '',
-      phone: '',
-      price: '',
-      openHours: {},  // 按周多时段 {周一: [{start,end}], ...}
-      description: ''
+      name: '', types: [], surfaceTypes: [], district: '', address: '', longitude: '', latitude: '',
+      phone: '', price: '', openHours: {}, description: ''
     }
   },
 
   onInput(e) {
-    const field = e.currentTarget.dataset.field;
-    this.setData({ [`form.${field}`]: e.detail.value });
+    this.setData({ [`form.${e.currentTarget.dataset.field}`]: e.detail.value });
   },
 
-  // 支持人制多选 toggle（2026-07-30 宏哥要求多选）
+  // 不再在 WXML 中调用 indexOf()。微信小程序 WXML 表达式不适合承担这种方法调用，
+  // 统一维护 selected 布尔值，避免“点击没有反应/选中状态不刷新”。
   onCourtTypeToggle(e) {
     const value = e.currentTarget.dataset.value;
-    const list = [...(this.data.form.types || [])];
+    const list = (this.data.form.types || []).slice();
     const idx = list.indexOf(value);
-    if (idx >= 0) {
-      list.splice(idx, 1);
-    } else {
-      list.push(value);
-    }
-    this.setData({ 'form.types': list });
+    if (idx >= 0) list.splice(idx, 1); else list.push(value);
+    const courtTypes = this.data.courtTypes.map(item => ({ ...item, selected: list.includes(item.value) }));
+    this.setData({ 'form.types': list, courtTypes });
   },
 
-  // 场地性质多选 toggle
   onSurfaceToggle(e) {
     const value = e.currentTarget.dataset.value;
-    const list = [...this.data.form.surfaceTypes];
+    const list = (this.data.form.surfaceTypes || []).slice();
     const idx = list.indexOf(value);
-    if (idx >= 0) {
-      list.splice(idx, 1);
-    } else {
-      list.push(value);
-    }
-    this.setData({ 'form.surfaceTypes': list });
+    if (idx >= 0) list.splice(idx, 1); else list.push(value);
+    const surfaceTypes = this.data.surfaceTypes.map(item => ({ ...item, selected: list.includes(item.value) }));
+    this.setData({ 'form.surfaceTypes': list, surfaceTypes });
   },
 
   onDistrictChange(e) {
     const idx = Number(e.detail.value);
-    this.setData({
-      districtIndex: idx,
-      'form.district': this.data.districts[idx]
-    });
+    this.setData({ districtIndex: idx, 'form.district': this.data.districts[idx] });
   },
 
-  // 添加时段
   onAddSlot(e) {
     const day = e.currentTarget.dataset.day;
     const openHours = { ...this.data.form.openHours };
@@ -85,116 +64,78 @@ Page({
     this.setData({ 'form.openHours': openHours });
   },
 
-  // 删除时段
   onDelSlot(e) {
     const day = e.currentTarget.dataset.day;
     const idx = Number(e.currentTarget.dataset.idx);
     const openHours = { ...this.data.form.openHours };
     if (openHours[day]) {
       openHours[day] = openHours[day].filter((_, i) => i !== idx);
-      if (openHours[day].length === 0) delete openHours[day];
+      if (!openHours[day].length) delete openHours[day];
     }
     this.setData({ 'form.openHours': openHours });
   },
 
-  // 修改时段
   onSlotTimeChange(e) {
-    const day = e.currentTarget.dataset.day;
-    const idx = Number(e.currentTarget.dataset.idx);
-    const field = e.currentTarget.dataset.field;
+    const { day, idx, field } = e.currentTarget.dataset;
     const openHours = { ...this.data.form.openHours };
-    if (openHours[day] && openHours[day][idx]) {
-      openHours[day] = openHours[day].map((s, i) => i === idx ? { ...s, [field]: e.detail.value } : s);
+    const index = Number(idx);
+    if (openHours[day]?.[index]) {
+      openHours[day] = openHours[day].map((slot, i) => i === index ? { ...slot, [field]: e.detail.value } : slot);
     }
     this.setData({ 'form.openHours': openHours });
   },
 
   async onSubmit() {
     const f = this.data.form;
-    // 必填校验
     if (!f.name) return wx.showToast({ title: '请填写球场名称', icon: 'none' });
     if (!f.address) return wx.showToast({ title: '请填写球场地址', icon: 'none' });
     if (!f.district) return wx.showToast({ title: '请选择行政区', icon: 'none' });
-    if (!f.types || f.types.length === 0) {
-      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
-    }
-    if (!f.surfaceTypes || f.surfaceTypes.length === 0) {
-      return wx.showToast({ title: '请至少选择一种场地性质', icon: 'none' });
-    }
+    if (!f.types.length) return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    if (!f.surfaceTypes.length) return wx.showToast({ title: '请至少选择一种场地性质', icon: 'none' });
 
-    wx.showLoading({ title: '提交中...' });
+    wx.showLoading({ title: '提交中...', mask: true });
     try {
       const res = await api.registerRole({
         role: 'court',
         courtInfo: {
-          name: f.name,
-          types: f.types,  // 2026-07-30 多选人制
-          type: f.types[0],  // 兼容后端单 type 字段
-          district: f.district,
-          surfaceTypes: f.surfaceTypes,
-          // 兼容旧字段（取多选第一个作 fallback，避免后端报错）
-          surfaceType: f.surfaceTypes[0],
-          address: f.address,
-          longitude: f.longitude ? Number(f.longitude) : null,
-          latitude: f.latitude ? Number(f.latitude) : null,
-          phone: f.phone,
-          price: Number(f.price) || 0,
-          // 按周多时段（已过滤空对象）
-          openHours: f.openHours,
-          // 兼容旧字段（从按周时段拼出 openTime/closeTime，取周一第一段）
-          openTime: this.inferOldOpenTime(f.openHours),
-          closeTime: this.inferOldCloseTime(f.openHours),
+          name: f.name, types: f.types, type: f.types[0], district: f.district,
+          surfaceTypes: f.surfaceTypes, surfaceType: f.surfaceTypes[0], address: f.address,
+          longitude: f.longitude ? Number(f.longitude) : null, latitude: f.latitude ? Number(f.latitude) : null,
+          phone: f.phone, price: Number(f.price) || 0, openHours: f.openHours,
+          openTime: this.inferOldOpenTime(f.openHours), closeTime: this.inferOldCloseTime(f.openHours),
           description: f.description
         }
       });
       wx.hideLoading();
-
       if (res.code === 0) {
-        // 【2026-08-04 #22】同步 storage - 多身份数组
         const userInfo = wx.getStorageSync('userInfo') || {};
+        userInfo.roles = Array.isArray(res.data?.roles) ? res.data.roles : ['user', 'court'];
         userInfo.role = 'court';
-        userInfo.roles = res.data?.roles || ['user', 'court'];
         userInfo.courtId = res.data?.courtId || null;
         wx.setStorageSync('userInfo', userInfo);
         wx.showModal({
-          title: '提交成功',
-          content: '球场信息已提交，请等待管理员审核（1-3 个工作日）',
-          showCancel: false,
-          success: () => wx.navigateBack()
+          title: '提交成功', content: '球场信息已提交，请等待管理员审核（1-3 个工作日）', showCancel: false,
+          success: () => wx.switchTab({ url: '/pages/mine/mine' })
         });
       } else {
         wx.showToast({ title: res.message || '提交失败', icon: 'none' });
       }
     } catch (e) {
       wx.hideLoading();
-      wx.showToast({ title: '网络错误', icon: 'none' });
-      console.error(e);
+      console.error('[court-register] submit failed:', e);
+      wx.showToast({ title: e.message || '提交失败，请重试', icon: 'none' });
     }
   },
 
-  // 从按周时段推断 openTime（旧字段 fallback）
   inferOldOpenTime(openHours) {
-    if (!openHours) return '08:00:00';
-    const mon = openHours['周一'];
-    if (mon && mon[0] && mon[0].start) return mon[0].start + ':00';
-    // 取第一个有数据的日
-    for (const day of Object.keys(openHours)) {
-      if (openHours[day] && openHours[day][0] && openHours[day][0].start) {
-        return openHours[day][0].start + ':00';
-      }
-    }
+    const days = Object.keys(openHours || {});
+    for (const day of days) if (openHours[day]?.[0]?.start) return openHours[day][0].start + ':00';
     return '08:00:00';
   },
 
   inferOldCloseTime(openHours) {
-    if (!openHours) return '22:00:00';
-    const mon = openHours['周一'];
-    if (mon && mon[0] && mon[0].end) return mon[0].end + ':00';
-    for (const day of Object.keys(openHours)) {
-      if (openHours[day] && openHours[day][0] && openHours[day][0].end) {
-        return openHours[day][0].end + ':00';
-      }
-    }
+    const days = Object.keys(openHours || {});
+    for (const day of days) if (openHours[day]?.[0]?.end) return openHours[day][0].end + ':00';
     return '22:00:00';
   }
 });
