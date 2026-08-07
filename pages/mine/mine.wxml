@@ -1,5 +1,6 @@
 <!-- pages/mine/mine.wxml -->
 <view class="page">
+  <!-- 未登录：无 token / 无用户壳 -->
   <view class="login-entry" wx:if="{{!userInfo}}" bindtap="onLogin">
     <view class="login-entry-avatar">⚽</view>
     <view class="login-entry-info">
@@ -9,6 +10,17 @@
     <text class="login-entry-arrow">›</text>
   </view>
 
+  <!-- 已微信登录但未选身份 -->
+  <view class="login-entry" wx:elif="{{needSelectRole}}" bindtap="onSelectRolePage">
+    <view class="login-entry-avatar">⚽</view>
+    <view class="login-entry-info">
+      <view class="login-entry-title">请选择您的身份</view>
+      <view class="login-entry-desc">个人用户或球场方，选择后才能使用完整功能</view>
+    </view>
+    <text class="login-entry-arrow">›</text>
+  </view>
+
+  <!-- 已选身份 -->
   <view class="user-card" wx:else>
     <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}" bindtap="onAvatarTap">
       <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
@@ -16,8 +28,8 @@
     <view class="user-avatar placeholder" wx:else bindtap="onAvatarTap">👤</view>
     <view class="user-info">
       <view class="user-name">{{userInfo.nickName || userInfo.nickname || '微信用户'}}</view>
-      <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
-      <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方</view>
+      <view class="user-role" wx:if="{{currentRole === 'user'}}">👤 个人用户</view>
+      <view class="user-role" wx:if="{{currentRole === 'court'}}">🏟 球场方</view>
       <view class="user-actions">
         <view class="login-btn" bindtap="onEditNickname">✏️ 修改资料</view>
         <view class="logout-btn" bindtap="onLogout">退出登录</view>
@@ -25,7 +37,6 @@
     </view>
   </view>
 
-  <!-- 头像/昵称编辑面板：使用微信官方 chooseAvatar + type=nickname -->
   <view class="profile-mask" wx:if="{{showProfilePanel}}" bindtap="onCloseProfilePanel"></view>
   <view class="profile-panel" wx:if="{{showProfilePanel}}">
     <view class="profile-panel-title">完善头像和昵称</view>
@@ -56,7 +67,8 @@
     </view>
   </view>
 
-  <view class="register-card" wx:if="{{userInfo && !userInfo.role}}">
+  <!-- 兜底：页面内再选一次身份 -->
+  <view class="register-card" wx:if="{{needSelectRole}}">
     <view class="register-title">选择您的身份</view>
     <view class="register-sub">选择后才能使用完整功能</view>
     <view class="register-options">
@@ -73,7 +85,7 @@
     </view>
   </view>
 
-  <view class="menu-card" wx:if="{{userInfo && userInfo.role === 'user'}}">
+  <view class="menu-card" wx:if="{{currentRole === 'user'}}">
     <view class="menu-section-title">我的组队</view>
     <view class="menu-row" bindtap="onMenuTap" data-type="my-teams">
       <view class="menu-icon icon-team">⚽</view>
@@ -102,7 +114,7 @@
     </view>
   </view>
 
-  <view class="menu-card" wx:if="{{userInfo && userInfo.role === 'court'}}">
+  <view class="menu-card" wx:if="{{currentRole === 'court'}}">
     <view class="menu-section-title">球场管理</view>
     <view class="menu-row" wx:if="{{userInfo.courtInfo}}">
       <view class="menu-icon icon-court">🏟</view>
@@ -138,7 +150,7 @@
     </view>
   </view>
 
-  <view class="my-teams-card" wx:if="{{userInfo && userInfo.role === 'user' && myTeams.length > 0}}">
+  <view class="my-teams-card" wx:if="{{currentRole === 'user' && myTeams.length > 0}}">
     <view class="menu-section-title">我的球队</view>
     <view class="my-team-item" wx:for="{{myTeams}}" wx:key="id" bindtap="onMyTeamTap" data-id="{{item.id}}">
       <view class="team-logo">{{item.name[0] || '⚽'}}</view>
