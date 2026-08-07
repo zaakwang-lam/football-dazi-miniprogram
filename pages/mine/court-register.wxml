@@ -8,18 +8,18 @@
 
     <view class="form-label required">支持人制（多选）</view>
     <view class="checkbox-group">
-      <view class="checkbox-item {{form.types.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{courtTypes}}" wx:key="index" bindtap="onCourtTypeToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
-        <view class="checkbox {{form.types.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.types.indexOf(item) >= 0 ? '✓' : ''}}</view>
-        <text>{{item}}</text>
+      <view class="checkbox-item {{item.selected ? 'active' : ''}}" wx:for="{{courtTypes}}" wx:key="value" bindtap="onCourtTypeToggle" data-value="{{item.value}}" hover-class="checkbox-item-hover">
+        <view class="checkbox {{item.selected ? 'checked' : ''}}">{{item.selected ? '✓' : ''}}</view>
+        <text>{{item.value}}</text>
       </view>
     </view>
 
     <view class="form-label required">场地性质（多选）</view>
     <view class="checkbox-group">
-      <label class="checkbox-item {{form.surfaceTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{surfaceTypes}}" wx:key="*this" bindtap="onSurfaceToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
-        <view class="checkbox {{form.surfaceTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.surfaceTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
-        <text>{{item}}</text>
-      </label>
+      <view class="checkbox-item {{item.selected ? 'active' : ''}}" wx:for="{{surfaceTypes}}" wx:key="value" bindtap="onSurfaceToggle" data-value="{{item.value}}" hover-class="checkbox-item-hover">
+        <view class="checkbox {{item.selected ? 'checked' : ''}}">{{item.selected ? '✓' : ''}}</view>
+        <text>{{item.value}}</text>
+      </view>
     </view>
 
     <view class="form-label required">行政区</view>
@@ -32,10 +32,10 @@
 
     <view class="form-label">经纬度（选填）</view>
     <view class="form-loc-row">
-      <input class="form-input loc-input" placeholder="经度（备案后接入地图可选点）" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
+      <input class="form-input loc-input" placeholder="经度" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
       <input class="form-input loc-input" placeholder="纬度" value="{{form.latitude}}" bindinput="onInput" data-field="latitude" type="digit" />
     </view>
-    <view class="loc-hint">📍 备案通过后接入腾讯地图 SDK 可一键选点定位（当前手动输入）</view>
+    <view class="loc-hint">📍 当前支持手动填写经纬度</view>
 
     <view class="form-label">联系电话</view>
     <input class="form-input" placeholder="如：020-12345678" value="{{form.phone}}" bindinput="onInput" data-field="phone" type="number" />
