@@ -1,129 +1,55 @@
 <!-- pages/mine/mine.wxml -->
 <view class="page">
-  <!-- 未登录：简洁登录入口 -->
   <view class="login-entry" wx:if="{{!userInfo}}" bindtap="onLogin">
     <view class="login-entry-avatar">⚽</view>
-    <view class="login-entry-info">
-      <view class="login-entry-title">登录足球搭子</view>
-      <view class="login-entry-desc">微信一键登录，开始组队、约战、订场</view>
-    </view>
+    <view class="login-entry-info"><view class="login-entry-title">登录足球搭子</view><view class="login-entry-desc">微信一键登录，开始组队、约战、订场</view></view>
     <text class="login-entry-arrow">›</text>
   </view>
 
-  <!-- 已登录：用户信息 -->
   <view class="user-card" wx:else>
-    <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}">
+    <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}" bindtap="onAvatarTap">
       <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
     </view>
-    <view class="user-avatar placeholder" wx:else>👤</view>
-
+    <view class="user-avatar placeholder" wx:else bindtap="onAvatarTap">👤</view>
     <view class="user-info">
       <view class="user-name">{{userInfo.nickName || userInfo.nickname || '微信用户'}}</view>
       <view class="user-role" wx:if="{{userInfo.role === 'user'}}">👤 个人用户</view>
       <view class="user-role" wx:if="{{userInfo.role === 'court'}}">🏟 球场方</view>
-      <view class="user-actions">
-        <view class="login-btn" bindtap="onEditNickname">✏️ 修改昵称</view>
-        <view class="logout-btn" bindtap="onLogout">退出登录</view>
-      </view>
+      <view class="user-actions"><view class="login-btn" bindtap="onEditNickname">✏️ 修改昵称</view><view class="logout-btn" bindtap="onLogout">退出登录</view></view>
     </view>
   </view>
 
-  <!-- 已登录但尚未选择身份 -->
   <view class="register-card" wx:if="{{userInfo && !userInfo.role}}">
-    <view class="register-title">选择您的身份</view>
-    <view class="register-sub">选择后才能使用完整功能</view>
+    <view class="register-title">选择您的身份</view><view class="register-sub">选择后才能使用完整功能</view>
     <view class="register-options">
-      <view class="register-option" bindtap="onRegisterTap" data-role="user">
-        <view class="register-icon">👤</view>
-        <view class="register-name">个人用户</view>
-        <view class="register-desc">发起组队、加入约战、订场</view>
-      </view>
-      <view class="register-option" bindtap="onRegisterTap" data-role="court">
-        <view class="register-icon">🏟</view>
-        <view class="register-name">球场方</view>
-        <view class="register-desc">登记球场、发布空闲时段</view>
-      </view>
+      <view class="register-option" bindtap="onRegisterTap" data-role="user"><view class="register-icon">👤</view><view class="register-name">个人用户</view><view class="register-desc">发起组队、加入约战、订场</view></view>
+      <view class="register-option" bindtap="onRegisterTap" data-role="court"><view class="register-icon">🏟</view><view class="register-name">球场方</view><view class="register-desc">登记球场、发布空闲时段</view></view>
     </view>
   </view>
 
-  <!-- 个人用户菜单 -->
   <view class="menu-card" wx:if="{{userInfo && userInfo.role === 'user'}}">
     <view class="menu-section-title">我的组队</view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="my-teams">
-      <view class="menu-icon icon-team">⚽</view>
-      <text class="menu-label">我发起的组队</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="joined-teams">
-      <view class="menu-icon icon-join">👥</view>
-      <text class="menu-label">我加入的组队</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="create-team">
-      <view class="menu-icon icon-create">➕</view>
-      <text class="menu-label">发起组队</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="join-team">
-      <view class="menu-icon icon-join">👥</view>
-      <text class="menu-label">加入已发起组队</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" wx:if="{{hasCourt}}" bindtap="onSwitchRole">
-      <view class="menu-icon icon-switch">🔄</view>
-      <text class="menu-label">切换到球场方</text>
-      <text class="menu-arrow">›</text>
-    </view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="my-teams"><view class="menu-icon icon-team">⚽</view><text class="menu-label">我发起的组队</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="joined-teams"><view class="menu-icon icon-join">👥</view><text class="menu-label">我加入的组队</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="create-team"><view class="menu-icon icon-create">➕</view><text class="menu-label">发起组队</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="join-team"><view class="menu-icon icon-join">👥</view><text class="menu-label">加入已发起组队</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" wx:if="{{hasCourt}}" bindtap="onSwitchRole"><view class="menu-icon icon-switch">🔄</view><text class="menu-label">切换到球场方</text><text class="menu-arrow">›</text></view>
   </view>
 
-  <!-- 球场方菜单 -->
   <view class="menu-card" wx:if="{{userInfo && userInfo.role === 'court'}}">
     <view class="menu-section-title">球场管理</view>
-    <view class="menu-row" wx:if="{{userInfo.courtInfo}}">
-      <view class="menu-icon icon-court">🏟</view>
-      <text class="menu-label">{{userInfo.courtInfo.name || '我的球场'}}</text>
-      <view class="status-tag status-ok" wx:if="{{userInfo.courtInfo.status === 1}}">营业中</view>
-      <view class="status-tag status-pending" wx:if="{{userInfo.courtInfo.status === 2}}">审核中</view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="my-courts">
-      <view class="menu-icon icon-court">📋</view>
-      <text class="menu-label">我的球场</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="court-info">
-      <view class="menu-icon icon-info">📝</view>
-      <text class="menu-label">球场信息</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="publish-slot">
-      <view class="menu-icon icon-publish">📅</view>
-      <text class="menu-label">发布空闲时段</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="my-slots">
-      <view class="menu-icon icon-list">📋</view>
-      <text class="menu-label">我发布的空闲</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" wx:if="{{hasUser}}" bindtap="onSwitchRole">
-      <view class="menu-icon icon-switch">🔄</view>
-      <text class="menu-label">切换到个人用户</text>
-      <text class="menu-arrow">›</text>
-    </view>
+    <view class="menu-row" wx:if="{{userInfo.courtInfo}}"><view class="menu-icon icon-court">🏟</view><text class="menu-label">{{userInfo.courtInfo.name || '我的球场'}}</text><view class="status-tag status-ok" wx:if="{{userInfo.courtInfo.status === 1}}">营业中</view><view class="status-tag status-pending" wx:if="{{userInfo.courtInfo.status === 2}}">审核中</view><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="my-courts"><view class="menu-icon icon-court">📋</view><text class="menu-label">我的球场</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="court-info"><view class="menu-icon icon-info">📝</view><text class="menu-label">球场信息</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="publish-slot"><view class="menu-icon icon-publish">📅</view><text class="menu-label">发布空闲时段</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="my-slots"><view class="menu-icon icon-list">📋</view><text class="menu-label">我发布的空闲</text><text class="menu-arrow">›</text></view>
+    <view class="menu-row" wx:if="{{hasUser}}" bindtap="onSwitchRole"><view class="menu-icon icon-switch">🔄</view><text class="menu-label">切换到个人用户</text><text class="menu-arrow">›</text></view>
   </view>
 
-  <!-- 我的球队 -->
   <view class="my-teams-card" wx:if="{{userInfo && userInfo.role === 'user' && myTeams.length > 0}}">
     <view class="menu-section-title">我的球队</view>
     <view class="my-team-item" wx:for="{{myTeams}}" wx:key="id" bindtap="onMyTeamTap" data-id="{{item.id}}">
-      <view class="team-logo">{{item.name[0] || '⚽'}}</view>
-      <view class="team-info">
-        <view class="team-name">{{item.name}}</view>
-        <view class="team-meta">{{item.district || '广州'}} · {{item.memberCount || 1}} 人 · {{item.attendance || 0}} 场出勤</view>
-      </view>
-      <view class="team-role" wx:if="{{item.role === 'captain'}}">队长</view>
-      <text class="menu-arrow">›</text>
+      <view class="team-logo">{{item.name[0] || '⚽'}}</view><view class="team-info"><view class="team-name">{{item.name}}</view><view class="team-meta">{{item.district || '广州'}} · {{item.memberCount || 1}} 人 · {{item.attendance || 0}} 场出勤</view></view><view class="team-role" wx:if="{{item.role === 'captain'}}">队长</view><text class="menu-arrow">›</text>
     </view>
   </view>
 </view>
