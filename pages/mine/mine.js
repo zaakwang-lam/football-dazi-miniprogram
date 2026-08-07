@@ -68,7 +68,7 @@ Page({
     });
   },
 
-  /** 使用微信授权资料，同时更新昵称和头像 */
+  /** 使用微信授权资料，同时更新昵称和头像，并再次写入后端资料接口确认落库 */
   onRelogin() {
     wx.getUserProfile({
       desc: '用于完善您的头像和昵称',
@@ -79,14 +79,20 @@ Page({
         try {
           const loginRes = await new Promise((resolve, reject) => wx.login({ success: resolve, fail: reject }));
           if (!loginRes?.code) throw new Error('微信登录失败');
-          const res = await api.wxLogin(loginRes.code, { nickName: p.nickName, nickname: p.nickName, avatarUrl: p.avatarUrl || '', gender: p.gender, country: p.country, province: p.province, city: p.city, language: p.language });
-          if (res.code !== 0) throw new Error(res.message || '资料更新失败');
+          const profile = { nickName: p.nickName, nickname: p.nickName, avatarUrl: p.avatarUrl || '', gender: p.gender, country: p.country, province: p.province, city: p.city, language: p.language };
+          const res = await api.wxLogin(loginRes.code, profile);
+          if (res.code !== 0) throw new Error(res.message || '微信资料同步失败');
+          const token = res.data?.accessToken || res.data?.token || wx.getStorageSync('token');
+          if (token) wx.setStorageSync('token', token);
+          // wxLogin 已经同步一次；再调用 profile 更新接口，确保旧账号也真正落库。
+          const updateRes = await api.updateUserProfile({ nickname: p.nickName, avatarUrl: p.avatarUrl || '' });
+          if (updateRes.code !== 0) throw new Error(updateRes.message || '资料保存失败');
           const current = wx.getStorageSync('userInfo') || {};
           const serverUser = res.data?.user || {};
-          const userInfo = { ...current, ...serverUser, roles: Array.isArray(serverUser.roles) ? serverUser.roles : (current.roles || []), nickName: p.nickName, nickname: p.nickName, avatarUrl: p.avatarUrl || serverUser.avatarUrl || '', authorized: true };
+          const saved = updateRes.data || {};
+          const userInfo = { ...current, ...serverUser, ...saved, roles: Array.isArray(serverUser.roles) ? serverUser.roles : (current.roles || []), nickName: saved.nickname || p.nickName, nickname: saved.nickname || p.nickName, avatarUrl: saved.avatarUrl || p.avatarUrl || '', authorized: true };
           wx.setStorageSync('userInfo', userInfo);
-          if (res.data?.accessToken) wx.setStorageSync('token', res.data.accessToken);
-          app.globalData.userInfo = userInfo; app.globalData.token = res.data?.accessToken || wx.getStorageSync('token'); app.globalData.openid = userInfo.openid || '';
+          app.globalData.userInfo = userInfo; app.globalData.token = token; app.globalData.openid = userInfo.openid || '';
           this.applyUserState(userInfo);
           wx.showToast({ title: '微信头像和昵称已更新', icon: 'success' });
         } catch (e) { console.error('[mine] refresh profile error:', e); wx.showToast({ title: e.message || '更新失败', icon: 'none' }); }
@@ -109,7 +115,13 @@ Page({
             try {
               const res = await api.request('/api/v1/user/avatar', 'POST', { base64: fileRes.data, mimeType: 'image/jpeg' }, { loadingText: '保存头像...', showLoading: false });
               if (res.code !== 0) throw new Error(res.message || '头像上传失败');
-              const userInfo = { ...this.data.userInfo, avatarUrl: res.data?.avatarUrl || '' };
+              const avatarUrl = res.data?.avatarUrl;
+              if (!avatarUrl) throw new Error('服务器未返回头像地址');
+              // 再走一次资料接口，确保 User.avatarUrl 与当前页面完全一致。
+              const saved = await api.updateUserProfile({ avatarUrl });
+              if (saved.code !== 0) throw new Error(saved.message || '头像保存失败');
+              const savedUrl = saved.data?.avatarUrl || avatarUrl;
+              const userInfo = { ...this.data.userInfo, avatarUrl: savedUrl, nickName: this.data.userInfo?.nickName || this.data.userInfo?.nickname || '微信用户' };
               wx.setStorageSync('userInfo', userInfo); app.globalData.userInfo = userInfo; this.setData({ userInfo });
               wx.showToast({ title: '头像已更新', icon: 'success' });
             } catch (e) { console.error('[mine] avatar upload error:', e); wx.showToast({ title: e.message || '头像上传失败', icon: 'none' }); }
@@ -119,8 +131,7 @@ Page({
         });
       };
       wx.compressImage({ src: tempPath, quality: 75, success: r => upload(r.tempFilePath), fail: () => upload(tempPath) });
-    }
-  });
+    }, fail: () => wx.showToast({ title: '未选择图片', icon: 'none' }) });
   },
 
   async onRegisterTap(e) {
