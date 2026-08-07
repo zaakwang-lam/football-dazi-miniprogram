@@ -1,6 +1,5 @@
 <!-- pages/mine/mine.wxml -->
 <view class="page">
-  <!-- 未登录：无 token / 无用户壳 -->
   <view class="login-entry" wx:if="{{!userInfo}}" bindtap="onLogin">
     <view class="login-entry-avatar">⚽</view>
     <view class="login-entry-info">
@@ -10,7 +9,6 @@
     <text class="login-entry-arrow">›</text>
   </view>
 
-  <!-- 已微信登录但未选身份 -->
   <view class="login-entry" wx:elif="{{needSelectRole}}" bindtap="onSelectRolePage">
     <view class="login-entry-avatar">⚽</view>
     <view class="login-entry-info">
@@ -20,7 +18,6 @@
     <text class="login-entry-arrow">›</text>
   </view>
 
-  <!-- 已选身份 -->
   <view class="user-card" wx:else>
     <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}" bindtap="onAvatarTap">
       <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
@@ -41,7 +38,6 @@
   <view class="profile-panel" wx:if="{{showProfilePanel}}">
     <view class="profile-panel-title">完善头像和昵称</view>
     <view class="profile-panel-sub">微信已不再返回真实头像昵称，请手动选择</view>
-
     <view class="profile-avatar-row">
       <button class="avatar-choose-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseWechatAvatar">
         <image wx:if="{{userInfo.avatarUrl}}" class="avatar-preview" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
@@ -50,24 +46,14 @@
       </button>
       <view class="avatar-album-btn" bindtap="onChooseLocalAvatar">从相册选择</view>
     </view>
-
     <view class="profile-nick-label">昵称</view>
-    <input
-      class="profile-nick-input"
-      type="nickname"
-      maxlength="20"
-      placeholder="请输入昵称"
-      value="{{draftNickname}}"
-      bindinput="onDraftNicknameInput"
-      bindblur="onDraftNicknameInput"
-    />
+    <input class="profile-nick-input" type="nickname" maxlength="20" placeholder="请输入昵称" value="{{draftNickname}}" bindinput="onDraftNicknameInput" bindblur="onDraftNicknameInput" />
     <view class="profile-actions">
       <view class="profile-btn cancel" bindtap="onCloseProfilePanel">取消</view>
       <view class="profile-btn primary" bindtap="onSaveNickname">保存昵称</view>
     </view>
   </view>
 
-  <!-- 兜底：页面内再选一次身份 -->
   <view class="register-card" wx:if="{{needSelectRole}}">
     <view class="register-title">选择您的身份</view>
     <view class="register-sub">选择后才能使用完整功能</view>
@@ -114,22 +100,11 @@
     </view>
   </view>
 
+  <!-- 球场方：合并「我的球场/球场信息」为统一入口 -->
   <view class="menu-card" wx:if="{{currentRole === 'court'}}">
     <view class="menu-section-title">球场管理</view>
-    <view class="menu-row" wx:if="{{userInfo.courtInfo}}">
-      <view class="menu-icon icon-court">🏟</view>
-      <text class="menu-label">{{userInfo.courtInfo.name || '我的球场'}}</text>
-      <view class="status-tag status-ok" wx:if="{{userInfo.courtInfo.status === 1}}">营业中</view>
-      <view class="status-tag status-pending" wx:if="{{userInfo.courtInfo.status === 2}}">审核中</view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="my-courts">
-      <view class="menu-icon icon-court">📋</view>
-      <text class="menu-label">我的球场</text>
-      <text class="menu-arrow">›</text>
-    </view>
     <view class="menu-row" bindtap="onMenuTap" data-type="court-info">
-      <view class="menu-icon icon-info">📝</view>
+      <view class="menu-icon icon-court">🏟</view>
       <text class="menu-label">球场信息</text>
       <text class="menu-arrow">›</text>
     </view>
@@ -138,9 +113,9 @@
       <text class="menu-label">发布空闲时段</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="my-slots">
+    <view class="menu-row" bindtap="onMenuTap" data-type="court-orders">
       <view class="menu-icon icon-list">📋</view>
-      <text class="menu-label">我发布的空闲</text>
+      <text class="menu-label">订单管理</text>
       <text class="menu-arrow">›</text>
     </view>
     <view class="menu-row" wx:if="{{hasUser}}" bindtap="onSwitchRole">
