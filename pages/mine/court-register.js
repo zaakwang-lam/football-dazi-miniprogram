@@ -31,8 +31,6 @@ Page({
     this.setData({ [`form.${e.currentTarget.dataset.field}`]: e.detail.value });
   },
 
-  // 不再在 WXML 中调用 indexOf()。微信小程序 WXML 表达式不适合承担这种方法调用，
-  // 统一维护 selected 布尔值，避免“点击没有反应/选中状态不刷新”。
   onCourtTypeToggle(e) {
     const value = e.currentTarget.dataset.value;
     const list = (this.data.form.types || []).slice();
@@ -118,12 +116,13 @@ Page({
           success: () => wx.switchTab({ url: '/pages/mine/mine' })
         });
       } else {
-        wx.showToast({ title: res.message || '提交失败', icon: 'none' });
+        wx.showToast({ title: res.message || '提交失败', icon: 'none', duration: 3000 });
       }
     } catch (e) {
       wx.hideLoading();
       console.error('[court-register] submit failed:', e);
-      wx.showToast({ title: e.message || '提交失败，请重试', icon: 'none' });
+      const msg = (e && (e.message || e.errMsg)) || '提交失败，请重试';
+      wx.showToast({ title: msg, icon: 'none', duration: 3000 });
     }
   },
 
