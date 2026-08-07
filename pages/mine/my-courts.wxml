@@ -1,24 +1,21 @@
-<!-- pages/mine/my-courts.wxml -->
+<!-- pages/mine/my-courts.wxml 球场信息统一入口 -->
 <view class="page">
-  <!-- 空状态 -->
   <view class="empty-state" wx:if="{{!loading && courts.length === 0}}">
     <view class="empty-icon">🏟</view>
-    <view class="empty-title">暂无已审核球场</view>
-    <view class="empty-desc">球场信息审核通过后会在这里显示</view>
+    <view class="empty-title">暂无球场</view>
+    <view class="empty-desc">登记球场后可在此查看与编辑信息</view>
     <button class="btn-register" bindtap="onRegisterTap">登记新球场</button>
   </view>
 
-  <!-- 加载中 -->
   <view class="loading-state" wx:if="{{loading}}">
     <text>加载中...</text>
   </view>
 
-  <!-- 球场列表（按加入时间倒序） -->
   <view class="court-list" wx:if="{{courts.length > 0}}">
-    <view class="court-card" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
+    <view class="court-card" wx:for="{{courts}}" wx:key="id">
       <view class="card-header">
         <text class="court-name">{{item.name}}</text>
-        <view class="status-tag status-ok">已营业</view>
+        <view class="status-tag status-{{item.statusCls}}">{{item.statusLabel}}</view>
       </view>
 
       <view class="card-row">
@@ -28,8 +25,18 @@
       </view>
 
       <view class="card-row">
+        <text class="icon">📞</text>
+        <text>{{item.phone || '未设置联系电话'}}</text>
+      </view>
+
+      <view class="card-row">
+        <text class="icon">💰</text>
+        <text>{{item.priceText}}</text>
+      </view>
+
+      <view class="card-row">
         <text class="icon">🟢</text>
-        <text class="surface">{{item.surfaceTypesText}}</text>
+        <text class="surface">{{item.surfaceTypesText}} · {{item.type || ''}}</text>
       </view>
 
       <view class="card-row" wx:if="{{item.openHoursText}}">
@@ -37,10 +44,35 @@
         <text class="open-hours">{{item.openHoursText}}</text>
       </view>
 
-      <view class="card-footer">
-        <text class="join-time">加入于 {{item.createdAtText}}</text>
-        <text class="arrow">›</text>
+      <view class="card-row" wx:if="{{item.description}}">
+        <text class="icon">📝</text>
+        <text>{{item.description}}</text>
       </view>
+
+      <view class="card-actions">
+        <view class="action-btn" bindtap="onEditTap" data-id="{{item.id}}">编辑信息</view>
+        <view class="action-btn primary" wx:if="{{item.status === 1}}" bindtap="onPublishSlot" data-id="{{item.id}}">发布空闲</view>
+      </view>
+
+      <view class="card-footer">
+        <text class="join-time">登记于 {{item.createdAtText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 简易编辑面板：费用 / 电话 / 简介 -->
+  <view class="edit-mask" wx:if="{{editing}}" bindtap="onCancelEdit"></view>
+  <view class="edit-panel" wx:if="{{editing}}">
+    <view class="edit-title">编辑球场信息</view>
+    <view class="edit-label">联系电话</view>
+    <input class="edit-input" type="number" maxlength="20" value="{{editForm.phone}}" data-field="phone" bindinput="onEditInput" placeholder="联系电话" />
+    <view class="edit-label">场地费用（元/场）</view>
+    <input class="edit-input" type="digit" value="{{editForm.price}}" data-field="price" bindinput="onEditInput" placeholder="例如 300" />
+    <view class="edit-label">球场简介</view>
+    <textarea class="edit-textarea" value="{{editForm.description}}" data-field="description" bindinput="onEditInput" placeholder="交通、停车、更衣室等" maxlength="500" />
+    <view class="edit-actions">
+      <view class="edit-btn cancel" bindtap="onCancelEdit">取消</view>
+      <view class="edit-btn primary" bindtap="onSaveEdit">保存</view>
     </view>
   </view>
 </view>
