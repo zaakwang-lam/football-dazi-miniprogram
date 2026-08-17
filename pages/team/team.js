@@ -32,16 +32,36 @@ Page({
       const res = await api.getTeamList();
       const teams = (res.data?.list || []).map((t, i) => ({
         ...t,
-        shortName: t.name.substring(0, 2),
+        members: t.memberCount || t.members || 0,
+        shortName: (t.name || '球').substring(0, 2),
         bgColor: COLORS[i % COLORS.length],
         motto: t.motto || '',
-        attendance: t.attendance || 0
+        attendance: t.attendance || 0,
+        wins: t.wins || 0,
+        draws: t.draws || 0,
+        losses: t.losses || 0
       }));
 
       const myTeamId = wx.getStorageSync('myTeamId');
       let myTeam = null;
       if (myTeamId) {
         myTeam = teams.find(t => t.id === Number(myTeamId));
+      }
+      // 若本地无 myTeamId，尝试用「我的球队」接口
+      if (!myTeam) {
+        try {
+          const mine = await api.getMyTeams();
+          const first = (mine.data?.list || [])[0];
+          if (first) {
+            myTeam = teams.find(t => t.id === first.id) || {
+              ...first,
+              members: first.memberCount || 0,
+              shortName: (first.name || '球').substring(0, 2),
+              bgColor: COLORS[0]
+            };
+            wx.setStorageSync('myTeamId', first.id);
+          }
+        } catch (_) { /* ignore */ }
       }
 
       this.setData({ teams, myTeam });
@@ -61,17 +81,20 @@ Page({
 
   onQuickTap(e) {
     const type = e.currentTarget.dataset.type;
-    const map = {
-      checkin: '/pages/team/checkin',
-      aa: '/pages/team/aa',
-      announce: '/pages/team/team',
-      find: '/pages/court/list'
-    };
-    if (type === 'announce') {
-      wx.showToast({ title: '公告功能开发中', icon: 'none' });
+    const teamId = this.data.myTeam?.id;
+    if (type === 'checkin') {
+      wx.navigateTo({ url: `/pages/team/checkin?teamId=${teamId || ''}` });
       return;
     }
-    wx.navigateTo({ url: map[type] });
+    if (type === 'announce') {
+      wx.navigateTo({ url: `/pages/team/announce?teamId=${teamId || ''}` });
+      return;
+    }
+    if (type === 'find') {
+      // 约战 → 约战板块（非场地预订）
+      wx.navigateTo({ url: '/pages/war/war' });
+      return;
+    }
   },
 
   onShareAppMessage() {

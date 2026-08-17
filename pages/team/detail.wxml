@@ -4,7 +4,7 @@
     <view class="hero-avatar">{{team.shortName}}</view>
     <view class="hero-name">{{team.name}}</view>
     <view class="hero-meta">Lv.{{team.level}} · {{team.district}} · 成立 {{team.founded}}</view>
-    <view class="hero-motto">"{{team.motto}}"</view>
+    <view class="hero-motto" wx:if="{{team.motto}}">"{{team.motto}}"</view>
   </view>
 
   <view class="stats-card">
@@ -26,30 +26,10 @@
     </view>
   </view>
 
-  <view class="section-title">最近比赛</view>
-  <!-- 2026-07-30 宏哥要求：不显示比分（match-score） -->
-  <view class="match-list">
-    <view class="match-item">
-      <view class="match-date">07-20</view>
-      <view class="match-info">
-        <text class="match-title">vs 海珠飓风队</text>
-        <text class="match-loc">📍 海珠7人场</text>
-      </view>
-    </view>
-    <view class="match-item">
-      <view class="match-date">07-13</view>
-      <view class="match-info">
-        <text class="match-title">vs 天河新星队</text>
-        <text class="match-loc">📍 天河体育中心</text>
-      </view>
-    </view>
-    <view class="match-item">
-      <view class="match-date">07-06</view>
-      <view class="match-info">
-        <text class="match-title">vs 白云之鹰队</text>
-        <text class="match-loc">📍 白云山体育公园</text>
-      </view>
-    </view>
+  <!-- 球队公告 -->
+  <view class="section-title" wx:if="{{team.announcement}}">公告</view>
+  <view class="announce-box" wx:if="{{team.announcement}}">
+    <text>{{team.announcement}}</text>
   </view>
 
   <view class="section-title">队员 ({{team.members}})</view>

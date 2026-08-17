@@ -41,7 +41,7 @@
         <view class="main-info">
           <text class="info-item">📍 {{item.location}}</text>
           <text class="info-item">🕐 {{item.playTimeText}}</text>
-          <text class="info-item" wx:if="{{item.matchTypesText}}">⚽️ {{item.matchTypesText}}</text>
+          <text class="info-item" wx:if="{{item.matchTypesText}}">{{item.matchTypesText}}</text>
           <text class="info-item" wx:if="{{item.fee !== null && item.fee !== undefined}}">💰 ¥{{item.fee}}</text>
         </view>
         <view class="main-desc">{{item.desc}}</view>
@@ -61,9 +61,8 @@
     <text>+</text>
   </view>
 
-  <!-- 空状态 -->
+  <!-- 空状态（已去掉足球图标） -->
   <view class="empty" wx:if="{{list.length === 0 && loaded}}">
-    <view class="empty-icon">⚽</view>
     <text>暂无凑人信息</text>
     <view class="empty-tip">点 + 发起一个凑人</view>
   </view>

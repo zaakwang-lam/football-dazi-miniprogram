@@ -16,8 +16,9 @@ Page({
     loading: true,
     editing: false,
     typeOptions: TYPE_OPTIONS,
+    editCourtTypes: TYPE_OPTIONS.map(v => ({ value: v, selected: false })),
     editForm: {
-      id: null, name: '', address: '', type: '', typeIndex: 0,
+      id: null, name: '', address: '', types: [], type: '',
       phone: '', price: '', description: ''
     }
   },
@@ -35,8 +36,13 @@ Page({
       if (res.code === 0) {
         const list = (res.data.list || []).map(c => {
           const st = STATUS_MAP[c.status] || { label: '未知', cls: 'off' };
+          const types = Array.isArray(c.types) && c.types.length
+            ? c.types
+            : (c.type ? [c.type] : []);
           return {
             ...c,
+            types,
+            typesText: types.length ? types.join(' / ') : (c.type || '未设置'),
             statusLabel: st.label,
             statusCls: st.cls,
             surfaceTypesText: (c.surfaceTypes && c.surfaceTypes.length)
@@ -81,15 +87,22 @@ Page({
     const id = e.currentTarget.dataset.id;
     const court = this.data.courts.find(c => c.id === id);
     if (!court) return;
-    const typeIndex = Math.max(0, TYPE_OPTIONS.indexOf(court.type));
+    const types = Array.isArray(court.types) && court.types.length
+      ? court.types.slice()
+      : (court.type ? [court.type] : []);
+    const editCourtTypes = TYPE_OPTIONS.map(v => ({
+      value: v,
+      selected: types.includes(v)
+    }));
     this.setData({
       editing: true,
+      editCourtTypes,
       editForm: {
         id: court.id,
         name: court.name || '',
         address: court.address || '',
-        type: court.type || TYPE_OPTIONS[0],
-        typeIndex,
+        types,
+        type: types[0] || TYPE_OPTIONS[0],
         phone: court.phone || '',
         price: court.price != null ? String(court.price) : '',
         description: court.description || ''
@@ -101,11 +114,16 @@ Page({
     this.setData({ [`editForm.${e.currentTarget.dataset.field}`]: e.detail.value });
   },
 
-  onTypeChange(e) {
-    const idx = Number(e.detail.value);
+  onEditTypeToggle(e) {
+    const value = e.currentTarget.dataset.value;
+    const list = (this.data.editForm.types || []).slice();
+    const idx = list.indexOf(value);
+    if (idx >= 0) list.splice(idx, 1); else list.push(value);
+    const editCourtTypes = TYPE_OPTIONS.map(v => ({ value: v, selected: list.includes(v) }));
     this.setData({
-      'editForm.typeIndex': idx,
-      'editForm.type': TYPE_OPTIONS[idx]
+      'editForm.types': list,
+      'editForm.type': list[0] || '',
+      editCourtTypes
     });
   },
 
@@ -117,12 +135,16 @@ Page({
     if (!f.name || !f.address) {
       return wx.showToast({ title: '请填写名称和地址', icon: 'none' });
     }
+    if (!f.types || !f.types.length) {
+      return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
+    }
     wx.showLoading({ title: '保存中...', mask: true });
     try {
       const res = await api.updateMyCourt(f.id, {
         name: String(f.name).trim(),
         address: String(f.address).trim(),
-        type: f.type,
+        types: f.types,
+        type: f.types[0],
         phone: String(f.phone || '').trim(),
         price: Number(f.price) || 0,
         description: String(f.description || '').trim()

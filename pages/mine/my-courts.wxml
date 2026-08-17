@@ -18,7 +18,7 @@
       <view class="card-row"><text class="icon">📍</text><text class="district">{{item.district || '未设置'}}</text><text class="address">· {{item.address}}</text></view>
       <view class="card-row"><text class="icon">📞</text><text>{{item.phone || '未设置联系电话'}}</text></view>
       <view class="card-row"><text class="icon">💰</text><text>{{item.priceText}}</text></view>
-      <view class="card-row"><text class="icon">🟢</text><text class="surface">{{item.surfaceTypesText}} · {{item.type || ''}}</text></view>
+      <view class="card-row"><text class="icon">🟢</text><text class="surface">{{item.surfaceTypesText}} · {{item.typesText}}</text></view>
       <view class="card-row" wx:if="{{item.openHoursText}}"><text class="icon">🕐</text><text class="open-hours">{{item.openHoursText}}</text></view>
       <view class="card-row" wx:if="{{item.description}}"><text class="icon">📝</text><text>{{item.description}}</text></view>
       <view class="card-actions">
@@ -36,10 +36,19 @@
     <input class="edit-input" value="{{editForm.name}}" data-field="name" bindinput="onEditInput" placeholder="球场名称" />
     <view class="edit-label">地址</view>
     <input class="edit-input" value="{{editForm.address}}" data-field="address" bindinput="onEditInput" placeholder="详细地址" />
-    <view class="edit-label">人制类型</view>
-    <picker mode="selector" range="{{typeOptions}}" value="{{editForm.typeIndex}}" bindchange="onTypeChange">
-      <view class="edit-input">{{editForm.type || '请选择'}}</view>
-    </picker>
+    <view class="edit-label">人制类型（可多选）</view>
+    <view class="checkbox-group">
+      <view
+        class="checkbox-item {{item.selected ? 'active' : ''}}"
+        wx:for="{{editCourtTypes}}"
+        wx:key="value"
+        bindtap="onEditTypeToggle"
+        data-value="{{item.value}}"
+      >
+        <view class="checkbox {{item.selected ? 'checked' : ''}}">{{item.selected ? '✓' : ''}}</view>
+        <text>{{item.value}}</text>
+      </view>
+    </view>
     <view class="edit-label">联系电话</view>
     <input class="edit-input" type="number" maxlength="20" value="{{editForm.phone}}" data-field="phone" bindinput="onEditInput" placeholder="联系电话" />
     <view class="edit-label">场地费用（元/场）</view>

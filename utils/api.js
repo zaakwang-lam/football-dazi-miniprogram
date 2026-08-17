@@ -137,6 +137,9 @@ function createTeam(data) { return request('/api/v1/teams', 'POST', data, { load
 function joinTeam(id) {
   return request(`/api/v1/teams/${id}/join`, 'POST', {}, { loadingText: '加入中...' });
 }
+function updateTeamAnnouncement(id, announcement) {
+  return request(`/api/v1/teams/${id}/announcement`, 'PUT', { announcement }, { loadingText: '保存中...' });
+}
 function checkin(data) {
   return request(`/api/v1/teams/${data.teamId}/checkin`, 'POST', {
     longitude: data.longitude, latitude: data.latitude
@@ -152,5 +155,5 @@ module.exports = {
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, closeLfg,
-  getTeamList, getTeamDetail, createTeam, joinTeam, checkin, createAa, getTeamStats
+  getTeamList, getTeamDetail, createTeam, joinTeam, updateTeamAnnouncement, checkin, createAa, getTeamStats
 };

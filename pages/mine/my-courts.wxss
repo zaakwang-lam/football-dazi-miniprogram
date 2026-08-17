@@ -60,6 +60,7 @@
   position: fixed; left: 0; right: 0; bottom: 0;
   background: #fff; border-radius: 24rpx 24rpx 0 0;
   padding: 32rpx 28rpx 48rpx; z-index: 101;
+  max-height: 85vh; overflow-y: auto;
 }
 .edit-title { font-size: 32rpx; font-weight: bold; margin-bottom: 24rpx; }
 .edit-label { font-size: 24rpx; color: #888; margin: 16rpx 0 8rpx; }
@@ -76,3 +77,19 @@
 }
 .edit-btn.cancel { background: #f0f0f0; color: #666; }
 .edit-btn.primary { background: #FF6B00; color: #fff; }
+
+/* 人制多选（与登记页一致） */
+.checkbox-group {
+  display: flex; flex-wrap: wrap; gap: 16rpx;
+}
+.checkbox-item {
+  display: flex; align-items: center; padding: 12rpx 20rpx;
+  background: #f5f5f5; border-radius: 12rpx; font-size: 26rpx; color: #333;
+}
+.checkbox-item.active { background: #FFE8D6; color: #FF6B00; }
+.checkbox {
+  width: 32rpx; height: 32rpx; border-radius: 6rpx; border: 2rpx solid #ccc;
+  margin-right: 10rpx; display: flex; align-items: center; justify-content: center;
+  font-size: 22rpx; color: #fff;
+}
+.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }

@@ -26,7 +26,6 @@
     </view>
     <view class="quick-actions">
       <view class="quick-btn" bindtap="onQuickTap" data-type="checkin">📍 考勤</view>
-      <view class="quick-btn" bindtap="onQuickTap" data-type="aa">💰 队费AA</view>
       <view class="quick-btn" bindtap="onQuickTap" data-type="announce">📢 公告</view>
       <view class="quick-btn" bindtap="onQuickTap" data-type="find">🤝 约战</view>
     </view>
@@ -34,7 +33,6 @@
 
   <!-- 无球队提示 -->
   <view class="no-team card" wx:else>
-    <view class="no-team-icon">⚽</view>
     <view class="no-team-text">还没有球队</view>
     <view class="btn-primary" bindtap="onCreateTeam">创建球队</view>
   </view>

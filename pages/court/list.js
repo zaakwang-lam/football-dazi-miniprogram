@@ -27,12 +27,17 @@ Page({
   async loadData() {
     try {
       const res = await api.getNearbyCourts();
-      const allCourts = (res.data?.list || []).map((c, i) => ({
-        ...c,
-        bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
-        bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
-        freeSlots: c.freeSlots || []
-      }));
+      const allCourts = (res.data?.list || []).map((c, i) => {
+        const types = Array.isArray(c.types) && c.types.length ? c.types : (c.type ? [c.type] : []);
+        return {
+          ...c,
+          types,
+          typeLabel: types.length ? types.join('/') : (c.type || ''),
+          bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
+          bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
+          freeSlots: c.freeSlots || []
+        };
+      });
       this.setData({ _allCourts: allCourts });
       this.applyFilters();
     } catch (e) {
@@ -44,7 +49,10 @@ Page({
     const { type } = this.data.filters;
     let courts = this.data._allCourts || [];
     if (type !== 'all') {
-      courts = courts.filter(c => c.type === type);
+      courts = courts.filter(c => {
+        if (Array.isArray(c.types) && c.types.length) return c.types.includes(type);
+        return c.type === type;
+      });
     }
     this.setData({ courts });
   },

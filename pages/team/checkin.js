@@ -2,44 +2,55 @@
 const util = require('../../utils/util.js');
 const api = require('../../utils/api.js');
 
-const MOCK_MEMBERS = [
-  { id: 1, name: '老王', shortName: '王', checked: true },
-  { id: 2, name: '阿强', shortName: '强', checked: true },
-  { id: 3, name: '小林', shortName: '林', checked: true },
-  { id: 4, name: '大壮', shortName: '壮', checked: false },
-  { id: 5, name: '阿飞', shortName: '飞', checked: false },
-  { id: 6, name: '阿杰', shortName: '杰', checked: true },
-  { id: 7, name: '阿军', shortName: '军', checked: false },
-  { id: 8, name: '阿辉', shortName: '辉', checked: false }
-];
-
 Page({
   data: {
     today: '',
-    location: { name: '天河体育中心', distance: 0 },
+    location: { name: '定位中...', distance: null },
     checked: false,
-    members: MOCK_MEMBERS,
+    members: [],
+    attendCount: 0,
     teamId: null
   },
 
   onLoad(options) {
+    const teamId = options.teamId || wx.getStorageSync('myTeamId') || null;
     this.setData({
       today: util.formatTime(new Date(), 'YYYY-MM-DD') + ' ' + ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][new Date().getDay()],
-      members: MOCK_MEMBERS,
-      teamId: options.teamId || wx.getStorageSync('myTeamId') || 1
+      teamId
     });
+    this.loadMembers();
     this.getLocation();
   },
 
+  async loadMembers() {
+    const teamId = this.data.teamId;
+    if (!teamId) {
+      this.setData({ members: [] });
+      return;
+    }
+    try {
+      const res = await api.getTeamDetail(teamId);
+      const list = (res.data?.memberList || []).map(m => ({
+        id: m.id,
+        name: m.nickname || '队员',
+        shortName: (m.nickname || '队').slice(0, 1),
+        checked: false
+      }));
+      this.setData({ members: list, attendCount: 0 });
+    } catch (e) {
+      console.error(e);
+      this.setData({ members: [] });
+    }
+  },
+
   getLocation() {
-    // 优先用微信 wx.getLocation，失败用 mock
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
         this.setData({
           location: {
-            name: '天河体育中心',
-            distance: Math.floor(Math.random() * 100) + 50,
+            name: '当前位置已获取',
+            distance: null,
             longitude: res.longitude,
             latitude: res.latitude
           }
@@ -47,7 +58,7 @@ Page({
       },
       fail: () => {
         this.setData({
-          location: { name: '天河体育中心', distance: 87 }
+          location: { name: '未获取到位置（仍可打卡）', distance: null }
         });
       }
     });
@@ -58,17 +69,22 @@ Page({
       wx.showToast({ title: '已打卡', icon: 'none' });
       return;
     }
-    if (this.data.location.distance > 200) {
-      return wx.showToast({ title: '距离场地太远，无法打卡', icon: 'none' });
+    if (!this.data.teamId) {
+      return wx.showToast({ title: '未关联球队', icon: 'none' });
     }
 
     try {
       await api.checkin({
         teamId: this.data.teamId,
-        longitude: this.data.location.longitude || 113.3245,
-        latitude: this.data.location.latitude || 23.1356
+        longitude: this.data.location.longitude || null,
+        latitude: this.data.location.latitude || null
       });
-      this.setData({ checked: true });
+      const members = this.data.members.map(m => m);
+      // 标记自己为已打卡（前端即时反馈）
+      this.setData({
+        checked: true,
+        attendCount: this.data.attendCount + 1
+      });
       wx.showToast({ title: '打卡成功！', icon: 'success' });
     } catch (e) {
       console.error(e);

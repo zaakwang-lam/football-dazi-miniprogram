@@ -1,0 +1,34 @@
+/* pages/team/announce.wxss */
+.page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding: 32rpx;
+}
+.tip {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 24rpx;
+  line-height: 1.5;
+}
+.announce-input {
+  width: 100%;
+  min-height: 320rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+.count {
+  text-align: right;
+  font-size: 22rpx;
+  color: #999;
+  margin: 12rpx 0 40rpx;
+}
+.btn-save {
+  background: #FF6B00;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 30rpx;
+}

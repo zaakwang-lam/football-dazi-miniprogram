@@ -1,0 +1,14 @@
+<!-- pages/team/announce.wxml -->
+<view class="page">
+  <view class="tip">编辑球队公告，队员可在球队详情中查看。可随时修改。</view>
+  <textarea
+    class="announce-input"
+    placeholder="例如：本周六晚 19:00 天河体育中心训练，请准时到场"
+    maxlength="500"
+    value="{{announcement}}"
+    bindinput="onInput"
+    show-confirm-bar="{{false}}"
+  />
+  <view class="count">{{announcement.length || 0}}/500</view>
+  <button class="btn-save" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">保存公告</button>
+</view>

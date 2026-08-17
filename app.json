@@ -17,6 +17,7 @@
     "pages/team/detail",
     "pages/team/create",
     "pages/team/checkin",
+    "pages/team/announce",
     "pages/team/aa",
     "pages/login/login",
     "pages/role-select/role-select",

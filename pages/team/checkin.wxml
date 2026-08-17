@@ -9,23 +9,20 @@
   <view class="location-card">
     <view class="loc-label">当前位置</view>
     <view class="loc-name">{{location.name}}</view>
-    <view class="loc-distance">距离场地 {{location.distance}} 米</view>
     <view class="btn-primary checkin-btn" bindtap="onCheckin">
       {{checked ? '✓ 已打卡' : '立即打卡'}}
     </view>
   </view>
 
-  <view class="section-title">今日出勤 ({{attendList.length}}/{{members.length}})</view>
+  <view class="section-title">队员列表 ({{members.length}})</view>
 
-  <view class="member-list">
+  <view class="member-list" wx:if="{{members.length > 0}}">
     <view class="member-item" wx:for="{{members}}" wx:key="id">
       <view class="member-avatar">{{item.shortName}}</view>
       <view class="member-info">
         <text class="member-name">{{item.name}}</text>
-        <text class="member-status {{item.checked ? 'checked' : 'unchecked'}}">
-          {{item.checked ? '✓ 已打卡' : '未打卡'}}
-        </text>
       </view>
     </view>
   </view>
+  <view class="empty-tip" wx:else>暂无队员数据</view>
 </view>
