@@ -106,7 +106,6 @@ function getOrderList(params = {}) {
 function getOrderDetail(id) { return request(`/api/v1/orders/${id}`); }
 function cancelOrder(id) { return request(`/api/v1/orders/${id}/cancel`, 'POST'); }
 
-// 球场方订单（注意路径带 /api 前缀）
 function getAdminOrders(params = {}) {
   const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
@@ -135,6 +134,9 @@ function getTeamList(params = {}) {
 }
 function getTeamDetail(id) { return request(`/api/v1/teams/${id}`); }
 function createTeam(data) { return request('/api/v1/teams', 'POST', data, { loadingText: '创建中...' }); }
+function joinTeam(id) {
+  return request(`/api/v1/teams/${id}/join`, 'POST', {}, { loadingText: '加入中...' });
+}
 function checkin(data) {
   return request(`/api/v1/teams/${data.teamId}/checkin`, 'POST', {
     longitude: data.longitude, latitude: data.latitude
@@ -150,5 +152,5 @@ module.exports = {
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, closeLfg,
-  getTeamList, getTeamDetail, createTeam, checkin, createAa, getTeamStats
+  getTeamList, getTeamDetail, createTeam, joinTeam, checkin, createAa, getTeamStats
 };
