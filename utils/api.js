@@ -19,7 +19,7 @@ function request(url, method = 'GET', data = {}, options = {}) {
       url: API_BASE + url,
       method,
       data,
-      timeout: 15000,
+      timeout: 30000,
       header: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : ''
@@ -75,6 +75,12 @@ function hasRole(userInfo, roleName) {
 function getMyCourts() { return request('/api/user/me/courts', 'GET', {}); }
 function updateMyCourt(id, data) {
   return request(`/api/user/me/courts/${id}`, 'PUT', data, { loadingText: '保存中...' });
+}
+function uploadCourtImage(id, base64, mimeType = 'image/jpeg') {
+  return request(`/api/user/me/courts/${id}/image`, 'POST', { base64, mimeType }, {
+    loadingText: '上传中...',
+    showLoading: false
+  });
 }
 function getMyTeams() { return request('/api/user/me/teams', 'GET', {}); }
 function getMyLfgPosts(type = 'all') { return request('/api/user/me/lfg-posts', 'GET', { type }); }
@@ -150,7 +156,7 @@ function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
   API_BASE, request, wxLogin, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
-  getMyCourts, updateMyCourt, getMyTeams, getMyLfgPosts,
+  getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,

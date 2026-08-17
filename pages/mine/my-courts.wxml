@@ -11,6 +11,7 @@
 
   <view class="court-list" wx:if="{{courts.length > 0}}">
     <view class="court-card" wx:for="{{courts}}" wx:key="id">
+      <image wx:if="{{item.coverUrl}}" class="court-cover" src="{{item.coverUrl}}" mode="aspectFill" />
       <view class="card-header">
         <text class="court-name">{{item.name}}</text>
         <view class="status-tag status-{{item.statusCls}}">{{item.statusLabel}}</view>
@@ -32,6 +33,27 @@
   <view class="edit-mask" wx:if="{{editing}}" bindtap="onCancelEdit"></view>
   <view class="edit-panel" wx:if="{{editing}}">
     <view class="edit-title">编辑球场信息</view>
+
+    <view class="edit-label">球场图片（1 张）</view>
+    <view class="cover-row">
+      <view class="cover-box" bindtap="onChooseCover">
+        <image
+          wx:if="{{editForm.localPreview || editForm.coverUrl}}"
+          class="cover-preview"
+          src="{{editForm.localPreview || editForm.coverUrl}}"
+          mode="aspectFill"
+        />
+        <view wx:else class="cover-placeholder">
+          <text class="cover-plus">+</text>
+          <text class="cover-tip">上传图片</text>
+        </view>
+      </view>
+      <view class="cover-actions">
+        <view class="cover-btn" bindtap="onChooseCover">选择图片</view>
+        <view class="cover-btn ghost" wx:if="{{editForm.localPreview || editForm.coverUrl}}" bindtap="onRemoveCover">清除</view>
+      </view>
+    </view>
+
     <view class="edit-label">球场名称</view>
     <input class="edit-input" value="{{editForm.name}}" data-field="name" bindinput="onEditInput" placeholder="球场名称" />
     <view class="edit-label">地址</view>

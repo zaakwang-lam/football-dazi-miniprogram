@@ -19,7 +19,7 @@ Page({
     editCourtTypes: TYPE_OPTIONS.map(v => ({ value: v, selected: false })),
     editForm: {
       id: null, name: '', address: '', types: [], type: '',
-      phone: '', price: '', description: ''
+      phone: '', price: '', description: '', coverUrl: '', localPreview: ''
     }
   },
 
@@ -39,10 +39,12 @@ Page({
           const types = Array.isArray(c.types) && c.types.length
             ? c.types
             : (c.type ? [c.type] : []);
+          const coverUrl = c.coverUrl || (Array.isArray(c.images) && c.images[0]) || '';
           return {
             ...c,
             types,
             typesText: types.length ? types.join(' / ') : (c.type || '未设置'),
+            coverUrl,
             statusLabel: st.label,
             statusCls: st.cls,
             surfaceTypesText: (c.surfaceTypes && c.surfaceTypes.length)
@@ -105,7 +107,9 @@ Page({
         type: types[0] || TYPE_OPTIONS[0],
         phone: court.phone || '',
         price: court.price != null ? String(court.price) : '',
-        description: court.description || ''
+        description: court.description || '',
+        coverUrl: court.coverUrl || '',
+        localPreview: ''
       }
     });
   },
@@ -127,6 +131,67 @@ Page({
     });
   },
 
+  /** 选择并上传一张球场图片 */
+  onChooseCover() {
+    const courtId = this.data.editForm.id;
+    if (!courtId) return;
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      sizeType: ['compressed'],
+      success: async (res) => {
+        const file = (res.tempFiles || [])[0];
+        if (!file || !file.tempFilePath) return;
+        if (file.size && file.size > 3 * 1024 * 1024) {
+          return wx.showToast({ title: '图片请小于 3MB', icon: 'none' });
+        }
+        this.setData({ 'editForm.localPreview': file.tempFilePath });
+        wx.showLoading({ title: '上传中...', mask: true });
+        try {
+          const base64 = await this.readFileBase64(file.tempFilePath);
+          const mimeType = (file.tempFilePath || '').toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+          const up = await api.uploadCourtImage(courtId, base64, mimeType);
+          if (up.code !== 0) throw new Error(up.message || '上传失败');
+          const imageUrl = up.data?.imageUrl || (up.data?.images && up.data.images[0]) || '';
+          this.setData({
+            'editForm.coverUrl': imageUrl,
+            'editForm.localPreview': imageUrl || file.tempFilePath
+          });
+          wx.showToast({ title: '图片已上传', icon: 'success' });
+          // 同步列表封面
+          const courts = this.data.courts.map(c =>
+            c.id === courtId ? { ...c, coverUrl: imageUrl, images: [imageUrl] } : c
+          );
+          this.setData({ courts });
+        } catch (e) {
+          wx.showToast({ title: e.message || '上传失败', icon: 'none' });
+        } finally {
+          wx.hideLoading();
+        }
+      }
+    });
+  },
+
+  onRemoveCover() {
+    this.setData({
+      'editForm.coverUrl': '',
+      'editForm.localPreview': ''
+    });
+  },
+
+  readFileBase64(filePath) {
+    return new Promise((resolve, reject) => {
+      const fs = wx.getFileSystemManager();
+      fs.readFile({
+        filePath,
+        encoding: 'base64',
+        success: (r) => resolve(r.data),
+        fail: reject
+      });
+    });
+  },
+
   onCancelEdit() { this.setData({ editing: false }); },
 
   async onSaveEdit() {
@@ -140,7 +205,7 @@ Page({
     }
     wx.showLoading({ title: '保存中...', mask: true });
     try {
-      const res = await api.updateMyCourt(f.id, {
+      const payload = {
         name: String(f.name).trim(),
         address: String(f.address).trim(),
         types: f.types,
@@ -148,7 +213,12 @@ Page({
         phone: String(f.phone || '').trim(),
         price: Number(f.price) || 0,
         description: String(f.description || '').trim()
-      });
+      };
+      // 若已上传图片则一并写入；清空则传空数组
+      if (f.coverUrl) payload.images = [f.coverUrl];
+      else if (f.localPreview === '' && f.coverUrl === '') payload.images = [];
+
+      const res = await api.updateMyCourt(f.id, payload);
       if (res.code !== 0) throw new Error(res.message || '保存失败');
       wx.showToast({ title: '已保存', icon: 'success' });
       this.setData({ editing: false });
