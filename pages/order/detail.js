@@ -2,19 +2,18 @@
 const api = require('../../utils/api.js');
 
 const STATUS_CONFIG = {
-  '待支付': { icon: '⏰', desc: '请在 15 分钟内完成支付', statusKey: 'pending' },
-  '已预订': { icon: '✓', desc: '已通知球场方，请保持电话畅通。付款请到现场办理。', statusKey: 'booked' },
-  '已支付': { icon: '✓', desc: '预订成功，期待您的到来！', statusKey: 'paid' },
-  '已完成': { icon: '🏆', desc: '本次预订已完成，欢迎评价', statusKey: 'done' },
-  '已取消': { icon: '✕', desc: '订单已取消', statusKey: 'canceled' }
+  '已预订': { icon: '✓', statusDesc: '已通知球场方，请保持电话畅通。费用请到现场结算。', statusKey: 'booked' },
+  '已完成': { icon: '🏆', statusDesc: '本次预订已完成', statusKey: 'done' },
+  '已取消': { icon: '✕', statusDesc: '订单已取消', statusKey: 'canceled' },
+  '待支付': { icon: '⏰', statusDesc: '当前为到场付款模式，无需在线支付', statusKey: 'pending' },
+  '已支付': { icon: '✓', statusDesc: '已支付', statusKey: 'paid' }
 };
 
 Page({
-  data: {
-    order: null
-  },
+  data: { order: null },
 
   onLoad(options) {
+    this.orderId = options.id;
     this.loadDetail(options.id);
   },
 
@@ -22,100 +21,62 @@ Page({
     try {
       const res = await api.getOrderDetail(id);
       const order = res.data;
-      // 后端 status: pending/paid/refunded/canceled/completed → 中文映射
       const statusMap = {
-        pending: '待支付',
-        booked: '已预订',  // 2026-07-29 新增：免支付预订状态
-        paid: '已支付',
-        refunded: '已退款',
-        canceled: '已取消',
-        completed: '已完成'
+        pending: '待支付', booked: '已预订', paid: '已支付',
+        refunded: '已退款', canceled: '已取消', completed: '已完成'
       };
       const cnStatus = statusMap[order.status] || order.status;
-      const config = STATUS_CONFIG[cnStatus] || STATUS_CONFIG['待支付'];
+      const config = STATUS_CONFIG[cnStatus] || STATUS_CONFIG['已预订'];
       this.setData({
         order: {
           ...order,
           status: cnStatus,
+          orderNo: order.orderNo,
           courtName: order.court?.name || order.courtName,
-          date: order.schedule ? `${order.schedule.date} ${order.schedule.timeSlot}` : order.createdAt,
+          courtPhone: order.court?.phone || '',
+          date: order.schedule ? `${order.schedule.date} ${order.schedule.timeSlot}` : '',
           price: order.amount,
+          name: order.contactName,
+          phone: order.contactPhone,
           ...config
         }
       });
       wx.setNavigationBarTitle({ title: '订单详情' });
     } catch (e) {
       console.error('加载订单失败:', e);
+      wx.showToast({ title: e.message || '加载失败', icon: 'none' });
     }
   },
 
-  onPay() {
-    wx.showToast({ title: '支付成功！', icon: 'success' });
-    setTimeout(() => {
-      this.setData({
-        'order.status': '已支付',
-        ...STATUS_CONFIG['已支付']
-      });
-    }, 1000);
-  },
-
-  onCancel() {
-    wx.showModal({
-      title: '确认取消',
-      content: '取消后定金将原路退回',
-      success: (res) => {
-        if (res.confirm) {
-          this.setData({
-            'order.status': '已取消',
-            ...STATUS_CONFIG['已取消']
-          });
-        }
-      }
-    });
-  },
-
-  onRefund() {
-    wx.showModal({
-      title: '申请退订',
-      content: '提前 24h 全额退款，是否继续？',
-      success: (res) => {
-        if (res.confirm) {
-          wx.showToast({ title: '退款已提交', icon: 'success' });
-        }
-      }
-    });
-  },
-
-  onCheckin() {
-    wx.navigateTo({ url: '/pages/team/checkin' });
-  },
-
-  // 2026-07-29 新增：免支付预订后的辅助操作
-  onCancelBook() {
+  async onCancelBook() {
+    const order = this.data.order;
+    if (!order) return;
     wx.showModal({
       title: '取消预订',
-      content: '取消后该时段会重新开放给其他用户预订',
-      success: (res) => {
-        if (res.confirm) {
-          // 调用取消接口（此处 mock）：
-          this.setData({
-            'order.status': '已取消',
-            ...STATUS_CONFIG['已取消']
-          });
+      content: '取消后该时段会重新开放给其他用户',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.cancelOrder(order.id);
           wx.showToast({ title: '已取消', icon: 'success' });
+          this.loadDetail(order.id);
+        } catch (e) {
+          wx.showToast({ title: e.message || '取消失败', icon: 'none' });
         }
       }
     });
   },
 
   onContactCourt() {
-    // 2026-07-29 占位：球场方接收订单后才能联系，需后续接入
-    // 当前仅提示用户主动联系（球场方电话在 court 详情里有）
+    const phone = this.data.order?.courtPhone;
+    if (phone) {
+      wx.makePhoneCall({ phoneNumber: String(phone) });
+      return;
+    }
     wx.showModal({
       title: '联系球场方',
-      content: '请通过订单中的电话直接联系球场方。如有疑问，请在微信群反馈。',
-      showCancel: false,
-      confirmText: '我知道了'
+      content: '暂无球场电话，请通过订单联系人或微信群沟通。',
+      showCancel: false
     });
   }
 });
