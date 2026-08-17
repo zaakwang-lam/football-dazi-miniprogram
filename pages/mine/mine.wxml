@@ -72,6 +72,12 @@
   </view>
 
   <view class="menu-card" wx:if="{{currentRole === 'user'}}">
+    <view class="menu-section-title">我的服务</view>
+    <view class="menu-row" bindtap="onMenuTap" data-type="order">
+      <view class="menu-icon icon-list">📋</view>
+      <text class="menu-label">我的订单</text>
+      <text class="menu-arrow">›</text>
+    </view>
     <view class="menu-section-title">我的组队</view>
     <view class="menu-row" bindtap="onMenuTap" data-type="my-teams">
       <view class="menu-icon icon-team">⚽</view>
@@ -100,7 +106,6 @@
     </view>
   </view>
 
-  <!-- 球场方：合并「我的球场/球场信息」为统一入口 -->
   <view class="menu-card" wx:if="{{currentRole === 'court'}}">
     <view class="menu-section-title">球场管理</view>
     <view class="menu-row" bindtap="onMenuTap" data-type="court-info">
