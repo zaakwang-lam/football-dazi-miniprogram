@@ -8,24 +8,14 @@ const COLORS = [
   'linear-gradient(135deg, #9B59B6, #BE7BDB)'
 ];
 
-const MOCK_MEMBERS = [
-  { id: 1, name: '老王', role: '队长', shortName: '王' },
-  { id: 2, name: '阿强', role: '前锋', shortName: '强' },
-  { id: 3, name: '小林', role: '中场', shortName: '林' },
-  { id: 4, name: '大壮', role: '后卫', shortName: '壮' },
-  { id: 5, name: '阿飞', role: '门将', shortName: '飞' },
-  { id: 6, name: '阿杰', role: '队员', shortName: '杰' },
-  { id: 7, name: '阿军', role: '队员', shortName: '军' },
-  { id: 8, name: '阿辉', role: '队员', shortName: '辉' }
-];
-
 Page({
   data: {
     team: null,
-    members: MOCK_MEMBERS
+    members: []
   },
 
   onLoad(options) {
+    this.teamId = options.id;
     this.loadDetail(options.id);
   },
 
@@ -33,38 +23,51 @@ Page({
     try {
       const res = await api.getTeamDetail(id);
       const team = res.data;
+      const members = (team.memberList || []).map(m => ({
+        id: m.id,
+        name: m.nickname || '队员',
+        shortName: (m.nickname || '队').slice(0, 1),
+        role: m.role === 'captain' ? '队长' : '队员'
+      }));
       this.setData({
         team: {
           ...team,
-          shortName: team.name.substring(0, 2),
+          shortName: (team.name || '球').substring(0, 2),
           bgColor: COLORS[(team.id || 0) % COLORS.length],
-          membersList: team.memberList || []
-        }
+          members: team.memberCount || members.length
+        },
+        members
       });
-      // 取队员列表
-      this.setData({ members: team.memberList || [] });
-      wx.setNavigationBarTitle({ title: team.name });
+      wx.setNavigationBarTitle({ title: team.name || '球队详情' });
     } catch (e) {
       console.error(e);
+      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 
-  onJoinTap() {
+  async onJoinTap() {
+    if (!wx.getStorageSync('token')) {
+      return wx.navigateTo({ url: '/pages/login/login' });
+    }
     wx.showModal({
-      title: '申请加入',
-      content: '已向队长发送申请，请等待审批',
-      showCancel: false,
-      success: () => {
-        wx.showToast({ title: '申请已发送', icon: 'success' });
+      title: '加入球队',
+      content: `确认加入「${this.data.team?.name || ''}」吗？`,
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          const r = await api.joinTeam(this.teamId);
+          if (r.code !== 0) throw new Error(r.message || '加入失败');
+          wx.showToast({ title: '加入成功', icon: 'success' });
+          this.loadDetail(this.teamId);
+        } catch (e) {
+          wx.showToast({ title: e.message || '加入失败', icon: 'none' });
+        }
       }
     });
   },
 
   onShareTap() {
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    });
+    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
   },
 
   onShareAppMessage() {
