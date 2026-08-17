@@ -86,7 +86,14 @@
 .edit-btn.cancel { background: #f0f0f0; color: #666; }
 .edit-btn.primary { background: #FF6B00; color: #fff; }
 
-/* 球场图片上传 */
+.addr-row { display: flex; gap: 12rpx; align-items: center; }
+.addr-flex { flex: 1; }
+.btn-map-sm {
+  flex-shrink: 0; padding: 16rpx 20rpx; background: #FF6B00; color: #fff;
+  border-radius: 12rpx; font-size: 24rpx; white-space: nowrap;
+}
+.loc-hint { font-size: 22rpx; color: #999; margin-top: 8rpx; }
+
 .cover-row {
   display: flex;
   align-items: flex-end;
@@ -130,7 +137,6 @@
   color: #666;
 }
 
-/* 人制多选（与登记页一致） */
 .checkbox-group {
   display: flex; flex-wrap: wrap; gap: 16rpx;
 }
