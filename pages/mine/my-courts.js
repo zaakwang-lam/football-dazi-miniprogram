@@ -1,5 +1,4 @@
 // pages/mine/my-courts.js
-// 球场信息统一入口：查看 + 编辑费用/电话/简介
 const api = require('../../utils/api.js');
 
 const STATUS_MAP = {
@@ -9,12 +8,18 @@ const STATUS_MAP = {
   0: { label: '休息中', cls: 'off' }
 };
 
+const TYPE_OPTIONS = ['11人制', '8人制', '7人制', '5人制', '3人制'];
+
 Page({
   data: {
     courts: [],
     loading: true,
     editing: false,
-    editForm: { id: null, phone: '', price: '', description: '' }
+    typeOptions: TYPE_OPTIONS,
+    editForm: {
+      id: null, name: '', address: '', type: '', typeIndex: 0,
+      phone: '', price: '', description: ''
+    }
   },
 
   onLoad() { this.loadMyCourts(); },
@@ -35,8 +40,7 @@ Page({
             statusLabel: st.label,
             statusCls: st.cls,
             surfaceTypesText: (c.surfaceTypes && c.surfaceTypes.length)
-              ? c.surfaceTypes.join(' / ')
-              : (c.surfaceType || '未设置'),
+              ? c.surfaceTypes.join(' / ') : (c.surfaceType || '未设置'),
             openHoursText: this.formatOpenHours(c.openHours),
             priceText: c.price != null ? `¥${c.price}/场` : '未设置',
             createdAtText: this.formatDate(c.createdAt)
@@ -49,7 +53,6 @@ Page({
       }
     } catch (e) {
       this.setData({ loading: false });
-      console.error('加载我的球场失败:', e);
     }
   },
 
@@ -71,19 +74,22 @@ Page({
       const d = new Date(isoStr);
       const pad = n => String(n).padStart(2, '0');
       return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-    } catch (e) {
-      return isoStr;
-    }
+    } catch (e) { return isoStr; }
   },
 
   onEditTap(e) {
     const id = e.currentTarget.dataset.id;
     const court = this.data.courts.find(c => c.id === id);
     if (!court) return;
+    const typeIndex = Math.max(0, TYPE_OPTIONS.indexOf(court.type));
     this.setData({
       editing: true,
       editForm: {
         id: court.id,
+        name: court.name || '',
+        address: court.address || '',
+        type: court.type || TYPE_OPTIONS[0],
+        typeIndex,
         phone: court.phone || '',
         price: court.price != null ? String(court.price) : '',
         description: court.description || ''
@@ -92,23 +98,34 @@ Page({
   },
 
   onEditInput(e) {
-    const field = e.currentTarget.dataset.field;
-    this.setData({ [`editForm.${field}`]: e.detail.value });
+    this.setData({ [`editForm.${e.currentTarget.dataset.field}`]: e.detail.value });
   },
 
-  onCancelEdit() {
-    this.setData({ editing: false });
+  onTypeChange(e) {
+    const idx = Number(e.detail.value);
+    this.setData({
+      'editForm.typeIndex': idx,
+      'editForm.type': TYPE_OPTIONS[idx]
+    });
   },
+
+  onCancelEdit() { this.setData({ editing: false }); },
 
   async onSaveEdit() {
-    const { id, phone, price, description } = this.data.editForm;
-    if (!id) return;
+    const f = this.data.editForm;
+    if (!f.id) return;
+    if (!f.name || !f.address) {
+      return wx.showToast({ title: '请填写名称和地址', icon: 'none' });
+    }
     wx.showLoading({ title: '保存中...', mask: true });
     try {
-      const res = await api.updateMyCourt(id, {
-        phone: String(phone || '').trim(),
-        price: Number(price) || 0,
-        description: String(description || '').trim()
+      const res = await api.updateMyCourt(f.id, {
+        name: String(f.name).trim(),
+        address: String(f.address).trim(),
+        type: f.type,
+        phone: String(f.phone || '').trim(),
+        price: Number(f.price) || 0,
+        description: String(f.description || '').trim()
       });
       if (res.code !== 0) throw new Error(res.message || '保存失败');
       wx.showToast({ title: '已保存', icon: 'success' });
@@ -122,8 +139,7 @@ Page({
   },
 
   onPublishSlot(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/pages/mine/publish-slot?courtId=${id}` });
+    wx.navigateTo({ url: `/pages/mine/publish-slot?courtId=${e.currentTarget.dataset.id}` });
   },
 
   onRegisterTap() {
