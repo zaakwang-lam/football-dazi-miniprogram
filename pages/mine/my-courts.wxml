@@ -57,7 +57,11 @@
     <view class="edit-label">球场名称</view>
     <input class="edit-input" value="{{editForm.name}}" data-field="name" bindinput="onEditInput" placeholder="球场名称" />
     <view class="edit-label">地址</view>
-    <input class="edit-input" value="{{editForm.address}}" data-field="address" bindinput="onEditInput" placeholder="详细地址" />
+    <view class="addr-row">
+      <input class="edit-input addr-flex" value="{{editForm.address}}" data-field="address" bindinput="onEditInput" placeholder="详细地址" />
+      <view class="btn-map-sm" bindtap="onEditChooseLocation">地图选点</view>
+    </view>
+    <view class="loc-hint" wx:if="{{editForm.latitude && editForm.longitude}}">坐标 {{editForm.latitude}}, {{editForm.longitude}}</view>
     <view class="edit-label">人制类型（可多选）</view>
     <view class="checkbox-group">
       <view

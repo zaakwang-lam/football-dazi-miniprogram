@@ -1,5 +1,6 @@
 // pages/mine/my-courts.js
 const api = require('../../utils/api.js');
+const { chooseLocationOnMap } = require('../../utils/location.js');
 
 const STATUS_MAP = {
   1: { label: '营业中', cls: 'ok' },
@@ -19,7 +20,8 @@ Page({
     editCourtTypes: TYPE_OPTIONS.map(v => ({ value: v, selected: false })),
     editForm: {
       id: null, name: '', address: '', types: [], type: '',
-      phone: '', price: '', description: '', coverUrl: '', localPreview: ''
+      phone: '', price: '', description: '', coverUrl: '', localPreview: '',
+      longitude: '', latitude: ''
     }
   },
 
@@ -109,9 +111,22 @@ Page({
         price: court.price != null ? String(court.price) : '',
         description: court.description || '',
         coverUrl: court.coverUrl || '',
-        localPreview: ''
+        localPreview: '',
+        longitude: court.longitude != null ? String(court.longitude) : '',
+        latitude: court.latitude != null ? String(court.latitude) : ''
       }
     });
+  },
+
+  async onEditChooseLocation() {
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    this.setData({
+      'editForm.address': loc.address || loc.name || this.data.editForm.address,
+      'editForm.longitude': String(loc.longitude),
+      'editForm.latitude': String(loc.latitude)
+    });
+    wx.showToast({ title: '位置已更新', icon: 'success' });
   },
 
   onEditInput(e) {
@@ -131,7 +146,6 @@ Page({
     });
   },
 
-  /** 选择并上传一张球场图片 */
   onChooseCover() {
     const courtId = this.data.editForm.id;
     if (!courtId) return;
@@ -159,7 +173,6 @@ Page({
             'editForm.localPreview': imageUrl || file.tempFilePath
           });
           wx.showToast({ title: '图片已上传', icon: 'success' });
-          // 同步列表封面
           const courts = this.data.courts.map(c =>
             c.id === courtId ? { ...c, coverUrl: imageUrl, images: [imageUrl] } : c
           );
@@ -214,7 +227,10 @@ Page({
         price: Number(f.price) || 0,
         description: String(f.description || '').trim()
       };
-      // 若已上传图片则一并写入；清空则传空数组
+      if (f.longitude !== '' && f.latitude !== '') {
+        payload.longitude = Number(f.longitude);
+        payload.latitude = Number(f.latitude);
+      }
       if (f.coverUrl) payload.images = [f.coverUrl];
       else if (f.localPreview === '' && f.coverUrl === '') payload.images = [];
 
