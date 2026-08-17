@@ -12,7 +12,7 @@ const COLORS = [
 
 Page({
   data: {
-    city: '广州',
+    // 当前仅开发广州，城市选择器已移除
     banners: [],  // 2026-07-28 隐藏轮播，改为顶部固定 hero-banner（wxml 硬编码）
     courts: [],
     teams: [],
@@ -62,17 +62,6 @@ Page({
     if (diffDays === 0) return `今晚 ${hours}:${mins}`;
     if (diffDays === 1) return `明晚 ${hours}:${mins}`;
     return `${d.getMonth() + 1}/${d.getDate()} ${hours}:${mins}`;
-  },
-
-  onCityTap() {
-    wx.showActionSheet({
-      itemList: ['广州', '深圳', '佛山', '东莞'],
-      success: (res) => {
-        const cities = ['广州', '深圳', '佛山', '东莞'];
-        this.setData({ city: cities[res.tapIndex] });
-        wx.showToast({ title: `已切换到${cities[res.tapIndex]}`, icon: 'none' });
-      }
-    });
   },
 
   onSearchTap() {

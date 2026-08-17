@@ -3,32 +3,12 @@
   padding-bottom: 24rpx;
 }
 
-/* 顶部 */
+/* 顶部搜索栏（城市选择器已移除） */
 .top-bar {
   display: flex;
   align-items: center;
   padding: 24rpx;
   background: linear-gradient(135deg, #FF6B00 0%, #FF8C42 100%);
-}
-
-.city-selector {
-  display: flex;
-  align-items: center;
-  padding: 12rpx 24rpx;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 999rpx;
-  margin-right: 16rpx;
-  font-size: 26rpx;
-  color: #FFFFFF;
-}
-
-.city-icon {
-  margin-right: 8rpx;
-}
-
-.city-arrow {
-  margin-left: 8rpx;
-  font-size: 20rpx;
 }
 
 .search-box {
