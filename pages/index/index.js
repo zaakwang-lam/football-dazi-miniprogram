@@ -2,18 +2,9 @@
 const app = getApp();
 const api = require('../../utils/api.js');
 
-const COLORS = [
-  'linear-gradient(135deg, #FF6B00, #FF8C42)',
-  'linear-gradient(135deg, #007AFF, #4FACFE)',
-  'linear-gradient(135deg, #2ECC71, #58D68D)',
-  'linear-gradient(135deg, #9B59B6, #BE7BDB)',
-  'linear-gradient(135deg, #FFB800, #FFD75E)'
-];
-
 Page({
   data: {
-    // 当前仅开发广州，城市选择器已移除
-    banners: [],  // 2026-07-28 隐藏轮播，改为顶部固定 hero-banner（wxml 硬编码）
+    banners: [],
     courts: [],
     teams: [],
     lfgList: []
@@ -32,11 +23,13 @@ Page({
   },
 
   async loadData() {
-    // 取消滚动菜单后，只加载「进行中」（凑人+约战有效信息）
-    const lfgRes = await Promise.allSettled([api.getLfgList()]);
-    const lfgData = lfgRes[0].status === 'fulfilled' ? lfgRes[0].value.data?.list || [] : [];
+    const [lfgRes, bannerRes] = await Promise.allSettled([
+      api.getLfgList(),
+      api.getBanners()
+    ]);
 
-    const TYPE_KEY = { sub: 'sub', war: 'war' };  // 取消 join 类型
+    const lfgData = lfgRes.status === 'fulfilled' ? lfgRes.value.data?.list || [] : [];
+    const TYPE_KEY = { sub: 'sub', war: 'war' };
     const TYPE_LABEL = { sub: '找人顶', war: '约战' };
     const lfgList = lfgData.map(item => ({
       ...item,
@@ -46,7 +39,11 @@ Page({
       time: this.formatTime(item.playTime)
     }));
 
-    this.setData({ lfgList });
+    const banners = bannerRes.status === 'fulfilled'
+      ? (bannerRes.value.data?.list || []).filter(b => b.imageUrl)
+      : [];
+
+    this.setData({ lfgList, banners });
   },
 
   formatTime(dateStr) {
@@ -69,22 +66,24 @@ Page({
   },
 
   onBannerTap(e) {
-    // 2026-07-28: hero-banner 点击仅弹 toast，待运营位填充后再调跳转
+    const url = e.currentTarget.dataset.url;
+    if (url && /^https?:\/\//i.test(url)) {
+      // 外链暂不跳转（小程序需配置业务域名）
+      wx.showToast({ title: '活动页开发中', icon: 'none' });
+      return;
+    }
     wx.showToast({ title: '一起踢球，一起FUNS', icon: 'none' });
   },
 
   onEntryTap(e) {
     const type = e.currentTarget.dataset.type;
-    // tabBar 加回 凑人/约战：lfg/war 都是 tab 页 → switchTab
     const map = {
       book: '/pages/court/list',
-      // 2026-07-28: tabBar 删了凑人/约战 tab，走 navigateTo
       lfg: '/pages/lfg/lfg',
       war: '/pages/war/war'
     };
     const dest = map[type];
     if (!dest) return;
-    // 所有都走 navigateTo，因为凑人/约战已不在 tabBar
     wx.navigateTo({ url: dest });
   },
 

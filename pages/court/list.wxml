@@ -1,6 +1,5 @@
 <!-- pages/court/list.wxml -->
 <view class="page">
-  <!-- 筛选条：与登记/编辑一致的全部人制 -->
   <view class="filter-bar">
     <view class="filter-item {{filters.type === 'all' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="all">全部</view>
     <view class="filter-item {{filters.type === '11人制' ? 'active' : ''}}" bindtap="onFilterTap" data-key="type" data-val="11人制">11人</view>
@@ -11,10 +10,15 @@
     <view class="filter-item" bindtap="onSortTap">↕ 排序</view>
   </view>
 
-  <!-- 场地列表 -->
   <view class="court-list">
     <view class="court-row" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
       <view class="court-img" style="background: linear-gradient(135deg, {{item.bgColor1}}, {{item.bgColor2}});">
+        <image
+          wx:if="{{item.coverUrl}}"
+          class="court-cover"
+          src="{{item.coverUrl}}"
+          mode="aspectFill"
+        />
         <view class="court-type-badge">{{item.typeLabel || item.type}}</view>
       </view>
       <view class="court-info">

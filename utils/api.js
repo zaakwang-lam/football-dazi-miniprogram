@@ -99,6 +99,9 @@ function getNearbyCourts(params = {}) {
 function getCourtDetail(id) { return request(`/api/v1/courts/${id}`); }
 function getCourtSchedule(id) { return request(`/api/v1/courts/${id}/schedule`); }
 function evaluateCourt(id, data) { return request(`/api/v1/courts/${id}/evaluate`, 'POST', data); }
+function getBanners() {
+  return request('/api/v1/banners', 'GET', {}, { showLoading: false, silent: true });
+}
 function createOrder(data) { return request('/api/v1/orders', 'POST', data, { loadingText: '下单中...' }); }
 function payOrder(orderId, openid) {
   return request('/api/v1/payment/unified-order', 'POST', { orderId, openid }, { loadingText: '调起支付...' });
@@ -158,6 +161,7 @@ module.exports = {
   API_BASE, request, wxLogin, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
   getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
+  getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, closeLfg,

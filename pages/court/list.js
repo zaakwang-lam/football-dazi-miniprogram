@@ -20,6 +20,10 @@ Page({
     this.loadData();
   },
 
+  onShow() {
+    this.loadData();
+  },
+
   onPullDownRefresh() {
     this.loadData().then(() => wx.stopPullDownRefresh());
   },
@@ -29,10 +33,12 @@ Page({
       const res = await api.getNearbyCourts();
       const allCourts = (res.data?.list || []).map((c, i) => {
         const types = Array.isArray(c.types) && c.types.length ? c.types : (c.type ? [c.type] : []);
+        const coverUrl = c.coverUrl || (Array.isArray(c.images) && c.images[0]) || '';
         return {
           ...c,
           types,
           typeLabel: types.length ? types.join('/') : (c.type || ''),
+          coverUrl,
           bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
           bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
           freeSlots: c.freeSlots || []

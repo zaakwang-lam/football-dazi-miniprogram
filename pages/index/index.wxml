@@ -1,6 +1,5 @@
 <!-- pages/index/index.wxml -->
 <view class="page">
-  <!-- 顶部搜索（城市选择已移除，当前仅开发广州） -->
   <view class="top-bar">
     <view class="search-box" bindtap="onSearchTap">
       <text class="search-icon">🔍</text>
@@ -8,14 +7,26 @@
     </view>
   </view>
 
-  <!-- 顶部 Banner：固定页面（2026-07-28 改造，原 3 个轮播改为单个固定宣传页） -->
-  <!-- 2026-07-30 改造：橙色渐变色块 → 真草背景图 + 文字（文字烧在背景图里，不在 WXML 重复） -->
-  <view class="hero-banner" bindtap="onBannerTap" data-id="hero">
+  <!-- 首页置顶轮播：后台管理系统上传，最多 5 张，左右滑动 -->
+  <swiper
+    class="hero-swiper"
+    indicator-dots="{{banners.length > 1}}"
+    autoplay="{{banners.length > 1}}"
+    interval="4000"
+    circular="{{banners.length > 1}}"
+    wx:if="{{banners.length > 0}}"
+  >
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <view class="hero-banner" bindtap="onBannerTap" data-url="{{item.linkUrl}}">
+        <image class="hero-bg" src="{{item.imageUrl}}" mode="aspectFill"></image>
+      </view>
+    </swiper-item>
+  </swiper>
+  <!-- 无后台图时回退本地默认图 -->
+  <view class="hero-banner" bindtap="onBannerTap" wx:else>
     <image class="hero-bg" src="/images/hero/bg.png" mode="aspectFill"></image>
   </view>
 
-  <!-- 3 个图标入口（取消赛事） -->
-  <!-- 2026-07-30 改造：emoji → icons 文件夹图标（订场/凑人/约战） -->
   <view class="entry-grid">
     <view class="entry-item" bindtap="onEntryTap" data-type="book">
       <image class="entry-icon-img" src="/images/tab/book.png" mode="aspectFit"></image>
@@ -31,7 +42,6 @@
     </view>
   </view>
 
-  <!-- 附近球场点击入口（2026-07-28 隐藏：腾讯地图 SDK 未接入，等备案后再启用） -->
 <block wx:if="{{false}}">
   <view class="nearby-entry" bindtap="onNearbyTap">
     <text class="nearby-icon">📍</text>
@@ -40,7 +50,6 @@
   </view>
 </block>
 
-  <!-- 进行中 -->
   <view class="section">
     <view class="section-header">
       <text class="section-title">⚡ 进行中</text>
@@ -64,6 +73,5 @@
     </view>
   </view>
 
-  <!-- 底部安全区 -->
   <view class="safe-bottom"></view>
 </view>
