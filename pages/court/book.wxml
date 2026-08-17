@@ -2,13 +2,13 @@
 <view class="page" wx:if="{{court}}">
   <view class="court-summary">
     <view class="cs-name">{{court.name}}</view>
-    <view class="cs-meta">{{court.type}} · ¥{{court.price}}/场</view>
+    <view class="cs-meta">{{court.type}} · 到场结算</view>
   </view>
 
   <view class="form-group">
     <view class="form-label">选择日期</view>
     <scroll-view scroll-x class="date-scroll">
-      <view class="date-item {{form.dateIdx === index ? 'active' : ''}}" wx:for="{{dateList}}" wx:key="*this" bindtap="onDateSelect" data-idx="{{index}}">
+      <view class="date-item {{form.dateIdx === index ? 'active' : ''}}" wx:for="{{dateList}}" wx:key="dateKey" bindtap="onDateSelect" data-idx="{{index}}">
         <view class="date-day">{{item.week}}</view>
         <view class="date-num">{{item.day}}</view>
       </view>
@@ -17,10 +17,14 @@
 
   <view class="form-group">
     <view class="form-label">选择时段</view>
-    <view class="time-grid">
-      <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="id" bindtap="onSlotSelect" data-idx="{{index}}">
-        <view class="time-hour">{{item.time}}</view>
-        <view class="time-status">{{item.status === 'booked' ? '已订' : '空闲'}}</view>
+    <view class="empty-slots" wx:if="{{!daySlots.length}}" bindtap="onGoPublishHint">
+      <text>该日暂无可订时段</text>
+      <text class="empty-hint" wx:if="{{!hasAnySlot}}">球场方尚未发布空闲，点此了解</text>
+    </view>
+    <view class="time-grid" wx:else>
+      <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' || item.status === 'closed' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="id" bindtap="onSlotSelect" data-idx="{{index}}">
+        <view class="time-hour">{{item.timeSlot || item.time}}</view>
+        <view class="time-status">{{item.status === 'booked' ? '已订' : (item.status === 'closed' ? '关闭' : ('¥' + (item.price != null ? item.price : '')))}}</view>
       </view>
     </view>
   </view>
@@ -42,8 +46,8 @@
 
   <view class="summary-card">
     <view class="summary-row">
-      <text>场地费</text>
-      <text class="summary-price">¥{{court.price}}</text>
+      <text>场地费（到场结算）</text>
+      <text class="summary-price">¥{{totalPrice}}</text>
     </view>
     <view class="summary-row">
       <text>时段</text>
