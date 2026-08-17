@@ -1,7 +1,9 @@
 // pages/login/login.js
-// PRD：我的 → 微信登录 → 选择身份 → 完成对应注册
 const api = require('../../utils/api.js');
 const app = getApp();
+
+// 与后端 TEST_LOGIN_SECRET 默认值一致（可在后端改环境变量）
+const TEST_LOGIN_SECRET = 'football-audit-2026';
 
 Page({
   data: {
@@ -21,10 +23,6 @@ Page({
     wx.navigateTo({ url: '/pages/agreement/privacy-policy' });
   },
 
-  /**
-   * 微信登录：只完成微信身份认证。
-   * roles=[] → 身份选择；roles 有值 → 我的
-   */
   onLoginTap() {
     if (!this.data.agreed) {
       return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
@@ -64,7 +62,7 @@ Page({
         } catch (err) {
           this.setData({ loading: false });
           console.error('[login] wx login error:', err);
-          wx.showToast({ title: '网络错误，请稍后重试', icon: 'none' });
+          wx.showToast({ title: err.message || '网络错误，请稍后重试', icon: 'none' });
         }
       },
       fail: (err) => {
@@ -73,6 +71,36 @@ Page({
         wx.showToast({ title: '微信登录失败', icon: 'none' });
       }
     });
+  },
+
+  /** 审核测试账号：同时具备个人方 + 球场方 */
+  async onTestLoginTap() {
+    if (!this.data.agreed) {
+      return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
+    }
+    if (this.data.loading) return;
+    this.setData({ loading: true });
+    try {
+      const res = await api.loginTest(TEST_LOGIN_SECRET);
+      this.setData({ loading: false });
+      if (res.code !== 0) {
+        return wx.showToast({ title: res.message || '测试登录失败', icon: 'none' });
+      }
+      const user = res.data?.user || {};
+      const roles = Array.isArray(user.roles) ? user.roles.filter(Boolean) : ['user', 'court'];
+      this._saveLoginState(user, res.data?.accessToken, roles);
+      wx.showToast({ title: '测试账号已登录', icon: 'success' });
+      setTimeout(() => {
+        wx.switchTab({ url: '/pages/mine/mine' });
+      }, 500);
+    } catch (err) {
+      this.setData({ loading: false });
+      wx.showToast({
+        title: err.message || '测试登录未开启或密钥错误',
+        icon: 'none',
+        duration: 2500
+      });
+    }
   },
 
   _saveLoginState(user, token, roles) {

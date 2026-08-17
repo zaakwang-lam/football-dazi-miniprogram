@@ -62,6 +62,10 @@ function request(url, method = 'GET', data = {}, options = {}) {
 function wxLogin(code, userInfo = null) {
   return request('/api/user/login', 'POST', { code, userInfo }, { loadingText: '登录中...' });
 }
+/** 审核测试登录（需后端 TEST_LOGIN_ENABLED=1） */
+function loginTest(secret) {
+  return request('/api/user/login-test', 'POST', { secret }, { loadingText: '测试登录...' });
+}
 function phoneLogin(code, phoneCode) {
   return request('/api/user/login-phone', 'POST', { code, phoneCode }, { loadingText: '登录中...' });
 }
@@ -158,7 +162,7 @@ function createAa(data) { return request(`/api/v1/teams/${data.teamId}/aa`, 'POS
 function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
-  API_BASE, request, wxLogin, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
+  API_BASE, request, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
   getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
