@@ -1,36 +1,63 @@
 /* pages/mine/court-register.wxss */
-.page { padding: 24rpx; padding-bottom: 200rpx; }
-.form-tip { font-size: 24rpx; color: #999; margin-bottom: 24rpx; padding: 16rpx; background: #FFF8E1; border-radius: 8rpx; }
-.form-section { background: #fff; border-radius: 16rpx; padding: 32rpx 24rpx; }
-.form-label { font-size: 28rpx; color: #333; margin-top: 32rpx; margin-bottom: 12rpx; }
-.form-label.required::before { content: '*'; color: #FF3B30; margin-right: 4rpx; }
-.form-input, .form-picker { background: #F5F5F5; border-radius: 8rpx; padding: 20rpx; font-size: 28rpx; min-height: 40rpx; }
-.form-textarea { background: #F5F5F5; border-radius: 8rpx; padding: 20rpx; font-size: 28rpx; min-height: 160rpx; width: 100%; box-sizing: border-box; }
-.form-loc-row { display: flex; gap: 16rpx; }
-.loc-input { flex: 1; }
-.loc-hint { font-size: 22rpx; color: #999; margin-top: 8rpx; }
-.form-time-row { display: flex; align-items: center; gap: 16rpx; }
-.form-time-sep { color: #999; font-size: 24rpx; }
-.form-actions { margin-top: 48rpx; }
-.btn-submit { background: #FF6B00; color: #fff; border-radius: 12rpx; font-size: 32rpx; }
-
-/* 场地性质多选 */
-.checkbox-group { display: flex; gap: 20rpx; flex-wrap: wrap; }
-.checkbox-item { display: flex; align-items: center; gap: 8rpx; padding: 16rpx 24rpx; background: #F5F5F5; border-radius: 8rpx; font-size: 26rpx; }
-.checkbox { width: 36rpx; height: 36rpx; border: 2rpx solid #ccc; border-radius: 6rpx; display: flex; align-items: center; justify-content: center; font-size: 24rpx; color: #fff; background: #fff; }
-.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
-.checkbox-item-hover { opacity: 0.7; transform: scale(0.95); }
+.page { padding: 24rpx; padding-bottom: 160rpx; }
+.form-tip {
+  background: #FFF7E6; color: #AD6800; font-size: 24rpx; padding: 20rpx 24rpx;
+  border-radius: 16rpx; margin-bottom: 24rpx; line-height: 1.5;
+}
+.form-section {
+  background: #fff; border-radius: 24rpx; padding: 24rpx 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+.form-label {
+  font-size: 26rpx; color: #666; margin: 24rpx 0 12rpx; font-weight: 500;
+}
+.form-label.required::before { content: '* '; color: #FF4757; }
+.form-input, .form-picker, .form-textarea {
+  background: #F5F7FA; border-radius: 16rpx; padding: 20rpx 24rpx;
+  font-size: 28rpx; color: #1A1A1A; width: 100%; box-sizing: border-box;
+}
+.form-textarea { min-height: 160rpx; }
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.checkbox-item {
+  display: flex; align-items: center; gap: 8rpx; padding: 12rpx 20rpx;
+  background: #F5F7FA; border-radius: 999rpx; font-size: 26rpx; color: #666;
+}
 .checkbox-item.active { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.checkbox {
+  width: 28rpx; height: 28rpx; border: 2rpx solid #CCC; border-radius: 6rpx;
+  display: flex; align-items: center; justify-content: center; font-size: 18rpx; color: #fff;
+}
+.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
 
-/* 开放时间多时段 */
-.open-hours-list { background: #FAFAFA; border-radius: 12rpx; padding: 16rpx; }
-.open-hours-day { margin-bottom: 16rpx; padding-bottom: 16rpx; border-bottom: 1rpx solid #eee; }
-.open-hours-day:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.addr-row { display: flex; gap: 16rpx; align-items: center; }
+.addr-input { flex: 1; }
+.btn-map {
+  flex-shrink: 0; padding: 20rpx 24rpx; background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #fff; border-radius: 16rpx; font-size: 26rpx; font-weight: 600; white-space: nowrap;
+}
+.loc-hint { margin-top: 12rpx; font-size: 22rpx; color: #999; }
+
+.open-hours-list { margin-top: 8rpx; }
+.open-hours-day {
+  background: #F5F7FA; border-radius: 16rpx; padding: 16rpx 20rpx; margin-bottom: 12rpx;
+}
 .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
-.day-name { font-size: 28rpx; font-weight: bold; color: #333; }
-.add-slot { font-size: 24rpx; color: #FF6B00; padding: 4rpx 12rpx; border: 1rpx solid #FF6B00; border-radius: 6rpx; }
-.time-row { display: flex; align-items: center; gap: 12rpx; margin-top: 12rpx; }
-.time-picker { background: #fff; border: 1rpx solid #ddd; border-radius: 6rpx; padding: 12rpx 24rpx; font-size: 26rpx; min-width: 140rpx; text-align: center; }
+.day-name { font-size: 26rpx; font-weight: 600; color: #333; }
+.add-slot { font-size: 24rpx; color: #FF6B00; }
+.time-row { display: flex; align-items: center; gap: 12rpx; margin-top: 8rpx; }
+.time-picker {
+  background: #fff; padding: 10rpx 20rpx; border-radius: 12rpx; font-size: 26rpx; color: #333;
+}
 .time-sep { color: #999; font-size: 24rpx; }
-.del-slot { margin-left: auto; color: #FF3B30; font-size: 32rpx; padding: 4rpx 12rpx; }
-.empty-slot { font-size: 24rpx; color: #bbb; padding: 8rpx 0; }
+.del-slot { color: #FF4757; font-size: 28rpx; padding: 0 8rpx; }
+.empty-slot { font-size: 24rpx; color: #BBB; }
+
+.form-actions {
+  position: fixed; left: 0; right: 0; bottom: 0; padding: 24rpx 32rpx calc(24rpx + env(safe-area-inset-bottom));
+  background: #fff; box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.06);
+}
+.btn-submit {
+  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; border-radius: 999rpx;
+  font-size: 30rpx; font-weight: 600; height: 88rpx; line-height: 88rpx; border: none;
+}
+.btn-submit::after { border: none; }

@@ -28,14 +28,14 @@
     </picker>
 
     <view class="form-label required">球场地址</view>
-    <input class="form-input" placeholder="如：天河区体育西路 123 号" value="{{form.address}}" bindinput="onInput" data-field="address" />
-
-    <view class="form-label">经纬度（选填）</view>
-    <view class="form-loc-row">
-      <input class="form-input loc-input" placeholder="经度" value="{{form.longitude}}" bindinput="onInput" data-field="longitude" type="digit" />
-      <input class="form-input loc-input" placeholder="纬度" value="{{form.latitude}}" bindinput="onInput" data-field="latitude" type="digit" />
+    <view class="addr-row">
+      <input class="form-input addr-input" placeholder="点击右侧按钮地图选点，或手动填写" value="{{form.address}}" bindinput="onInput" data-field="address" />
+      <view class="btn-map" bindtap="onChooseLocation">地图选点</view>
     </view>
-    <view class="loc-hint">📍 当前支持手动填写经纬度</view>
+    <view class="loc-hint" wx:if="{{form.latitude && form.longitude}}">
+      📍 已选坐标：{{form.latitude}}, {{form.longitude}}
+    </view>
+    <view class="loc-hint" wx:else>📍 建议用地图选点，便于用户按距离查找球场</view>
 
     <view class="form-label">联系电话</view>
     <input class="form-input" placeholder="如：020-12345678" value="{{form.phone}}" bindinput="onInput" data-field="phone" type="number" />

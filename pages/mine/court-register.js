@@ -1,6 +1,6 @@
 // pages/mine/court-register.js
-// 球场信息登记表单：行政区 + 多选场地性质 + 按周多时段
 const api = require('../../utils/api.js');
+const { chooseLocationOnMap } = require('../../utils/location.js');
 
 const DISTRICTS = ['天河', '海珠', '越秀', '荔湾', '白云', '黄埔', '番禺', '花都', '南沙', '从化', '增城'];
 const WEEK_DAYS = [
@@ -29,6 +29,29 @@ Page({
 
   onInput(e) {
     this.setData({ [`form.${e.currentTarget.dataset.field}`]: e.detail.value });
+  },
+
+  async onChooseLocation() {
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    const patch = {
+      'form.address': loc.address || loc.name || '',
+      'form.longitude': String(loc.longitude),
+      'form.latitude': String(loc.latitude)
+    };
+    // 若名称仍空，可用地图点名称填充
+    if (!this.data.form.name && loc.name) {
+      patch['form.name'] = loc.name;
+    }
+    // 尝试根据地址匹配行政区
+    const addr = loc.address || '';
+    const hitIdx = DISTRICTS.findIndex(d => addr.indexOf(d) >= 0);
+    if (hitIdx >= 0) {
+      patch.districtIndex = hitIdx;
+      patch['form.district'] = DISTRICTS[hitIdx];
+    }
+    this.setData(patch);
+    wx.showToast({ title: '位置已选择', icon: 'success' });
   },
 
   onCourtTypeToggle(e) {
