@@ -2,13 +2,16 @@
 const api = require('../../utils/api.js');
 const app = getApp();
 
-// 与后端 TEST_LOGIN_SECRET 默认值一致（可在后端改环境变量）
+// 与后端 TEST_LOGIN_SECRET 默认值一致
 const TEST_LOGIN_SECRET = 'football-audit-2026';
+// 下次提审需要开放测试入口时改为 true
+const ENABLE_TEST_LOGIN = false;
 
 Page({
   data: {
     agreed: false,
-    loading: false
+    loading: false,
+    showTestLogin: ENABLE_TEST_LOGIN
   },
 
   onAgreeTap() {
@@ -75,6 +78,9 @@ Page({
 
   /** 审核测试账号：同时具备个人方 + 球场方 */
   async onTestLoginTap() {
+    if (!ENABLE_TEST_LOGIN) {
+      return wx.showToast({ title: '测试入口未开放', icon: 'none' });
+    }
     if (!this.data.agreed) {
       return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
     }

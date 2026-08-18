@@ -11,7 +11,7 @@ Page({
   data: {
     detail: null,
     typeFromQuery: null,
-    currentUserId: null  // 当前登录用户 id（用于判断是否已加入）
+    currentUserId: null
   },
 
   onLoad(options) {
@@ -27,14 +27,13 @@ Page({
       const config = TYPE_CONFIG[typeKey] || TYPE_CONFIG.sub;
       const userInfo = wx.getStorageSync('userInfo');
       const currentUserId = userInfo?.id;
-      // 判断当前用户是否已加入
-      const joined = !!(detail.joins && detail.joins.find(j => j.userId === currentUserId));
+      const joined = !!(detail.joins && detail.joins.find(j => Number(j.userId) === Number(currentUserId)));
       this.setData({
         currentUserId,
         detail: {
           ...detail,
           typeKey,
-          joined,  // 2026-07-28 新增：是否已加入（控制按钮文案）
+          joined,
           icon: config.icon,
           typeLabel: config.cnName,
           actionText: config.actionText,
@@ -44,14 +43,11 @@ Page({
           desc: detail.description || '',
           contact: detail.contact || '微信同名',
           status: detail.status === 'open' ? '招募中' : (detail.status === 'full' ? '已满' : '已关闭'),
-          // 2026-07-28 新增字段格式化
           matchTypesText: (detail.matchTypes && detail.matchTypes.length > 0)
             ? detail.matchTypes.join(' / ')
             : '不限',
-          // 2026-07-28 修复：发布时间 + 比赛时间同步格式化
           publishTime: this.formatPublishTime(detail.createdAt),
           time: this.formatPlayTime(detail.playTime) || '待定',
-          // 2026-07-28 修复：缺人、已加入人数同步
           need: detail.needCount || 0,
           joinedCount: detail.joinedCount || 0
         }
@@ -77,7 +73,6 @@ Page({
     });
   },
 
-  // 发布时间格式化（与 lfg/lfg.js 同步，2026-07-28）
   formatPublishTime(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -88,7 +83,6 @@ Page({
     return `${date.getMonth() + 1}月${date.getDate()}日 ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   },
 
-  // 比赛时间格式化
   formatPlayTime(isoStr) {
     if (!isoStr) return '';
     const date = new Date(isoStr);
@@ -105,6 +99,12 @@ Page({
   onJoinTap() {
     const id = this.data.detail?.id;
     if (!id) return;
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      setTimeout(() => wx.navigateTo({ url: '/pages/login/login' }), 800);
+      return;
+    }
     const detail = this.data.detail;
     wx.showModal({
       title: detail.confirmTitle || `确认${detail.actionText || '参与'}`,
@@ -114,19 +114,21 @@ Page({
           try {
             await api.joinLfg(id);
             wx.showToast({ title: `已${detail.actionText || '参与'}成功！`, icon: 'success' });
-            setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
+            setTimeout(() => this.loadDetail(id), 1000);
           } catch (e) {
-            console.error(e);
-            // 2026-07-30 修复：显示真实错误信息（之前被吞了）
+            console.error('[joinLfg]', e);
             const errMsg = (e && e.message) || (e && e.data && e.data.message) || '操作失败';
-            wx.showToast({ title: errMsg.length > 14 ? errMsg.substring(0, 14) + '…' : errMsg, icon: 'none', duration: 2500 });
+            wx.showToast({
+              title: errMsg.length > 20 ? errMsg.substring(0, 20) + '…' : errMsg,
+              icon: 'none',
+              duration: 3000
+            });
           }
         }
       }
     });
   },
 
-  // 退出组队（2026-07-28 新增）
   onQuitTap() {
     const id = this.data.detail?.id;
     if (!id) return;
@@ -138,7 +140,7 @@ Page({
           try {
             await api.quitLfg(id);
             wx.showToast({ title: '已退出组队', icon: 'success' });
-            setTimeout(() => this.loadDetail(id), 1000);  // 刷新详情，按钮切换
+            setTimeout(() => this.loadDetail(id), 1000);
           } catch (e) {
             console.error(e);
             wx.showToast({ title: e.message || '退出失败', icon: 'none' });

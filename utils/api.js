@@ -14,11 +14,14 @@ function request(url, method = 'GET', data = {}, options = {}) {
   const showLoading = options.showLoading !== false;
   if (showLoading) wx.showLoading({ title: options.loadingText || '加载中...', mask: true });
 
+  // 避免 data 为 null 时被序列化成字符串 "null"，导致后端 body 解析异常
+  const payload = data == null ? {} : data;
+
   return new Promise((resolve, reject) => {
     wx.request({
       url: API_BASE + url,
       method,
-      data,
+      data: payload,
       timeout: 30000,
       header: {
         'Content-Type': 'application/json',
@@ -45,13 +48,17 @@ function request(url, method = 'GET', data = {}, options = {}) {
           return;
         }
         const status = res.statusCode || 0;
-        const fallback = status ? `网络错误 ${status}` : '网络错误';
+        // 微信对非 JSON 响应常提示「服务器内容错误」；这里给出更明确文案
+        let fallback = '网络错误';
+        if (status === 502 || status === 503) fallback = '服务暂时不可用，请稍后重试';
+        else if (status === 500) fallback = '服务器内部错误，请稍后重试';
+        else if (status) fallback = `网络错误 ${status}`;
         if (options.silent !== true) wx.showToast({ title: fallback, icon: 'none' });
         reject({ code: status || -1, message: fallback, raw: res });
       },
       fail: (err) => {
         if (showLoading) wx.hideLoading();
-        const msg = '网络连接失败，请检查后端是否启动';
+        const msg = '网络连接失败，请检查网络';
         if (options.silent !== true) wx.showToast({ title: msg, icon: 'none', duration: 2000 });
         reject({ code: -1, message: msg, raw: err });
       }
@@ -137,9 +144,9 @@ function getLfgList(params = {}) {
 }
 function publishLfg(data) { return request('/api/v1/lfg', 'POST', data, { loadingText: '发布中...' }); }
 function getLfgDetail(id) { return request(`/api/v1/lfg/${id}`); }
-function joinLfg(id) { return request(`/api/v1/lfg/${id}/join`, 'POST', null, { loadingText: '报名中...' }); }
-function quitLfg(id) { return request(`/api/v1/lfg/${id}/quit`, 'POST', null, { loadingText: '退出中...' }); }
-function closeLfg(id) { return request(`/api/v1/lfg/${id}/close`, 'POST'); }
+function joinLfg(id) { return request(`/api/v1/lfg/${id}/join`, 'POST', {}, { loadingText: '报名中...' }); }
+function quitLfg(id) { return request(`/api/v1/lfg/${id}/quit`, 'POST', {}, { loadingText: '退出中...' }); }
+function closeLfg(id) { return request(`/api/v1/lfg/${id}/close`, 'POST', {}); }
 function getTeamList(params = {}) {
   const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');

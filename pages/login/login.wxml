@@ -18,11 +18,13 @@
       </block>
     </button>
 
-    <!-- 审核 / 联调：个人方 + 球场方双身份测试账号 -->
-    <button class="btn-test full" bindtap="onTestLoginTap" disabled="{{loading}}">
-      审核测试账号登录
-    </button>
-    <view class="test-hint">测试账号可切换「个人方 / 球场方」，密钥见提审说明</view>
+    <!-- 审核测试账号：默认隐藏；提审时把 ENABLE_TEST_LOGIN 改为 true -->
+    <block wx:if="{{showTestLogin}}">
+      <button class="btn-test full" bindtap="onTestLoginTap" disabled="{{loading}}">
+        审核测试账号登录
+      </button>
+      <view class="test-hint">测试账号可切换「个人方 / 球场方」，密钥见提审说明</view>
+    </block>
 
     <view class="agreement" bindtap="onAgreeTap">
       <view class="checkbox {{agreed ? 'checked' : ''}}">{{agreed ? '✓' : ''}}</view>
