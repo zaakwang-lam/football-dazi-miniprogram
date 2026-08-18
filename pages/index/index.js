@@ -30,13 +30,15 @@ Page({
 
     const lfgData = lfgRes.status === 'fulfilled' ? lfgRes.value.data?.list || [] : [];
     const TYPE_KEY = { sub: 'sub', war: 'war' };
-    const TYPE_LABEL = { sub: '找人顶', war: '约战' };
+    const TYPE_LABEL = { sub: '凑人', war: '约战' };
     const lfgList = lfgData.map(item => ({
       ...item,
       typeKey: TYPE_KEY[item.type] || 'sub',
       typeLabel: TYPE_LABEL[item.type] || '凑人',
       teamName: item.title || item.publisher?.nickname || '招募中',
-      time: this.formatTime(item.playTime)
+      time: this.formatTime(item.playTime),
+      need: item.needCount != null ? item.needCount : 0,
+      location: item.location || '地点待定'
     }));
 
     const banners = bannerRes.status === 'fulfilled'
@@ -49,6 +51,7 @@ Page({
   formatTime(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return '';
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const target = new Date(d);
@@ -68,7 +71,6 @@ Page({
   onBannerTap(e) {
     const url = e.currentTarget.dataset.url;
     if (url && /^https?:\/\//i.test(url)) {
-      // 外链暂不跳转（小程序需配置业务域名）
       wx.showToast({ title: '活动页开发中', icon: 'none' });
       return;
     }
@@ -111,6 +113,10 @@ Page({
 
   onLfgTap(e) {
     const id = e.currentTarget.dataset.id;
+    if (!id) {
+      wx.showToast({ title: '无效的组队信息', icon: 'none' });
+      return;
+    }
     wx.navigateTo({ url: `/pages/lfg/detail?id=${id}` });
   },
 

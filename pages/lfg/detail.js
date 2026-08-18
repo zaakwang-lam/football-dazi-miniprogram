@@ -1,5 +1,4 @@
 // pages/lfg/detail.js
-// 凑人/约战共享详情页
 const api = require('../../utils/api.js');
 
 const TYPE_CONFIG = {
@@ -16,12 +15,19 @@ Page({
 
   onLoad(options) {
     this.setData({ typeFromQuery: options.type || null });
+    if (!options.id) {
+      wx.showToast({ title: '缺少组队 ID', icon: 'none' });
+      return;
+    }
     this.loadDetail(options.id);
   },
 
   async loadDetail(id) {
     try {
       const res = await api.getLfgDetail(id);
+      if (!res || res.code !== 0 || !res.data) {
+        throw new Error((res && res.message) || '详情为空');
+      }
       const detail = res.data;
       const typeKey = detail.type || this.data.typeFromQuery || 'sub';
       const config = TYPE_CONFIG[typeKey] || TYPE_CONFIG.sub;
@@ -57,7 +63,12 @@ Page({
       });
     } catch (e) {
       console.error('加载详情失败:', e);
-      wx.showToast({ title: '加载失败', icon: 'none' });
+      const msg = (e && e.message) || '加载失败';
+      wx.showToast({
+        title: msg.length > 20 ? msg.slice(0, 20) + '…' : msg,
+        icon: 'none',
+        duration: 3000
+      });
     }
   },
 
@@ -76,6 +87,7 @@ Page({
   formatPublishTime(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return '';
     const now = new Date();
     const diff = (now - date) / 1000;
     if (diff < 60) return '刚刚';
@@ -86,6 +98,7 @@ Page({
   formatPlayTime(isoStr) {
     if (!isoStr) return '';
     const date = new Date(isoStr);
+    if (Number.isNaN(date.getTime())) return '';
     const now = new Date();
     const isToday = date.toDateString() === now.toDateString();
     const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
@@ -117,7 +130,7 @@ Page({
             setTimeout(() => this.loadDetail(id), 1000);
           } catch (e) {
             console.error('[joinLfg]', e);
-            const errMsg = (e && e.message) || (e && e.data && e.data.message) || '操作失败';
+            const errMsg = (e && e.message) || '操作失败';
             wx.showToast({
               title: errMsg.length > 20 ? errMsg.substring(0, 20) + '…' : errMsg,
               icon: 'none',

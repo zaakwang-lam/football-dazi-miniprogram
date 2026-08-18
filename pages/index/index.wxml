@@ -7,7 +7,6 @@
     </view>
   </view>
 
-  <!-- 首页置顶轮播：后台管理系统上传，最多 5 张，左右滑动 -->
   <swiper
     class="hero-swiper"
     indicator-dots="{{banners.length > 1}}"
@@ -22,7 +21,6 @@
       </view>
     </swiper-item>
   </swiper>
-  <!-- 无后台图时回退本地默认图 -->
   <view class="hero-banner" bindtap="onBannerTap" wx:else>
     <image class="hero-bg" src="/images/hero/bg.png" mode="aspectFill"></image>
   </view>
@@ -42,22 +40,14 @@
     </view>
   </view>
 
-<block wx:if="{{false}}">
-  <view class="nearby-entry" bindtap="onNearbyTap">
-    <text class="nearby-icon">📍</text>
-    <text class="nearby-text">查看附近球场</text>
-    <text class="nearby-arrow">›</text>
-  </view>
-</block>
-
   <view class="section">
     <view class="section-header">
       <text class="section-title">⚡ 进行中</text>
     </view>
-    <view class="lfg-list">
+    <view class="lfg-list" wx:if="{{lfgList.length > 0}}">
       <view class="lfg-item" wx:for="{{lfgList}}" wx:key="id" bindtap="onLfgTap" data-id="{{item.id}}">
         <view class="lfg-left">
-          <view class="lfg-type type-{{item.typeKey}}">{{item.type}}</view>
+          <view class="lfg-type type-{{item.typeKey}}">{{item.typeLabel}}</view>
         </view>
         <view class="lfg-right">
           <view class="lfg-row1">
@@ -70,6 +60,9 @@
           </view>
         </view>
       </view>
+    </view>
+    <view class="empty-lfg" wx:else>
+      <text>暂无进行中的凑人/约战</text>
     </view>
   </view>
 
