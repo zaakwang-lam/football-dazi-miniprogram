@@ -2,7 +2,6 @@
 <view class="page">
   <view class="form-title">发起约战</view>
   <view class="form-subtitle">球队对球队，向对手发起挑战</view>
-  <view class="form-tip">例如：本队平均水平、希望挑战的对手水平、人均费用、人制等</view>
 
   <view class="form-group">
     <view class="form-label required">队伍名称</view>
@@ -11,13 +10,16 @@
 
   <view class="form-group">
     <view class="form-label required">比赛地点</view>
-    <input class="form-input" placeholder="如：海珠7人场" value="{{form.location}}" bindinput="onInput" data-key="location" />
+    <view class="loc-row">
+      <input class="form-input loc-flex" placeholder="点击右侧地图选点" value="{{form.location}}" disabled />
+      <view class="btn-map" bindtap="onChooseLocation">地图选点</view>
+    </view>
   </view>
 
   <view class="form-group">
-    <view class="form-label">比赛时间</view>
+    <view class="form-label required">比赛时间</view>
     <view class="time-row">
-      <picker mode="date" value="{{form.dateValue}}" start="{{form.dateMin}}" end="{{form.dateMax}}" bindchange="onDateChange">
+      <picker mode="date" value="{{form.dateValue}}" start="{{dateMin}}" end="{{dateMax}}" bindchange="onDateChange">
         <view class="time-cell">
           <text wx:if="{{form.dateText}}" style="color:#1A1A1A;font-weight:500;">{{form.dateText}}</text>
           <text wx:else style="color:#999999;">选日期</text>
@@ -35,7 +37,7 @@
   <view class="form-group">
     <view class="form-label required">人制（单选）</view>
     <view class="checkbox-group">
-      <view class="checkbox-item {{form.matchType === item ? 'active' : ''}}" wx:for="{{matchTypeOptions}}" wx:key="index" bindtap="onMatchTypeSelect" data-value="{{item}}" data-index="{{index}}" hover-class="checkbox-item-hover" hover-stay-time="100">
+      <view class="checkbox-item {{form.matchType === item ? 'active' : ''}}" wx:for="{{matchTypeOptions}}" wx:key="*this" bindtap="onMatchTypeSelect" data-value="{{item}}">
         <view class="radio {{form.matchType === item ? 'checked' : ''}}">{{form.matchType === item ? '●' : ''}}</view>
         <text>{{item}}</text>
       </view>
@@ -56,8 +58,8 @@
   </view>
 
   <view class="form-group">
-    <view class="form-label required">联系方式</view>
-    <input class="form-input" placeholder="微信号或手机号" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
+    <view class="form-label required">联系手机</view>
+    <input class="form-input" type="number" maxlength="11" placeholder="请输入11位手机号码" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
   </view>
 
   <view class="form-group">

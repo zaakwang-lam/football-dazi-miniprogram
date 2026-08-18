@@ -5,19 +5,33 @@
   <view class="form-section">
     <view class="form-label required">人制（多选）</view>
     <view class="checkbox-group">
-      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{teamTypes}}" wx:key="index" bindtap="onTeamTypeToggle" data-value="{{item}}" hover-class="checkbox-item-hover" hover-stay-time="100">
+      <view class="checkbox-item {{form.matchTypes.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{teamTypes}}" wx:key="*this" bindtap="onTeamTypeToggle" data-value="{{item}}">
         <view class="checkbox {{form.matchTypes.indexOf(item) >= 0 ? 'checked' : ''}}">{{form.matchTypes.indexOf(item) >= 0 ? '✓' : ''}}</view>
         <text>{{item}}</text>
       </view>
     </view>
 
     <view class="form-label required">场地位置</view>
-    <input class="form-input" placeholder="如：天河体育中心足球场" value="{{form.location}}" bindinput="onInput" data-field="location" />
+    <view class="loc-row">
+      <input class="form-input loc-flex" placeholder="点击右侧地图选点" value="{{form.location}}" disabled />
+      <view class="btn-map" bindtap="onChooseLocation">地图选点</view>
+    </view>
 
     <view class="form-label required">比赛时间</view>
-    <picker mode="multiSelector" range="{{dateRange}}" value="{{dateIndex}}" bindchange="onDateChange">
-      <view class="form-picker">{{form.playTimeLabel}}</view>
-    </picker>
+    <view class="time-row">
+      <picker mode="date" value="{{form.dateValue}}" start="{{dateMin}}" end="{{dateMax}}" bindchange="onDateChange">
+        <view class="time-cell">
+          <text wx:if="{{form.dateText}}">{{form.dateText}}</text>
+          <text wx:else class="ph">选日期</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{form.timeValue}}" bindchange="onTimeChange">
+        <view class="time-cell">
+          <text wx:if="{{form.timeText}}">{{form.timeText}}</text>
+          <text wx:else class="ph">选时间</text>
+        </view>
+      </picker>
+    </view>
 
     <view class="form-label required">空闲名额</view>
     <view class="count-row">
@@ -30,8 +44,8 @@
     <view class="form-label">人均费用（元，选填）</view>
     <input class="form-input" placeholder="如：30" value="{{form.fee}}" bindinput="onInput" data-field="fee" type="digit" />
 
-    <view class="form-label">联系方式</view>
-    <input class="form-input" placeholder="如：微信昵称或手机号" value="{{form.contact}}" bindinput="onInput" data-field="contact" />
+    <view class="form-label required">联系手机</view>
+    <input class="form-input" type="number" maxlength="11" placeholder="请输入11位手机号码" value="{{form.contact}}" bindinput="onInput" data-field="contact" />
 
     <view class="form-label">备注</view>
     <textarea class="form-textarea" placeholder="如：水平不限，欢迎新人" value="{{form.description}}" bindinput="onInput" data-field="description" maxlength="200" />
