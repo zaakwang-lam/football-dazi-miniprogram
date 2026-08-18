@@ -1,18 +1,15 @@
 // pages/mine/my-teams.js
-// 我发起的 / 我加入的 / 加入已发起 三个 tab
 const api = require('../../utils/api.js');
 
 Page({
   data: {
-    activeTab: 'created',  // 默认我发起的
+    activeTab: 'created',
     list: [],
     loaded: false
   },
 
   onLoad(options) {
     const tab = options.type;
-    // mine 跳过来时: type=created/joined → 直接显示对应 tab
-    // 或 type=browse → 浏览所有可加入的
     if (tab === 'created' || tab === 'joined' || tab === 'browse') {
       this.setData({ activeTab: tab });
     }
@@ -40,10 +37,8 @@ Page({
       const tab = this.data.activeTab;
 
       if (tab === 'browse') {
-        // 浏览所有可加入的（status=open 且未满）
         res = await api.getLfgList({ type: 'sub', status: 'open' });
       } else {
-        // 我发起的 / 我加入的
         res = await api.getMyLfgPosts(tab);
       }
 
@@ -101,12 +96,30 @@ Page({
   onItemTap(e) {
     const id = e.currentTarget.dataset.id;
     const type = e.currentTarget.dataset.type;
-    // 跳详情（sub/war 都跳到 lfg/detail，detail 内部根据 type 分支）
     wx.navigateTo({ url: `/pages/lfg/detail?id=${id}&type=${type}` });
   },
 
+  onDeleteTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (!id) return;
+    wx.showModal({
+      title: '删除组队',
+      content: '删除后报名记录一并清除，确认删除？',
+      confirmColor: '#FF4757',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.deleteLfg(id);
+          wx.showToast({ title: '已删除', icon: 'success' });
+          this.loadList();
+        } catch (err) {
+          wx.showToast({ title: err.message || '删除失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
   onPublishTap() {
-    // 我发起的 tab 的 + 按钮 → 跳个人发起组队页（mine/lfg-publish）
     wx.navigateTo({ url: '/pages/mine/lfg-publish' });
   },
 

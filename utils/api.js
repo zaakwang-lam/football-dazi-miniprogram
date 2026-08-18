@@ -14,7 +14,6 @@ function request(url, method = 'GET', data = {}, options = {}) {
   const showLoading = options.showLoading !== false;
   if (showLoading) wx.showLoading({ title: options.loadingText || '加载中...', mask: true });
 
-  // 避免 data 为 null 时被序列化成字符串 "null"，导致后端 body 解析异常
   const payload = data == null ? {} : data;
 
   return new Promise((resolve, reject) => {
@@ -48,7 +47,6 @@ function request(url, method = 'GET', data = {}, options = {}) {
           return;
         }
         const status = res.statusCode || 0;
-        // 微信对非 JSON 响应常提示「服务器内容错误」；这里给出更明确文案
         let fallback = '网络错误';
         if (status === 502 || status === 503) fallback = '服务暂时不可用，请稍后重试';
         else if (status === 500) fallback = '服务器内部错误，请稍后重试';
@@ -69,7 +67,6 @@ function request(url, method = 'GET', data = {}, options = {}) {
 function wxLogin(code, userInfo = null) {
   return request('/api/user/login', 'POST', { code, userInfo }, { loadingText: '登录中...' });
 }
-/** 审核测试登录（需后端 TEST_LOGIN_ENABLED=1） */
 function loginTest(secret) {
   return request('/api/user/login-test', 'POST', { secret }, { loadingText: '测试登录...' });
 }
@@ -146,6 +143,7 @@ function publishLfg(data) { return request('/api/v1/lfg', 'POST', data, { loadin
 function getLfgDetail(id) { return request(`/api/v1/lfg/${id}`); }
 function joinLfg(id) { return request(`/api/v1/lfg/${id}/join`, 'POST', {}, { loadingText: '报名中...' }); }
 function quitLfg(id) { return request(`/api/v1/lfg/${id}/quit`, 'POST', {}, { loadingText: '退出中...' }); }
+function deleteLfg(id) { return request(`/api/v1/lfg/${id}`, 'DELETE', {}, { loadingText: '删除中...' }); }
 function closeLfg(id) { return request(`/api/v1/lfg/${id}/close`, 'POST', {}); }
 function getTeamList(params = {}) {
   const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
@@ -175,6 +173,6 @@ module.exports = {
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,
-  getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, closeLfg,
+  getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, deleteLfg, closeLfg,
   getTeamList, getTeamDetail, createTeam, joinTeam, updateTeamAnnouncement, checkin, createAa, getTeamStats
 };

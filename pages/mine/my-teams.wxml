@@ -1,56 +1,59 @@
 <!-- pages/mine/my-teams.wxml -->
 <view class="page">
-  <!-- Tab 切换 -->
   <view class="tabs">
     <view class="tab {{activeTab === 'created' ? 'active' : ''}}" bindtap="onTabTap" data-tab="created">我发起的</view>
     <view class="tab {{activeTab === 'joined' ? 'active' : ''}}" bindtap="onTabTap" data-tab="joined">我加入的</view>
     <view class="tab {{activeTab === 'browse' ? 'active' : ''}}" bindtap="onTabTap" data-tab="browse">加入已发起</view>
   </view>
 
-  <!-- 列表 -->
   <view class="lfg-list">
-    <view class="lfg-card" wx:for="{{list}}" wx:key="id" bindtap="onItemTap" data-id="{{item.id}}" data-type="{{item.type}}">
-      <view class="card-top">
-        <view class="card-type {{item.type === 'sub' ? 'type-sub' : 'type-war'}}">
-          <text class="type-icon">{{item.type === 'sub' ? '🙋' : '⚔️'}}</text>
-          <text>{{item.type === 'sub' ? '凑人' : '约战'}}</text>
+    <view class="lfg-card" wx:for="{{list}}" wx:key="id">
+      <view bindtap="onItemTap" data-id="{{item.id}}" data-type="{{item.type}}">
+        <view class="card-top">
+          <view class="card-type {{item.type === 'sub' ? 'type-sub' : 'type-war'}}">
+            <text class="type-icon">{{item.type === 'sub' ? '🙋' : '⚔️'}}</text>
+            <text>{{item.type === 'sub' ? '凑人' : '约战'}}</text>
+          </view>
+          <view class="card-role" wx:if="{{item.role === 'creator'}}">发起人</view>
+          <view class="card-role joiner" wx:elif="{{item.role === 'joiner'}}">参与者</view>
+          <text class="card-time">{{item.publishTime}}</text>
         </view>
-        <view class="card-role" wx:if="{{item.role === 'creator'}}">发起人</view>
-        <view class="card-role joiner" wx:elif="{{item.role === 'joiner'}}">参与者</view>
-        <text class="card-time">{{item.publishTime}}</text>
+
+        <view class="card-main">
+          <view class="main-row">
+            <text class="team-name">{{item.teamName}}</text>
+            <text class="need-num">缺 {{item.needCount || 0}} 人</text>
+          </view>
+          <view class="main-info">
+            <text class="info-item">📍 {{item.location}}</text>
+            <text class="info-item">🕐 {{item.playTimeText}}</text>
+            <text class="info-item" wx:if="{{item.matchTypesText}}">⚽️ {{item.matchTypesText}}</text>
+            <text class="info-item" wx:if="{{item.fee !== null && item.fee !== undefined}}">💰 ¥{{item.fee}}</text>
+          </view>
+          <view class="main-desc" wx:if="{{item.description}}">{{item.description}}</view>
+        </view>
+
+        <view class="card-bottom">
+          <text class="contact-info">📱 {{item.contact}}</text>
+          <view class="status-tag status-{{item.status}}" wx:if="{{item.status === 'open'}}">招募中</view>
+          <view class="status-tag status-full" wx:elif="{{item.status === 'full'}}">已满</view>
+          <view class="status-tag status-closed" wx:else>已关闭</view>
+        </view>
       </view>
 
-      <view class="card-main">
-        <view class="main-row">
-          <text class="team-name">{{item.teamName}}</text>
-          <text class="need-num">缺 {{item.needCount || 0}} 人</text>
-        </view>
-        <view class="main-info">
-          <text class="info-item">📍 {{item.location}}</text>
-          <text class="info-item">🕐 {{item.playTimeText}}</text>
-          <text class="info-item" wx:if="{{item.matchTypesText}}">⚽️ {{item.matchTypesText}}</text>
-          <text class="info-item" wx:if="{{item.fee !== null && item.fee !== undefined}}">💰 ¥{{item.fee}}</text>
-        </view>
-        <view class="main-desc" wx:if="{{item.description}}">{{item.description}}</view>
-      </view>
-
-      <view class="card-bottom">
-        <text class="contact-info">💬 {{item.contact}}</text>
-        <view class="status-tag status-{{item.status}}" wx:if="{{item.status === 'open'}}">招募中</view>
-        <view class="status-tag status-full" wx:elif="{{item.status === 'full'}}">已满</view>
-        <view class="status-tag status-closed" wx:else>已关闭</view>
+      <!-- 仅「我发起的」显示删除 -->
+      <view class="card-actions" wx:if="{{activeTab === 'created'}}">
+        <view class="action-del" catchtap="onDeleteTap" data-id="{{item.id}}">删除</view>
       </view>
     </view>
   </view>
 
-  <!-- 空状态 -->
   <view class="empty" wx:if="{{list.length === 0 && loaded}}">
     <view class="empty-icon">{{activeTab === 'created' ? '📋' : (activeTab === 'joined' ? '👥' : '🔍')}}</view>
     <text class="empty-text">{{emptyText}}</text>
     <view class="empty-tip" wx:if="{{activeTab !== 'browse'}}">点击下方按钮发起一个组队</view>
   </view>
 
-  <!-- 底部浮动按钮（仅我发起的 + 我加入的 显示，方便快速发布） -->
   <view class="fab" wx:if="{{activeTab === 'created'}}" bindtap="onPublishTap">
     <text>+</text>
   </view>
