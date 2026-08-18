@@ -12,36 +12,8 @@
   margin-top: 8rpx;
 }
 
-.type-selector {
-  display: flex;
-  gap: 16rpx;
-  margin-bottom: 32rpx;
-}
-
-.type-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24rpx 0;
-  background: #FFFFFF;
-  border: 2rpx solid #F5F7FA;
-  border-radius: 24rpx;
-  font-size: 26rpx;
-  color: #666666;
-}
-
-.type-item.active {
-  border-color: #FF6B00;
-  background: #FFE8D6;
-  color: #FF6B00;
-  font-weight: 600;
-}
-
-.type-emoji {
-  font-size: 48rpx;
-  margin-bottom: 8rpx;
-}
+.form-subtitle { font-size: 24rpx; color: #666; margin-bottom: 8rpx; }
+.form-tip { font-size: 22rpx; color: #999; margin-bottom: 24rpx; }
 
 .form-group {
   background: #FFFFFF;
@@ -56,6 +28,7 @@
   color: #999999;
   margin-bottom: 12rpx;
 }
+.form-label.required::before { content: '* '; color: #FF4757; }
 
 .form-input {
   font-size: 30rpx;
@@ -73,7 +46,14 @@
   padding: 8rpx 0;
 }
 
-/* 数量选择器 */
+.loc-row { display: flex; align-items: center; gap: 16rpx; }
+.loc-flex { flex: 1; }
+.btn-map {
+  flex-shrink: 0; padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #fff; border-radius: 12rpx; font-size: 26rpx; font-weight: 600;
+}
+
 .number-picker {
   display: flex;
   align-items: center;
@@ -101,7 +81,6 @@
   text-align: center;
 }
 
-/* 水平选择 */
 .level-selector {
   display: flex;
   flex-wrap: wrap;
@@ -122,7 +101,6 @@
   font-weight: 600;
 }
 
-/* 底部按钮 */
 .bottom-action {
   position: fixed;
   left: 0;
@@ -137,8 +115,15 @@
 .btn-primary.full {
   display: block;
   width: 100%;
+  text-align: center;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #fff;
+  border-radius: 999rpx;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  font-weight: 600;
 }
-/* 时间选择器 2026-07-28 调整 */
+
 .time-row { display: flex; gap: 16rpx; }
 .time-cell {
   flex: 1;

@@ -1,221 +1,52 @@
 /* pages/war/publish.wxss */
-/* 2026-07-28 同步 lfg/publish 样式 + 适配约战表单字段 */
-.page {
-  padding: 24rpx;
-  padding-bottom: 200rpx;
-}
-
-.form-title {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: #1A1A1A;
-  margin-bottom: 12rpx;
-}
-
-.form-subtitle {
-  font-size: 26rpx;
-  color: #FF6B00;
-  margin-bottom: 8rpx;
-}
-
-.form-tip {
-  font-size: 24rpx;
-  color: #999;
-  margin-bottom: 32rpx;
-}
-
+.page { padding: 24rpx; padding-bottom: 200rpx; }
+.form-title { font-size: 32rpx; font-weight: 700; color: #1A1A1A; margin-bottom: 8rpx; }
+.form-subtitle { font-size: 24rpx; color: #666; margin-bottom: 24rpx; }
 .form-group {
-  background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 24rpx 32rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  background: #fff; border-radius: 24rpx; padding: 24rpx 32rpx;
+  margin-bottom: 20rpx; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.04);
 }
-
-.form-label {
-  font-size: 26rpx;
-  color: #999999;
-  margin-bottom: 12rpx;
+.form-label { font-size: 26rpx; color: #999; margin-bottom: 12rpx; }
+.form-label.required::before { content: '* '; color: #FF4757; }
+.form-input { font-size: 30rpx; color: #1A1A1A; width: 100%; padding: 8rpx 0; }
+.form-textarea { font-size: 28rpx; color: #1A1A1A; width: 100%; min-height: 140rpx; }
+.loc-row { display: flex; align-items: center; gap: 16rpx; }
+.loc-flex { flex: 1; }
+.btn-map {
+  flex-shrink: 0; padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #fff; border-radius: 12rpx; font-size: 26rpx; font-weight: 600;
 }
-
-.form-label.required::before {
-  content: '*';
-  color: #FF3B30;
-  margin-right: 6rpx;
-}
-
-.form-input {
-  font-size: 30rpx;
-  color: #1A1A1A;
-  font-weight: 500;
-  width: 100%;
-  padding: 8rpx 0;
-}
-
-.form-textarea {
-  font-size: 28rpx;
-  color: #1A1A1A;
-  width: 100%;
-  min-height: 160rpx;
-  padding: 8rpx 0;
-}
-
-/* 时间选择器（2026-07-28 双 picker） */
 .time-row { display: flex; gap: 16rpx; }
 .time-cell {
-  flex: 1;
-  background: #F5F5F5;
-  border-radius: 8rpx;
-  padding: 20rpx;
-  font-size: 28rpx;
-  min-height: 40rpx;
-  text-align: center;
+  flex: 1; background: #F5F5F5; border-radius: 8rpx; padding: 20rpx;
+  font-size: 28rpx; text-align: center;
 }
-
-/* 数量选择 */
-.num-row {
-  display: flex;
-  align-items: center;
-  gap: 24rpx;
-}
-
-.num-btn {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 50%;
-  background: #F5F7FA;
-  color: #FF6B00;
-  font-size: 36rpx;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.num-val {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: #FF6B00;
-  min-width: 60rpx;
-  text-align: center;
-}
-
-.num-unit {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* 人制多选（2026-07-28 新增） */
-.checkbox-group {
-  display: flex;
-  gap: 16rpx;
-  flex-wrap: wrap;
-}
-
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 12rpx; }
 .checkbox-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 12rpx 20rpx;
-  background: #F5F7FA;
-  border-radius: 999rpx;
-  font-size: 26rpx;
-  color: #666;
-  cursor: pointer;
+  display: flex; align-items: center; gap: 8rpx; padding: 12rpx 20rpx;
+  background: #F5F7FA; border-radius: 999rpx; font-size: 26rpx; color: #666;
 }
-
-.checkbox-item-hover {
-  opacity: 0.7;
-  transform: scale(0.95);
+.checkbox-item.active { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.radio {
+  width: 28rpx; height: 28rpx; border: 2rpx solid #ccc; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 16rpx;
 }
-
-.checkbox-item.active {
-  background: #FFE8D6;
-  color: #FF6B00;
-  font-weight: 600;
-}
-
-.checkbox-item .checkbox {
-  width: 32rpx;
-  height: 32rpx;
-  border: 2rpx solid #DDD;
-  border-radius: 50%;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22rpx;
-  color: #FFF;
-}
-
-.checkbox-item .checkbox.checked {
-  background: #FF6B00;
-  border-color: #FF6B00;
-  color: #fff;
-}
-
-/* 2026-07-30 单选用 radio 样式（与 checkbox 同位置复用） */
-.checkbox-item .radio {
-  width: 32rpx;
-  height: 32rpx;
-  border: 2rpx solid #DDD;
-  border-radius: 50%;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  color: transparent;
-}
-
-.checkbox-item .radio.checked {
-  border-color: #FF6B00;
-  color: #FF6B00;
-}
-
-/* 水平选择 */
-.level-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-}
-
+.radio.checked { border-color: #FF6B00; color: #FF6B00; }
+.level-row { display: flex; gap: 16rpx; }
 .level-item {
-  padding: 12rpx 28rpx;
-  background: #F5F7FA;
-  border-radius: 999rpx;
-  font-size: 26rpx;
-  color: #666666;
+  flex: 1; text-align: center; padding: 16rpx 0; background: #F5F7FA;
+  border-radius: 12rpx; font-size: 28rpx; color: #666;
 }
-
 .level-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
-  color: #FFFFFF;
-  font-weight: 600;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; font-weight: 600;
 }
-
-/* 底部按钮 */
 .bottom-action {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 24rpx;
-  background: #FFFFFF;
-  border-top: 2rpx solid #F5F7FA;
+  position: fixed; left: 0; right: 0; bottom: 0; padding: 24rpx;
+  background: #fff; border-top: 2rpx solid #F5F7FA;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 }
-
 .btn-primary.full {
-  display: block;
-  width: 100%;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
-  color: #FFFFFF;
-  text-align: center;
-  padding: 24rpx 0;
-  border-radius: 999rpx;
-  font-size: 32rpx;
-  font-weight: 600;
+  text-align: center; background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  color: #fff; border-radius: 999rpx; padding: 24rpx 0; font-size: 30rpx; font-weight: 600;
 }
-
-.safe-bottom { padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); }
