@@ -1,11 +1,12 @@
-// pages/team/checkin.js
+// pages/team/checkin.js — 打卡可不传坐标；需要时用地图选点（不用 getLocation）
 const util = require('../../utils/util.js');
 const api = require('../../utils/api.js');
+const { chooseLocationOnMap } = require('../../utils/location.js');
 
 Page({
   data: {
     today: '',
-    location: { name: '定位中...', distance: null },
+    location: { name: '未选择位置（可直接打卡）', distance: null },
     checked: false,
     members: [],
     attendCount: 0,
@@ -19,7 +20,6 @@ Page({
       teamId
     });
     this.loadMembers();
-    this.getLocation();
   },
 
   async loadMembers() {
@@ -43,23 +43,15 @@ Page({
     }
   },
 
-  getLocation() {
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        this.setData({
-          location: {
-            name: '当前位置已获取',
-            distance: null,
-            longitude: res.longitude,
-            latitude: res.latitude
-          }
-        });
-      },
-      fail: () => {
-        this.setData({
-          location: { name: '未获取到位置（仍可打卡）', distance: null }
-        });
+  async onPickLocation() {
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    this.setData({
+      location: {
+        name: loc.name || loc.address || '已选位置',
+        distance: null,
+        longitude: loc.longitude,
+        latitude: loc.latitude
       }
     });
   },
@@ -79,8 +71,6 @@ Page({
         longitude: this.data.location.longitude || null,
         latitude: this.data.location.latitude || null
       });
-      const members = this.data.members.map(m => m);
-      // 标记自己为已打卡（前端即时反馈）
       this.setData({
         checked: true,
         attendCount: this.data.attendCount + 1

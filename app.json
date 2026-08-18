@@ -66,11 +66,10 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于展示附近球场距离，以及球场方在地图上选择球场位置"
+      "desc": "用于在地图上选择球场、凑人/约战地点及计算距离"
     }
   },
   "requiredPrivateInfos": [
-    "getLocation",
     "chooseLocation"
   ],
   "style": "v2",

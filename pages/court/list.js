@@ -1,6 +1,7 @@
 // pages/court/list.js
+// 距离：用户通过「地图选点」设定参考位置（仅 chooseLocation，不用 getLocation）
 const api = require('../../utils/api.js');
-const { getCurrentLocation } = require('../../utils/location.js');
+const { chooseLocationOnMap, DEFAULT_GUANGZHOU } = require('../../utils/location.js');
 
 const COLOR_PAIRS = [
   ['#4FACFE', '#00F2FE'],
@@ -14,58 +15,40 @@ Page({
   data: {
     filters: { type: 'all' },
     keyword: '',
-    sortBy: 'distance', // distance | price | rating
-    userLat: null,
-    userLng: null,
-    locLabel: '定位中',
+    sortBy: 'distance',
+    userLat: DEFAULT_GUANGZHOU.latitude,
+    userLng: DEFAULT_GUANGZHOU.longitude,
+    locLabel: '广州（默认）',
     loading: false,
     _allCourts: [],
     courts: []
   },
 
   onLoad() {
-    this.initLocationAndLoad();
+    this.loadData();
   },
 
   onShow() {
-    // 若已有定位则静默刷新列表
-    if (this.data.userLat != null) this.loadData();
+    if (this.data._allCourts && this.data._allCourts.length) return;
+    this.loadData();
   },
 
   onPullDownRefresh() {
-    this.initLocationAndLoad().then(() => wx.stopPullDownRefresh());
+    this.loadData().then(() => wx.stopPullDownRefresh());
   },
 
-  async initLocationAndLoad() {
-    this.setData({ locLabel: '定位中', loading: true });
-    const loc = await getCurrentLocation();
-    if (loc) {
-      this.setData({
-        userLat: loc.latitude,
-        userLng: loc.longitude,
-        locLabel: '已定位'
-      });
-    } else {
-      this.setData({ locLabel: '重新定位' });
-    }
-    await this.loadData();
-  },
-
+  /** 用地图选点设定「我的位置」，再按距离排序 */
   async onRelocate() {
-    this.setData({ locLabel: '定位中' });
-    const loc = await getCurrentLocation();
-    if (loc) {
-      this.setData({
-        userLat: loc.latitude,
-        userLng: loc.longitude,
-        locLabel: '已定位',
-        sortBy: 'distance'
-      });
-      wx.showToast({ title: '定位成功', icon: 'success' });
-      await this.loadData();
-    } else {
-      this.setData({ locLabel: '重新定位' });
-    }
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    this.setData({
+      userLat: loc.latitude,
+      userLng: loc.longitude,
+      locLabel: loc.name || loc.address || '已选位置',
+      sortBy: 'distance'
+    });
+    wx.showToast({ title: '位置已更新', icon: 'success' });
+    await this.loadData();
   },
 
   onKeywordInput(e) {
@@ -86,12 +69,10 @@ Page({
     try {
       const params = {
         pageSize: 30,
-        radiusKm: 80
+        radiusKm: 80,
+        latitude: this.data.userLat,
+        longitude: this.data.userLng
       };
-      if (this.data.userLat != null && this.data.userLng != null) {
-        params.latitude = this.data.userLat;
-        params.longitude = this.data.userLng;
-      }
       if (this.data.keyword) params.keyword = this.data.keyword.trim();
 
       const res = await api.getNearbyCourts(params);

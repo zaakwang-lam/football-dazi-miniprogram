@@ -1,47 +1,38 @@
-// pages/nearby/nearby.js
+// pages/nearby/nearby.js — 不用 getLocation，默认广州中心；可地图选点刷新距离
 const api = require('../../utils/api.js');
+const { chooseLocationOnMap, DEFAULT_GUANGZHOU } = require('../../utils/location.js');
 
 Page({
   data: {
-    userLocation: null,
+    userLocation: {
+      latitude: DEFAULT_GUANGZHOU.latitude,
+      longitude: DEFAULT_GUANGZHOU.longitude
+    },
+    locLabel: '广州（默认）',
     courts: [],
     filterType: 'all'
   },
 
   onLoad() {
-    this.getLocation();
+    this.loadCourts(DEFAULT_GUANGZHOU.longitude, DEFAULT_GUANGZHOU.latitude);
   },
 
   onPullDownRefresh() {
-    this.getLocation().then(() => wx.stopPullDownRefresh());
+    const loc = this.data.userLocation;
+    this.loadCourts(loc?.longitude, loc?.latitude).then(() => wx.stopPullDownRefresh());
   },
 
-  /**
-   * 获取用户位置
-   * 后续接入腾讯地图 SDK 后，用 GCJ-02 坐标系
-   */
-  async getLocation() {
-    try {
-      const res = await new Promise((resolve, reject) => {
-        wx.getLocation({
-          type: 'gcj02',
-          success: resolve,
-          fail: reject
-        });
-      });
-      this.setData({
-        userLocation: {
-          latitude: res.latitude,
-          longitude: res.longitude,
-          accuracy: res.accuracy
-        }
-      });
-      this.loadCourts(res.longitude, res.latitude);
-    } catch (e) {
-      console.warn('获取位置失败:', e);
-      // 即使定位失败，也加载默认列表（按热度排序）
-      this.loadCourts();
-    }
+  async onPickLocation() {
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    this.setData({
+      userLocation: {
+        latitude: loc.latitude,
+        longitude: loc.longitude
+      },
+      locLabel: loc.name || loc.address || '已选位置'
+    });
+    this.loadCourts(loc.longitude, loc.latitude);
   },
 
   async loadCourts(longitude, latitude) {
@@ -74,6 +65,6 @@ Page({
   },
 
   onRefresh() {
-    this.getLocation();
+    this.onPickLocation();
   }
 });
