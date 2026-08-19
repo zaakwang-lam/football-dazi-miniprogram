@@ -1,4 +1,4 @@
-// pages/war/publish.js — 发布约战
+// pages/war/publish.js — 发布约战（不展示「缺人」）
 const api = require('../../utils/api.js');
 const { chooseLocationOnMap } = require('../../utils/location.js');
 
@@ -22,7 +22,7 @@ Page({
       timeText: '',
       playTime: '',
       playTimeLabel: '',
-      needCount: 1,
+      needCount: 0,
       level: '养生',
       matchType: '11人制',
       fee: '',
@@ -107,7 +107,7 @@ Page({
         location,
         fee: fee ? Number(fee) : null,
         playTime,
-        needCount: this.data.form.needCount,
+        needCount: 0,
         level: this.data.form.level,
         contact: String(contact).trim(),
         description: this.data.form.description

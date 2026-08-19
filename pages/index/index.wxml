@@ -56,7 +56,8 @@
           </view>
           <view class="lfg-row2">
             <text class="lfg-loc">📍 {{item.location}}</text>
-            <text class="lfg-need">缺 {{item.need}} 人</text>
+            <text class="lfg-need" wx:if="{{item.showNeed}}">缺 {{item.need}} 人</text>
+            <text class="lfg-need war-tag" wx:else>约战</text>
           </view>
         </view>
       </view>

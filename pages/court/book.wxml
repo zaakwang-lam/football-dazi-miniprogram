@@ -7,7 +7,7 @@
 
   <view class="form-group">
     <view class="form-label">选择日期</view>
-    <scroll-view scroll-x class="date-scroll">
+    <scroll-view scroll-x class="date-scroll" enable-flex>
       <view class="date-item {{form.dateIdx === index ? 'active' : ''}}" wx:for="{{dateList}}" wx:key="dateKey" bindtap="onDateSelect" data-idx="{{index}}">
         <view class="date-day">{{item.week}}</view>
         <view class="date-num">{{item.day}}</view>
@@ -30,13 +30,13 @@
   </view>
 
   <view class="form-group">
-    <view class="form-label">联系人</view>
-    <input class="form-input" placeholder="姓名" value="{{form.name}}" bindinput="onInput" data-key="name" />
+    <view class="form-label required">联系人</view>
+    <input class="form-input" placeholder="请填写姓名（必填）" value="{{form.name}}" bindinput="onInput" data-key="name" />
   </view>
 
   <view class="form-group">
-    <view class="form-label">联系电话</view>
-    <input class="form-input" type="number" placeholder="手机号" value="{{form.phone}}" bindinput="onInput" data-key="phone" />
+    <view class="form-label required">联系电话</view>
+    <input class="form-input" type="number" maxlength="11" placeholder="请填写11位手机号（必填）" value="{{form.phone}}" bindinput="onInput" data-key="phone" />
   </view>
 
   <view class="form-group">

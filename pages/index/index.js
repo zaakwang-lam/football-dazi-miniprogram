@@ -1,23 +1,14 @@
 // pages/index/index.js
-const app = getApp();
 const api = require('../../utils/api.js');
 
 Page({
   data: {
     banners: [],
-    courts: [],
-    teams: [],
     lfgList: []
   },
 
-  onLoad() {
-    this.loadData();
-  },
-
-  onShow() {
-    this.loadData();
-  },
-
+  onLoad() { this.loadData(); },
+  onShow() { this.loadData(); },
   onPullDownRefresh() {
     this.loadData().then(() => wx.stopPullDownRefresh());
   },
@@ -38,6 +29,8 @@ Page({
       teamName: item.title || item.publisher?.nickname || '招募中',
       time: this.formatTime(item.playTime),
       need: item.needCount != null ? item.needCount : 0,
+      // 约战不展示「缺 X 人」
+      showNeed: item.type === 'sub',
       location: item.location || '地点待定'
     }));
 
@@ -65,7 +58,7 @@ Page({
   },
 
   onSearchTap() {
-    wx.showToast({ title: '搜索功能开发中', icon: 'none' });
+    wx.navigateTo({ url: '/pages/search/search' });
   },
 
   onBannerTap(e) {
@@ -89,34 +82,9 @@ Page({
     wx.navigateTo({ url: dest });
   },
 
-  onNearbyTap() {
-    wx.navigateTo({ url: '/pages/nearby/nearby' });
-  },
-
-  onMoreCourt() {
-    wx.navigateTo({ url: '/pages/court/list' });
-  },
-
-  onCourtTap(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/pages/court/detail?id=${id}` });
-  },
-
-  onMoreTeam() {
-    wx.switchTab({ url: '/pages/team/team' });
-  },
-
-  onTeamTap(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/pages/team/detail?id=${id}` });
-  },
-
   onLfgTap(e) {
     const id = e.currentTarget.dataset.id;
-    if (!id) {
-      wx.showToast({ title: '无效的组队信息', icon: 'none' });
-      return;
-    }
+    if (!id) return wx.showToast({ title: '无效的组队信息', icon: 'none' });
     wx.navigateTo({ url: `/pages/lfg/detail?id=${id}` });
   },
 

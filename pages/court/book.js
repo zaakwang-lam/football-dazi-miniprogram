@@ -1,7 +1,7 @@
 // pages/court/book.js
 const api = require('../../utils/api.js');
 
-const WEEKS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const WEEKS = ['日', '一', '二', '三', '四', '五', '六'];
 
 Page({
   data: {
@@ -42,10 +42,12 @@ Page({
     for (let i = 0; i < 7; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
+      const m = d.getMonth() + 1;
+      const day = d.getDate();
       list.push({
-        week: i === 0 ? '今天' : (i === 1 ? '明天' : WEEKS[d.getDay()]),
-        day: `${d.getMonth() + 1}/${d.getDate()}`,
-        dateKey: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+        week: i === 0 ? '今' : (i === 1 ? '明' : WEEKS[d.getDay()]),
+        day: `${m}/${day}`,
+        dateKey: `${d.getFullYear()}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`
       });
     }
     this.setData({ dateList: list, 'form.dateIdx': 0 });
@@ -57,7 +59,6 @@ Page({
       const scheduleRes = await api.getCourtSchedule(this.courtId);
       const grouped = scheduleRes.data?.schedules || {};
       const dateList = this.data.dateList;
-      // 优先按前端日期键匹配，否则按后端返回顺序
       const dateKey = dateList[idx]?.dateKey;
       let slots = (dateKey && grouped[dateKey]) ? grouped[dateKey] : [];
       if (!slots.length) {
@@ -109,7 +110,7 @@ Page({
     if (slotItem && slotItem.price != null) total = Number(slotItem.price) || 0;
     else if (this.data.court) total = Number(this.data.court.price) || 0;
     this.setData({
-      'form.dateText': dateItem ? `${dateItem.day} ${dateItem.week}` : '',
+      'form.dateText': dateItem ? `${dateItem.day}(${dateItem.week})` : '',
       'form.slotText': slotItem ? (slotItem.timeSlot || slotItem.time) : '',
       totalPrice: total
     });
@@ -132,32 +133,25 @@ Page({
       return this.onGoPublishHint();
     }
     if (this.data.form.slotIdx < 0) return wx.showToast({ title: '请选择时段', icon: 'none' });
-    if (!this.data.form.name) return wx.showToast({ title: '请填写联系人', icon: 'none' });
-    if (!this.data.form.phone) return wx.showToast({ title: '请填写联系电话', icon: 'none' });
+    const name = (this.data.form.name || '').trim();
+    const phone = (this.data.form.phone || '').trim();
+    if (!name) return wx.showToast({ title: '请填写联系人', icon: 'none' });
+    if (!/^1\d{10}$/.test(phone)) return wx.showToast({ title: '请填写11位手机号', icon: 'none' });
 
     const court = this.data.court;
     const slot = this.data.daySlots[this.data.form.slotIdx];
     if (!slot?.id) return wx.showToast({ title: '请重新选择时段', icon: 'none' });
 
-    // 订阅消息占位（模板未配置时失败不影响下单）
-    const tmplIds = [];
-    if (tmplIds.length) {
-      wx.requestSubscribeMessage({
-        tmplIds,
-        complete: () => this.doBook(court, slot)
-      });
-    } else {
-      this.doBook(court, slot);
-    }
+    this.doBook(court, slot, name, phone);
   },
 
-  doBook(court, slot) {
+  doBook(court, slot, name, phone) {
     wx.showLoading({ title: '预订中...', mask: true });
     api.createOrder({
       courtId: court.id,
       scheduleId: slot.id,
-      contactName: this.data.form.name,
-      contactPhone: this.data.form.phone,
+      contactName: name,
+      contactPhone: phone,
       remark: this.data.form.remark
     }).then(orderRes => {
       wx.hideLoading();

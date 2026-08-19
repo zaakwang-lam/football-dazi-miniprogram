@@ -86,8 +86,7 @@ function updateMyCourt(id, data) {
 }
 function uploadCourtImage(id, base64, mimeType = 'image/jpeg') {
   return request(`/api/user/me/courts/${id}/image`, 'POST', { base64, mimeType }, {
-    loadingText: '上传中...',
-    showLoading: false
+    loadingText: '上传中...', showLoading: false
   });
 }
 function getMyTeams() { return request('/api/user/me/teams', 'GET', {}); }
@@ -123,17 +122,6 @@ function getOrderList(params = {}) {
 function getOrderDetail(id) { return request(`/api/v1/orders/${id}`); }
 function cancelOrder(id) { return request(`/api/v1/orders/${id}/cancel`, 'POST'); }
 
-function getAdminOrders(params = {}) {
-  const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
-    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
-  return request('/api/admin/orders' + (query ? `?${query}` : ''));
-}
-function getAdminOrderDetail(id) { return request(`/api/admin/orders/${id}`); }
-function acceptAdminOrder(id) { return request(`/api/admin/orders/${id}/accept`, 'POST'); }
-function cancelAdminOrder(id, reason = '') {
-  return request(`/api/admin/orders/${id}/cancel`, 'POST', { reason });
-}
-
 function getLfgList(params = {}) {
   const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
@@ -155,6 +143,15 @@ function createTeam(data) { return request('/api/v1/teams', 'POST', data, { load
 function joinTeam(id) {
   return request(`/api/v1/teams/${id}/join`, 'POST', {}, { loadingText: '加入中...' });
 }
+function leaveTeam(id) {
+  return request(`/api/v1/teams/${id}/leave`, 'POST', {}, { loadingText: '退出中...' });
+}
+function updateTeam(id, data) {
+  return request(`/api/v1/teams/${id}`, 'PUT', data, { loadingText: '保存中...' });
+}
+function dissolveTeam(id) {
+  return request(`/api/v1/teams/${id}/dissolve`, 'POST', {}, { loadingText: '解散中...' });
+}
 function updateTeamAnnouncement(id, announcement) {
   return request(`/api/v1/teams/${id}/announcement`, 'PUT', { announcement }, { loadingText: '保存中...' });
 }
@@ -172,7 +169,7 @@ module.exports = {
   getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
-  getAdminOrders, getAdminOrderDetail, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, deleteLfg, closeLfg,
-  getTeamList, getTeamDetail, createTeam, joinTeam, updateTeamAnnouncement, checkin, createAa, getTeamStats
+  getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam,
+  updateTeamAnnouncement, checkin, createAa, getTeamStats
 };
