@@ -1,51 +1,32 @@
 // pages/role-select/role-select.js
-// PRD：微信登录后必须手动选择「个人 / 球场方」
-const app = getApp();
 const api = require('../../utils/api.js');
+const app = getApp();
 
 Page({
-  data: { loading: false },
+  data: {
+    loading: false
+  },
 
-  onLoad() {
-    const token = wx.getStorageSync('token');
-    if (!token) {
-      wx.redirectTo({ url: '/pages/login/login' });
-      return;
+  onSelectRole(e) {
+    const role = e.currentTarget.dataset.role;
+    if (role === 'court') {
+      return wx.navigateTo({ url: '/pages/mine/court-register' });
     }
-    const userInfo = wx.getStorageSync('userInfo') || {};
-    const roles = Array.isArray(userInfo.roles) ? userInfo.roles.filter(Boolean) : [];
-    // 已选过身份才回「我的」；roles 为空必须留在本页
-    if (roles.length > 0) {
-      wx.switchTab({ url: '/pages/mine/mine' });
+    if (role === 'user') {
+      this.registerPersonal();
     }
   },
 
-  async onSelectRole(e) {
-    const role = e.currentTarget.dataset.role;
+  async registerPersonal() {
     if (this.data.loading) return;
-
-    const token = wx.getStorageSync('token');
-    if (!token) {
+    if (!wx.getStorageSync('token')) {
       wx.showToast({ title: '登录状态已失效，请重新登录', icon: 'none' });
-      setTimeout(() => wx.redirectTo({ url: '/pages/login/login' }), 700);
-      return;
+      return setTimeout(() => wx.redirectTo({ url: '/pages/login/login' }), 700);
     }
-
-    // 球场方：进入球场信息编辑（PRD 第八/九节）
-    if (role === 'court') {
-      wx.redirectTo({ url: '/pages/mine/court-register' });
-      return;
-    }
-    if (role !== 'user') {
-      wx.showToast({ title: '请选择正确的身份', icon: 'none' });
-      return;
-    }
-
-    // 个人用户：直接完成个人账户创建（PRD 第六节，不强制再弹 getUserProfile）
     this.setData({ loading: true });
-    wx.showLoading({ title: '注册中...', mask: true });
     try {
-      let roles = [];
+      wx.showLoading({ title: '注册中...' });
+      let roles = ['user'];
       try {
         const roleResult = await api.registerRole({ role: 'user' });
         if (roleResult?.code === 0) {
@@ -73,8 +54,8 @@ Page({
         roles,
         role: 'user',
         registered: true,
-        nickName: oldUser.nickName || oldUser.nickname || '微信用户',
-        nickname: oldUser.nickname || oldUser.nickName || '微信用户'
+        nickName: oldUser.nickName || oldUser.nickname || '',
+        nickname: oldUser.nickname || oldUser.nickName || ''
       };
       wx.setStorageSync('userInfo', userInfo);
       app.globalData.userInfo = userInfo;
