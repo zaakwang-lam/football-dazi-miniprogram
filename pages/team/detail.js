@@ -11,12 +11,18 @@ const COLORS = [
 Page({
   data: {
     team: null,
-    members: []
+    members: [],
+    isMember: false,
+    isCaptain: false
   },
 
   onLoad(options) {
     this.teamId = options.id;
     this.loadDetail(options.id);
+  },
+
+  onShow() {
+    if (this.teamId) this.loadDetail(this.teamId);
   },
 
   async loadDetail(id) {
@@ -36,7 +42,9 @@ Page({
           bgColor: COLORS[(team.id || 0) % COLORS.length],
           members: team.memberCount || members.length
         },
-        members
+        members,
+        isMember: !!team.isMember,
+        isCaptain: !!team.isCaptain
       });
       wx.setNavigationBarTitle({ title: team.name || '球队详情' });
     } catch (e) {
@@ -66,14 +74,52 @@ Page({
     });
   },
 
-  onShareTap() {
-    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] });
+  onLeaveTap() {
+    wx.showModal({
+      title: '退出球队',
+      content: '确认退出该球队？',
+      confirmColor: '#FF4757',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.leaveTeam(this.teamId);
+          wx.showToast({ title: '已退出', icon: 'success' });
+          this.loadDetail(this.teamId);
+        } catch (e) {
+          wx.showToast({ title: e.message || '退出失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  onEditTap() {
+    wx.navigateTo({ url: `/pages/team/edit?id=${this.teamId}` });
+  },
+
+  onDissolveTap() {
+    wx.showModal({
+      title: '解散球队',
+      content: '解散后所有队员将退出，且不可恢复。确认解散？',
+      confirmColor: '#FF4757',
+      confirmText: '解散',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.dissolveTeam(this.teamId);
+          wx.showToast({ title: '已解散', icon: 'success' });
+          setTimeout(() => wx.navigateBack(), 1200);
+        } catch (e) {
+          wx.showToast({ title: e.message || '解散失败', icon: 'none' });
+        }
+      }
+    });
   },
 
   onShareAppMessage() {
+    const t = this.data.team;
     return {
-      title: this.data.team ? `${this.data.team.name} 招募中！` : '来踢球',
-      path: `/pages/team/detail?id=${this.data.team ? this.data.team.id : ''}`
+      title: t ? `${t.name} 欢迎加入！` : '来踢球',
+      path: `/pages/team/detail?id=${t ? t.id : ''}`
     };
   }
 });

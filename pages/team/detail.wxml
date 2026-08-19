@@ -3,7 +3,7 @@
   <view class="hero" style="background: {{team.bgColor}};">
     <view class="hero-avatar">{{team.shortName}}</view>
     <view class="hero-name">{{team.name}}</view>
-    <view class="hero-meta">Lv.{{team.level}} · {{team.district}} · 成立 {{team.founded}}</view>
+    <view class="hero-meta">{{team.matchType || ''}} · {{team.city || ''}}{{team.district || ''}} · 成立 {{team.founded}}</view>
     <view class="hero-motto" wx:if="{{team.motto}}">"{{team.motto}}"</view>
   </view>
 
@@ -26,7 +26,6 @@
     </view>
   </view>
 
-  <!-- 球队公告 -->
   <view class="section-title" wx:if="{{team.announcement}}">公告</view>
   <view class="announce-box" wx:if="{{team.announcement}}">
     <text>{{team.announcement}}</text>
@@ -41,8 +40,15 @@
     </view>
   </view>
 
+  <!-- 队长操作 -->
+  <view class="captain-actions" wx:if="{{isCaptain}}">
+    <view class="cap-btn" bindtap="onEditTap">球队编辑</view>
+    <view class="cap-btn danger" bindtap="onDissolveTap">解散球队</view>
+  </view>
+
   <view class="bottom-bar">
-    <view class="btn-secondary" bindtap="onShareTap">分享球队</view>
-    <view class="btn-primary" bindtap="onJoinTap" wx:if="{{team.recruitment}}">申请加入</view>
+    <button class="btn-share" open-type="share">分享球队</button>
+    <view class="btn-primary" bindtap="onJoinTap" wx:if="{{!isMember && team.recruitment}}">申请加入</view>
+    <view class="btn-leave" bindtap="onLeaveTap" wx:if="{{isMember && !isCaptain}}">退出球队</view>
   </view>
 </view>

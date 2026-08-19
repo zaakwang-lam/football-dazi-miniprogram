@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="form-group">
+    <view class="label required">球队名称</view>
+    <input class="input" value="{{form.name}}" bindinput="onInput" data-key="name" placeholder="球队名称" />
+  </view>
+  <view class="form-group">
+    <view class="label">省 / 市</view>
+    <view class="row">
+      <input class="input half" value="{{form.province}}" bindinput="onInput" data-key="province" />
+      <input class="input half" value="{{form.city}}" bindinput="onInput" data-key="city" />
+    </view>
+  </view>
+  <view class="form-group">
+    <view class="label required">区域</view>
+    <input class="input" value="{{form.district}}" bindinput="onInput" data-key="district" placeholder="如：天河区" />
+  </view>
+  <view class="form-group">
+    <view class="label">队制</view>
+    <view class="chips">
+      <view class="chip {{form.matchType === item ? 'on' : ''}}" wx:for="{{matchTypes}}" wx:key="*this" bindtap="onMatchType" data-val="{{item}}">{{item}}</view>
+    </view>
+  </view>
+  <view class="form-group">
+    <view class="label">队长电话</view>
+    <input class="input" type="number" maxlength="11" value="{{form.captainPhone}}" bindinput="onInput" data-key="captainPhone" placeholder="11位手机号" />
+  </view>
+  <view class="form-group">
+    <view class="label">口号</view>
+    <input class="input" value="{{form.motto}}" bindinput="onInput" data-key="motto" placeholder="选填" />
+  </view>
+  <view class="form-group row-between" bindtap="onRecruitToggle">
+    <text class="label">是否招人</text>
+    <text class="toggle">{{form.recruitment ? '是' : '否'}}</text>
+  </view>
+  <view class="btn-save" bindtap="onSave">保存</view>
+</view>

@@ -1,204 +1,70 @@
 /* pages/team/detail.wxss */
-.page {
-  padding: 0 0 200rpx;
-}
-
+.page { padding: 0 0 220rpx; }
 .hero {
-  padding: 60rpx 32rpx 80rpx;
-  text-align: center;
-  color: #FFFFFF;
+  padding: 60rpx 32rpx 80rpx; text-align: center; color: #FFFFFF;
   border-radius: 0 0 48rpx 48rpx;
 }
-
 .hero-avatar {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 50%;
+  width: 140rpx; height: 140rpx; border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24rpx;
-  font-size: 48rpx;
-  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24rpx; font-size: 48rpx; font-weight: 700;
 }
-
-.hero-name {
-  font-size: 40rpx;
-  font-weight: 700;
-  margin-bottom: 12rpx;
-}
-
-.hero-meta {
-  font-size: 24rpx;
-  opacity: 0.9;
-  margin-bottom: 16rpx;
-}
-
-.hero-motto {
-  font-size: 26rpx;
-  opacity: 0.95;
-  font-style: italic;
-}
-
+.hero-name { font-size: 40rpx; font-weight: 700; margin-bottom: 12rpx; }
+.hero-meta { font-size: 24rpx; opacity: 0.9; margin-bottom: 16rpx; }
+.hero-motto { font-size: 26rpx; opacity: 0.95; font-style: italic; }
 .stats-card {
-  display: flex;
-  background: #FFFFFF;
-  margin: -40rpx 24rpx 24rpx;
-  border-radius: 24rpx;
-  padding: 32rpx 0;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  display: flex; background: #FFFFFF; margin: -40rpx 24rpx 24rpx;
+  border-radius: 24rpx; padding: 32rpx 0; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
 }
-
-.stat-item {
-  flex: 1;
-  text-align: center;
+.stat-item { flex: 1; text-align: center; }
+.stat-num { display: block; font-size: 40rpx; font-weight: 700; color: #FF6B00; margin-bottom: 8rpx; }
+.stat-label { font-size: 22rpx; color: #999999; }
+.section-title { font-size: 30rpx; font-weight: 700; color: #1A1A1A; padding: 16rpx 32rpx; }
+.announce-box {
+  margin: 0 24rpx 24rpx; padding: 24rpx; background: #FFF8E1; border-radius: 16rpx;
+  font-size: 26rpx; color: #666; line-height: 1.5;
 }
-
-.stat-num {
-  display: block;
-  font-size: 40rpx;
-  font-weight: 700;
-  color: #FF6B00;
-  margin-bottom: 8rpx;
-}
-
-.stat-label {
-  font-size: 22rpx;
-  color: #999999;
-}
-
-.section-title {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #1A1A1A;
-  padding: 16rpx 32rpx;
-}
-
-/* 比赛列表 */
-.match-list {
-  background: #FFFFFF;
-  margin: 0 24rpx 24rpx;
-  border-radius: 24rpx;
-  padding: 0 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.match-item {
-  display: flex;
-  align-items: center;
-  padding: 28rpx 0;
-  border-bottom: 2rpx solid #F5F7FA;
-}
-
-.match-item:last-child {
-  border-bottom: none;
-}
-
-.match-date {
-  font-size: 26rpx;
-  font-weight: 700;
-  color: #666666;
-  width: 100rpx;
-}
-
-.match-info {
-  flex: 1;
-}
-
-.match-title {
-  display: block;
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #1A1A1A;
-  margin-bottom: 6rpx;
-}
-
-.match-loc {
-  font-size: 22rpx;
-  color: #999999;
-}
-
-.match-score {
-  padding: 12rpx 28rpx;
-  border-radius: 999rpx;
-  font-size: 28rpx;
-  font-weight: 700;
-}
-
-.match-score.win {
-  background: #E8F8EE;
-  color: #2ECC71;
-}
-
-.match-score.draw {
-  background: #FFF7E6;
-  color: #FFB800;
-}
-
-.match-score.loss {
-  background: #FFEAEC;
-  color: #FF4757;
-}
-
-/* 队员网格 */
 .member-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16rpx;
-  background: #FFFFFF;
-  margin: 0 24rpx 24rpx;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx;
+  background: #FFFFFF; margin: 0 24rpx 24rpx; border-radius: 24rpx; padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
 }
-
-.member-item {
-  text-align: center;
-}
-
+.member-item { text-align: center; }
 .member-avatar {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 50%;
+  width: 88rpx; height: 88rpx; border-radius: 50%;
   background: linear-gradient(135deg, #4FACFE, #00F2FE);
-  margin: 0 auto 8rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #FFFFFF;
-  font-size: 26rpx;
-  font-weight: 700;
+  margin: 0 auto 8rpx; display: flex; align-items: center; justify-content: center;
+  color: #FFFFFF; font-size: 26rpx; font-weight: 700;
 }
-
-.member-name {
-  display: block;
-  font-size: 24rpx;
-  color: #1A1A1A;
-  margin-bottom: 4rpx;
+.member-name { display: block; font-size: 24rpx; color: #1A1A1A; margin-bottom: 4rpx; }
+.member-role { font-size: 20rpx; color: #FF6B00; }
+.captain-actions {
+  display: flex; gap: 24rpx; margin: 0 24rpx 24rpx;
 }
-
-.member-role {
-  font-size: 20rpx;
-  color: #FF6B00;
+.cap-btn {
+  flex: 1; text-align: center; padding: 20rpx 0; border-radius: 12rpx;
+  background: #FFE8D6; color: #FF6B00; font-size: 28rpx; font-weight: 600;
 }
-
-/* 底部 */
+.cap-btn.danger { background: #FFEBEE; color: #FF4757; }
 .bottom-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  gap: 24rpx;
-  padding: 24rpx;
-  background: #FFFFFF;
-  border-top: 2rpx solid #F5F7FA;
+  position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 24rpx;
+  padding: 24rpx; background: #FFFFFF; border-top: 2rpx solid #F5F7FA;
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 }
-
-.bottom-bar .btn-primary,
-.bottom-bar .btn-secondary {
-  flex: 1;
-  text-align: center;
+.btn-share {
+  flex: 1; margin: 0; padding: 0; height: 80rpx; line-height: 80rpx;
+  background: #F5F7FA; color: #333; font-size: 28rpx; border-radius: 999rpx;
+  border: none; font-weight: 600;
+}
+.btn-share::after { border: none; }
+.btn-primary {
+  flex: 1; text-align: center; height: 80rpx; line-height: 80rpx;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff;
+  border-radius: 999rpx; font-size: 28rpx; font-weight: 600;
+}
+.btn-leave {
+  flex: 1; text-align: center; height: 80rpx; line-height: 80rpx;
+  background: #FFEBEE; color: #FF4757; border-radius: 999rpx;
+  font-size: 28rpx; font-weight: 600;
 }

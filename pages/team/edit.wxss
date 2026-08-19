@@ -1,0 +1,21 @@
+.page { padding: 24rpx; padding-bottom: 80rpx; }
+.form-group {
+  background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 20rpx;
+}
+.label { font-size: 26rpx; color: #999; margin-bottom: 12rpx; }
+.label.required::before { content: '* '; color: #FF4757; }
+.input { font-size: 30rpx; color: #1A1A1A; width: 100%; }
+.row { display: flex; gap: 16rpx; }
+.half { flex: 1; background: #F5F5F5; border-radius: 8rpx; padding: 16rpx; }
+.chips { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.chip {
+  padding: 12rpx 24rpx; background: #F5F5F5; border-radius: 999rpx; font-size: 26rpx; color: #666;
+}
+.chip.on { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.row-between { display: flex; justify-content: space-between; align-items: center; }
+.toggle { color: #FF6B00; font-weight: 600; }
+.btn-save {
+  margin-top: 40rpx; text-align: center; padding: 28rpx;
+  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff;
+  border-radius: 999rpx; font-size: 30rpx; font-weight: 600;
+}
