@@ -43,23 +43,26 @@ App({
             const roles = Array.isArray(user?.roles) ? user.roles.filter(Boolean) : [];
             const existing = wx.getStorageSync('userInfo') || {};
 
-            if (roles.length > 0) {
-              // 已选过身份：合并服务端资料
-              const role = (user.role && roles.includes(user.role)) ? user.role : roles[0];
+            // 身份只认 roles 数组，忽略服务端 ENUM role 默认值
+            const cleanRoles = Array.isArray(roles)
+              ? roles.filter((r) => r === 'user' || r === 'court')
+              : [];
+            if (cleanRoles.length > 0) {
+              const role = (user.role && cleanRoles.includes(user.role)) ? user.role : cleanRoles[0];
               const merged = {
                 ...existing,
                 ...user,
-                roles,
+                roles: cleanRoles,
                 role,
-                nickName: user.nickname || existing.nickName || existing.nickname || '微信用户',
-                nickname: user.nickname || existing.nickname || existing.nickName || '微信用户',
+                registered: true,
+                nickName: user.nickname || existing.nickName || existing.nickname || '',
+                nickname: user.nickname || existing.nickname || existing.nickName || '',
                 avatarUrl: user.avatarUrl || existing.avatarUrl || ''
               };
               wx.setStorageSync('userInfo', merged);
               this.globalData.userInfo = merged;
             } else {
-              // 未选身份：只保留 token/openid，不写成「微信用户」完整登录态
-              // 昵称/头像留空，强制走登录页完善资料 + 身份选择
+              // 未选身份：不得写成个人方
               const serverNick = (user?.nickname || '').trim();
               const isDefault = !serverNick || serverNick === '微信用户' || serverNick === '微信昵称';
               const nick = isDefault
