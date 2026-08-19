@@ -4,9 +4,13 @@
   <view class="form-subtitle">个人顶个人，找不到人赶紧来</view>
   <view class="form-tip">例如：你 6 人到场，还差 5 个 → 发布</view>
 
-  <view class="form-group">
-    <view class="form-label">球队名称</view>
-    <input class="form-input" placeholder="请输入球队名称" value="{{form.teamName}}" bindinput="onInput" data-key="teamName" />
+  <view class="form-group" wx:if="{{ready}}">
+    <view class="form-label required">球队名称</view>
+    <picker wx:if="{{myTeams.length > 1}}" mode="selector" range="{{myTeams}}" range-key="name" value="{{teamIndex}}" bindchange="onTeamPick">
+      <view class="form-input picker-val">{{form.teamName}} ›</view>
+    </picker>
+    <input wx:else class="form-input" disabled value="{{form.teamName}}" />
+    <view class="form-hint">仅已加入球队可发起，队名自动带入</view>
   </view>
 
   <view class="form-group">
