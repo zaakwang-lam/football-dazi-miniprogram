@@ -51,3 +51,80 @@
 .features { display: flex; justify-content: space-around; margin-top: 64rpx; }
 .feature { display: flex; flex-direction: column; align-items: center; font-size: 24rpx; color: #666; }
 .feature-icon { font-size: 40rpx; margin-bottom: 8rpx; }
+
+/* —— 完善资料步骤 —— */
+.profile-card { align-items: stretch; }
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  margin: 8rpx 0 32rpx;
+  width: 100%;
+}
+.avatar-choose-btn {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+.avatar-choose-btn::after { border: none; }
+.avatar-preview {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: #F5F7FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4rpx solid #E8E8E8;
+}
+.avatar-preview.placeholder {
+  font-size: 56rpx;
+  color: #CCC;
+}
+.avatar-choose-text {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #07C160;
+  font-weight: 600;
+}
+.avatar-album-btn {
+  padding: 16rpx 28rpx;
+  background: #F5F7FA;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #666;
+  border: 1rpx solid #E8E8E8;
+}
+.profile-nick-label {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+  width: 100%;
+}
+.profile-nick-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 88rpx;
+  line-height: 88rpx;
+  padding: 0 28rpx;
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  color: #1A1A1A;
+  border: 2rpx solid #E8E8E8;
+}
+.profile-tip {
+  margin-top: 24rpx;
+  font-size: 22rpx;
+  color: #BBB;
+  text-align: center;
+  width: 100%;
+  line-height: 1.5;
+}
