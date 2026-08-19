@@ -3,9 +3,13 @@
   <view class="form-title">发起约战</view>
   <view class="form-subtitle">球队对球队，向对手发起挑战</view>
 
-  <view class="form-group">
+  <view class="form-group" wx:if="{{ready}}">
     <view class="form-label required">队伍名称</view>
-    <input class="form-input" placeholder="如：海珠飓风队" value="{{form.teamName}}" bindinput="onInput" data-key="teamName" />
+    <picker wx:if="{{myTeams.length > 1}}" mode="selector" range="{{myTeams}}" range-key="name" value="{{teamIndex}}" bindchange="onTeamPick">
+      <view class="form-input picker-val">{{form.teamName}} ›</view>
+    </picker>
+    <input wx:else class="form-input" disabled value="{{form.teamName}}" />
+    <view class="form-hint">仅已加入球队可发起，队名自动带入</view>
   </view>
 
   <view class="form-group">
