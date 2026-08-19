@@ -1,5 +1,18 @@
 // pages/mine/mine.js
 const app = getApp();
+
+function isDefaultNickname(name) {
+  const n = String(name || '').trim();
+  return !n || n === '微信用户' || n === '微信昵称';
+}
+function isProfileComplete(user) {
+  if (!user) return false;
+  const hasNick = !isDefaultNickname(user.nickname || user.nickName);
+  const hasAvatar = !!(user.avatarUrl && String(user.avatarUrl).trim());
+  return hasNick && hasAvatar;
+}
+
+
 const api = require('../../utils/api.js');
 
 function normalizeRoles(raw) {
@@ -69,14 +82,20 @@ Page({
         roles,
         role: currentRole,
         registered: roles.length > 0,
-        nickName: serverUser.nickname || cached?.nickName || cached?.nickname || '微信用户',
-        nickname: serverUser.nickname || cached?.nickname || cached?.nickName || '微信用户',
+        nickName: (serverUser.nickname && serverUser.nickname !== '微信用户') ? serverUser.nickname : (cached?.nickName || cached?.nickname || ''),
+        nickname: (serverUser.nickname && serverUser.nickname !== '微信用户') ? serverUser.nickname : (cached?.nickname || cached?.nickName || ''),
         avatarUrl,
         courtInfo: serverUser.court || cached?.courtInfo || null
       };
       wx.setStorageSync('userInfo', merged);
       app.globalData.userInfo = merged;
       this.applyUserState(merged);
+
+      // 资料不完整：回登录页完善头像昵称
+      if (!isProfileComplete(merged)) {
+        wx.redirectTo({ url: '/pages/login/login' });
+        return;
+      }
 
       if (roles.length === 0) {
         wx.redirectTo({ url: '/pages/role-select/role-select' });
@@ -87,7 +106,11 @@ Page({
       else this.setData({ myTeams: [] });
     } catch (e) {
       const roles = normalizeRoles(cached?.roles);
-      if (token && roles.length === 0) wx.redirectTo({ url: '/pages/role-select/role-select' });
+      if (token && !isProfileComplete(cached)) {
+        wx.redirectTo({ url: '/pages/login/login' });
+      } else if (token && roles.length === 0) {
+        wx.redirectTo({ url: '/pages/role-select/role-select' });
+      }
     }
   },
 
