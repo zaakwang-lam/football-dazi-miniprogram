@@ -1,4 +1,4 @@
-// pages/mine/lfg-publish.js — 发起组队（与约战同一套日期+时间选择）
+// pages/mine/lfg-publish.js — 发起组队（仅球队成员可发起，队名默认已加入球队）
 const api = require('../../utils/api.js');
 const { chooseLocationOnMap } = require('../../utils/location.js');
 
@@ -12,8 +12,12 @@ function isMobile(s) {
 
 Page({
   data: {
+    myTeams: [],
+    teamIndex: 0,
     teamTypes: ['11人制', '8人制', '7人制', '5人制', '3人制'],
     form: {
+      teamId: null,
+      teamName: '',
       location: '',
       dateValue: '',
       dateText: '',
@@ -28,7 +32,59 @@ Page({
       description: ''
     },
     dateMin: fmtDate(new Date()),
-    dateMax: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return fmtDate(d); })()
+    dateMax: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return fmtDate(d); })(),
+    ready: false
+  },
+
+  onLoad() {
+    this.ensureTeamMember();
+  },
+
+  async ensureTeamMember() {
+    if (!wx.getStorageSync('token')) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      setTimeout(() => wx.redirectTo({ url: '/pages/login/login' }), 800);
+      return;
+    }
+    try {
+      const res = await api.getMyTeams();
+      const list = (res.code === 0 ? (res.data?.list || []) : []) || [];
+      if (!list.length) {
+        wx.showModal({
+          title: '需要先加入球队',
+          content: '仅球队队长或队员可发起组队/凑人，请先创建或加入一支球队。',
+          confirmText: '去球队',
+          cancelText: '返回',
+          success: (m) => {
+            if (m.confirm) wx.switchTab({ url: '/pages/team/team' });
+            else wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/mine/mine' }) });
+          }
+        });
+        return;
+      }
+      const first = list[0];
+      this.setData({
+        myTeams: list,
+        teamIndex: 0,
+        ready: true,
+        'form.teamId': first.id,
+        'form.teamName': first.name || ''
+      });
+    } catch (e) {
+      wx.showToast({ title: e.message || '加载球队失败', icon: 'none' });
+      setTimeout(() => wx.navigateBack(), 1200);
+    }
+  },
+
+  onTeamPick(e) {
+    const idx = Number(e.detail.value);
+    const t = this.data.myTeams[idx];
+    if (!t) return;
+    this.setData({
+      teamIndex: idx,
+      'form.teamId': t.id,
+      'form.teamName': t.name || ''
+    });
   },
 
   onTeamTypeToggle(e) {
@@ -93,7 +149,9 @@ Page({
   },
 
   async onSubmit() {
+    if (!this.data.ready) return wx.showToast({ title: '请先加入球队', icon: 'none' });
     const f = this.data.form;
+    if (!f.teamId) return wx.showToast({ title: '请选择已加入的球队', icon: 'none' });
     if (!f.location) return wx.showToast({ title: '请用地图选择场地位置', icon: 'none' });
     if (!f.dateValue || !f.timeValue || !f.playTime) {
       return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
@@ -109,8 +167,9 @@ Page({
     try {
       const res = await api.publishLfg({
         type: 'sub',
+        teamId: f.teamId,
         matchTypes: f.matchTypes,
-        title: `${f.location} ${f.matchTypes.join('/')} 凑人`,
+        title: `${f.teamName || ''} ${f.matchTypes.join('/')} 凑人`.trim(),
         location: f.location,
         fee: f.fee ? Number(f.fee) : null,
         playTime: f.playTime,
@@ -125,6 +184,7 @@ Page({
       }
     } catch (e) {
       wx.hideLoading();
+      wx.showToast({ title: e.message || '发布失败', icon: 'none' });
     }
   }
 });
