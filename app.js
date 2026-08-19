@@ -58,12 +58,18 @@ App({
               wx.setStorageSync('userInfo', merged);
               this.globalData.userInfo = merged;
             } else {
-              // 未选身份：只保留微信身份壳，role 置空，供登录后跳转身份选择
+              // 未选身份：只保留 token/openid，不写成「微信用户」完整登录态
+              // 昵称/头像留空，强制走登录页完善资料 + 身份选择
+              const serverNick = (user?.nickname || '').trim();
+              const isDefault = !serverNick || serverNick === '微信用户' || serverNick === '微信昵称';
+              const nick = isDefault
+                ? ((existing.nickname && existing.nickname !== '微信用户') ? existing.nickname : '')
+                : serverNick;
               const shell = {
                 id: user?.id || existing.id,
                 openid: user?.openid || existing.openid || '',
-                nickname: user?.nickname || existing.nickname || '微信用户',
-                nickName: user?.nickname || existing.nickName || '微信用户',
+                nickname: nick,
+                nickName: nick,
                 avatarUrl: user?.avatarUrl || existing.avatarUrl || '',
                 roles: [],
                 role: '',
