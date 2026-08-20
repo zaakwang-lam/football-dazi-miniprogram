@@ -64,15 +64,21 @@
 }
 .avatar-choose-btn {
   margin: 0;
-  padding: 0;
+  padding: 16rpx 24rpx;
   background: transparent;
   border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   line-height: 1.2;
+  min-width: 180rpx;
+  min-height: 200rpx;
+  position: relative;
+  z-index: 2;
 }
 .avatar-choose-btn::after { border: none; }
+.avatar-choose-hover { opacity: 0.85; }
 .avatar-preview {
   width: 140rpx;
   height: 140rpx;
