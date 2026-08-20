@@ -19,7 +19,6 @@
       </block>
     </button>
 
-    <!-- 审核测试账号：默认隐藏；提审时把 ENABLE_TEST_LOGIN 改为 true -->
     <block wx:if="{{showTestLogin}}">
       <button class="btn-test full" bindtap="onTestLoginTap" disabled="{{loading}}">
         审核测试账号登录
@@ -39,7 +38,13 @@
     <view class="login-desc">请选择微信头像并填写昵称，便于队友识别</view>
 
     <view class="profile-avatar-row">
-      <button class="avatar-choose-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseWechatAvatar">
+      <!-- 官方能力：button open-type="chooseAvatar"；bindchooseavatar 兼容性更好 -->
+      <button
+        class="avatar-choose-btn"
+        open-type="chooseAvatar"
+        bindchooseavatar="onChooseWechatAvatar"
+        hover-class="avatar-choose-hover"
+      >
         <image wx:if="{{avatarUrl}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill" />
         <view wx:else class="avatar-preview placeholder">👤</view>
         <text class="avatar-choose-text">选微信头像</text>
@@ -48,6 +53,7 @@
     </view>
 
     <view class="profile-nick-label">微信昵称</view>
+    <!-- type="nickname" 可调起微信昵称填写；blur 时部分机型才回填 -->
     <input
       class="profile-nick-input"
       type="nickname"
@@ -55,32 +61,35 @@
       placeholder="点击填写微信昵称"
       value="{{draftNickname}}"
       bindinput="onNicknameInput"
-      bindblur="onNicknameInput"
+      bindblur="onNicknameBlur"
+      always-embed="{{true}}"
     />
 
-    <button class="btn-wechat full" style="margin-top: 40rpx;" bindtap="onConfirmProfile" disabled="{{loading || uploadingAvatar}}">
+    <button
+      class="btn-wechat full"
+      style="margin-top: 40rpx;"
+      bindtap="onConfirmProfile"
+      disabled="{{loading || uploadingAvatar}}"
+    >
       <text wx:if="{{loading}}">保存中...</text>
+      <text wx:elif="{{uploadingAvatar}}">头像上传中...</text>
       <text wx:else>确认并继续</text>
     </button>
     <view class="profile-tip">微信已不再返回真实头像昵称，需您主动选择一次</view>
   </view>
 
-  <view class="features" wx:if="{{step === 'login'}}">
+  <view class="features">
     <view class="feature">
-      <view class="feature-icon">📍</view>
-      <text>附近场地</text>
+      <text class="feature-icon">🏟</text>
+      <text>订场</text>
     </view>
     <view class="feature">
-      <view class="feature-icon">👥</view>
-      <text>凑人约战</text>
+      <text class="feature-icon">👥</text>
+      <text>组队</text>
     </view>
     <view class="feature">
-      <view class="feature-icon">💰</view>
-      <text>队费AA</text>
-    </view>
-    <view class="feature">
-      <view class="feature-icon">📊</view>
-      <text>数据统计</text>
+      <text class="feature-icon">⚔️</text>
+      <text>约战</text>
     </view>
   </view>
 </view>
