@@ -35,24 +35,42 @@ Page({
     uploadingAvatar: false
   },
 
+  // 标记用户是否已在本页编辑过头像/昵称，避免 onShow 覆盖
+  _editingProfile: false,
+
   onShow() {
     const token = wx.getStorageSync('token');
     const user = wx.getStorageSync('userInfo') || {};
     const roles = normalizeRoles(user.roles);
 
-    if (!token) return;
-
-    // 资料不全 → 完善资料
-    if (!isProfileComplete(user)) {
-      this.setData({
-        step: 'profile',
-        avatarUrl: user.avatarUrl || '',
-        draftNickname: isDefaultNickname(user.nickname || user.nickName) ? '' : (user.nickname || user.nickName || '')
-      });
+    if (!token) {
+      // 未登录保持在登录步骤
+      if (this.data.step !== 'login') {
+        this.setData({ step: 'login' });
+      }
       return;
     }
 
-    // 资料全但未选身份 → 强制身份选择（修复：此前会停在登录页或误进「我的」当个人）
+    // 资料不全 → 进入完善资料
+    if (!isProfileComplete(user)) {
+      // 关键：用户正在选择头像/昵称时，微信原生弹层关闭会触发 onShow，
+      // 若这里覆盖 avatarUrl / draftNickname，会导致「选了却不显示、像无法选择」
+      if (this.data.step === 'profile' && this._editingProfile) {
+        return;
+      }
+      const patch = { step: 'profile' };
+      // 仅首次进入完善资料时写入服务端已有值，不打断用户编辑
+      if (this.data.step !== 'profile') {
+        patch.avatarUrl = user.avatarUrl || this.data.avatarUrl || '';
+        patch.draftNickname = isDefaultNickname(user.nickname || user.nickName)
+          ? (this.data.draftNickname || '')
+          : (user.nickname || user.nickName || '');
+      }
+      this.setData(patch);
+      return;
+    }
+
+    // 资料全但未选身份 → 强制身份选择
     if (roles.length === 0) {
       wx.redirectTo({ url: '/pages/role-select/role-select' });
       return;
@@ -101,14 +119,17 @@ Page({
           const roles = normalizeRoles(user.roles);
           this._saveLoginState(user, res.data?.accessToken, roles);
 
-          if (!isProfileComplete({
+          const mergedForCheck = {
             ...user,
             nickname: user.nickname,
             avatarUrl: user.avatarUrl || (wx.getStorageSync('userInfo') || {}).avatarUrl
-          })) {
+          };
+
+          if (!isProfileComplete(mergedForCheck)) {
+            this._editingProfile = false;
             this.setData({
               step: 'profile',
-              avatarUrl: user.avatarUrl || (wx.getStorageSync('userInfo') || {}).avatarUrl || '',
+              avatarUrl: mergedForCheck.avatarUrl || '',
               draftNickname: isDefaultNickname(user.nickname) ? '' : (user.nickname || '')
             });
             return;
@@ -167,26 +188,41 @@ Page({
     }
   },
 
+  /**
+   * 微信头像（open-type="chooseAvatar"）
+   * e.detail.avatarUrl 为本地临时路径，需上传后才有永久 URL
+   */
   onChooseWechatAvatar(e) {
-    const localPath = e.detail?.avatarUrl;
-    if (!localPath) return wx.showToast({ title: '未获取到头像', icon: 'none' });
+    this._editingProfile = true;
+    const localPath = (e && e.detail && e.detail.avatarUrl) || '';
+    if (!localPath) {
+      return wx.showToast({ title: '未获取到头像，请重试', icon: 'none' });
+    }
+    // 先展示本地预览，再上传
     this.setData({ avatarUrl: localPath });
     this._uploadLocalAvatar(localPath);
   },
 
   onChooseLocalAvatar() {
+    this._editingProfile = true;
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
       sourceType: ['album', 'camera'],
       sizeType: ['compressed'],
       success: (chooseRes) => {
-        const tempPath = chooseRes.tempFiles?.[0]?.tempFilePath;
+        const tempPath = chooseRes.tempFiles && chooseRes.tempFiles[0]
+          ? chooseRes.tempFiles[0].tempFilePath
+          : '';
         if (!tempPath) return wx.showToast({ title: '未选择图片', icon: 'none' });
         this.setData({ avatarUrl: tempPath });
         this._uploadLocalAvatar(tempPath);
       },
-      fail: () => wx.showToast({ title: '未选择图片', icon: 'none' })
+      fail: (err) => {
+        // 用户取消不提示
+        if (err && err.errMsg && err.errMsg.indexOf('cancel') >= 0) return;
+        wx.showToast({ title: '未选择图片', icon: 'none' });
+      }
     });
   },
 
@@ -208,7 +244,7 @@ Page({
               { showLoading: false, silent: true }
             );
             if (res.code !== 0) throw new Error(res.message || '头像上传失败');
-            const avatarUrl = res.data?.avatarUrl;
+            const avatarUrl = res.data && res.data.avatarUrl;
             if (!avatarUrl) throw new Error('服务器未返回头像地址');
 
             const userInfo = {
@@ -220,7 +256,7 @@ Page({
             this.setData({ avatarUrl });
             wx.showToast({ title: '头像已设置', icon: 'success' });
           } catch (e) {
-            wx.showToast({ title: e.message || '头像上传失败', icon: 'none' });
+            wx.showToast({ title: (e && e.message) || '头像上传失败', icon: 'none' });
           } finally {
             this.setData({ uploadingAvatar: false });
             wx.hideLoading();
@@ -234,16 +270,31 @@ Page({
       });
     };
 
-    wx.compressImage({
-      src: tempPath,
-      quality: 80,
-      success: (r) => doUpload(r.tempFilePath || tempPath),
-      fail: () => doUpload(tempPath)
-    });
+    if (wx.compressImage) {
+      wx.compressImage({
+        src: tempPath,
+        quality: 80,
+        success: (r) => doUpload((r && r.tempFilePath) || tempPath),
+        fail: () => doUpload(tempPath)
+      });
+    } else {
+      doUpload(tempPath);
+    }
   },
 
   onNicknameInput(e) {
-    this.setData({ draftNickname: e.detail.value || '' });
+    this._editingProfile = true;
+    const val = (e && e.detail && e.detail.value != null) ? String(e.detail.value) : '';
+    this.setData({ draftNickname: val });
+  },
+
+  onNicknameBlur(e) {
+    this._editingProfile = true;
+    const val = (e && e.detail && e.detail.value != null) ? String(e.detail.value) : '';
+    // type="nickname" 在部分机型上于 blur 时才回填微信昵称
+    if (val) {
+      this.setData({ draftNickname: val });
+    }
   },
 
   async onConfirmProfile() {
@@ -254,6 +305,10 @@ Page({
 
     if (!avatarUrl) {
       return wx.showToast({ title: '请选择微信头像', icon: 'none' });
+    }
+    // 本地临时路径未上传成功时，提示重新选择
+    if (/^wxfile:\/\//i.test(avatarUrl) || /^http:\/\/tmp\//i.test(avatarUrl)) {
+      return wx.showToast({ title: '头像上传中或失败，请重新选择', icon: 'none' });
     }
     if (!nickname || isDefaultNickname(nickname)) {
       return wx.showToast({ title: '请填写微信昵称', icon: 'none' });
@@ -266,15 +321,16 @@ Page({
       const res = await api.updateUserProfile({ nickname });
       if (res.code !== 0) throw new Error(res.message || '保存失败');
 
-      const savedNick = res.data?.nickname || nickname;
+      const savedNick = (res.data && res.data.nickname) || nickname;
       const prev = wx.getStorageSync('userInfo') || {};
-      // 身份只认 roles，资料接口返回的 role 字符串不自动视为已选身份
-      const roles = normalizeRoles(res.data?.roles != null ? res.data.roles : prev.roles);
+      const roles = normalizeRoles(
+        res.data && res.data.roles != null ? res.data.roles : prev.roles
+      );
       const userInfo = {
         ...prev,
         nickname: savedNick,
         nickName: savedNick,
-        avatarUrl: res.data?.avatarUrl || avatarUrl,
+        avatarUrl: (res.data && res.data.avatarUrl) || avatarUrl,
         roles,
         role: roles.length ? (roles.includes(prev.role) ? prev.role : roles[0]) : '',
         registered: roles.length > 0
@@ -282,6 +338,7 @@ Page({
       wx.setStorageSync('userInfo', userInfo);
       app.globalData.userInfo = userInfo;
 
+      this._editingProfile = false;
       this.setData({ loading: false });
       wx.hideLoading();
 
@@ -294,7 +351,7 @@ Page({
     } catch (e) {
       this.setData({ loading: false });
       wx.hideLoading();
-      wx.showToast({ title: e.message || '保存失败', icon: 'none' });
+      wx.showToast({ title: (e && e.message) || '保存失败', icon: 'none' });
     }
   },
 
@@ -302,12 +359,14 @@ Page({
     const oldUser = wx.getStorageSync('userInfo') || {};
     const safeRoles = normalizeRoles(roles);
     const role = safeRoles.length
-      ? ((user?.role && safeRoles.includes(user.role)) ? user.role : safeRoles[0])
+      ? ((user && user.role && safeRoles.includes(user.role)) ? user.role : safeRoles[0])
       : '';
 
-    const serverNick = user?.nickname || '';
+    const serverNick = (user && user.nickname) || '';
     const nick = isDefaultNickname(serverNick)
-      ? (isDefaultNickname(oldUser.nickName || oldUser.nickname) ? '' : (oldUser.nickName || oldUser.nickname || ''))
+      ? (isDefaultNickname(oldUser.nickName || oldUser.nickname)
+        ? ''
+        : (oldUser.nickName || oldUser.nickname || ''))
       : serverNick;
 
     const userInfo = {
@@ -318,7 +377,7 @@ Page({
       registered: safeRoles.length > 0,
       nickName: nick,
       nickname: nick,
-      avatarUrl: user?.avatarUrl || oldUser.avatarUrl || ''
+      avatarUrl: (user && user.avatarUrl) || oldUser.avatarUrl || ''
     };
 
     wx.setStorageSync('token', token || '');
