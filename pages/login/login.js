@@ -1,6 +1,6 @@
 // pages/login/login.js
 // 流程：勾选协议 → 微信一键登录 → 选择头像+填写昵称 → 选择身份
-// 头像/昵称能力对齐 pages/mine（用户确认可用的实现）
+// 头像能力对齐 8.18～8.19 可用写法（chooseAvatar + 隐私授权）
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -34,7 +34,8 @@ Page({
     step: 'login',
     avatarUrl: '',
     draftNickname: '',
-    uploadingAvatar: false
+    uploadingAvatar: false,
+    needPrivacy: false
   },
 
   _editingProfile: false,
@@ -57,7 +58,6 @@ Page({
     }
 
     if (!isProfileComplete(user)) {
-      // 编辑中勿覆盖（选头像弹层关闭会触发 onShow）
       if (this.data.step === 'profile' && this._editingProfile) {
         return;
       }
@@ -81,33 +81,57 @@ Page({
     wx.switchTab({ url: '/pages/mine/mine' });
   },
 
-  /** 微信隐私协议：未授权时 chooseAvatar / 相册可能无响应 */
+  /** 微信隐私协议：未授权时 chooseAvatar 真机常完全无响应 */
   _ensurePrivacy() {
-    if (this._privacyReady) return;
     if (typeof wx.getPrivacySetting !== 'function') {
       this._privacyReady = true;
+      this.setData({ needPrivacy: false });
       return;
     }
     try {
       wx.getPrivacySetting({
         success: (res) => {
-          if (res && res.needAuthorization) {
-            if (typeof wx.requirePrivacyAuthorize === 'function') {
-              wx.requirePrivacyAuthorize({
-                success: () => { this._privacyReady = true; },
-                fail: () => {
-                  console.warn('[login] privacy authorize fail');
-                }
-              });
-            }
-          } else {
+          const need = !!(res && res.needAuthorization);
+          this.setData({ needPrivacy: need });
+          if (!need) {
             this._privacyReady = true;
+            return;
+          }
+          if (typeof wx.requirePrivacyAuthorize === 'function') {
+            wx.requirePrivacyAuthorize({
+              success: () => {
+                this._privacyReady = true;
+                this.setData({ needPrivacy: false });
+              },
+              fail: () => {
+                console.warn('[login] privacy authorize fail/cancel');
+                this.setData({ needPrivacy: true });
+              }
+            });
           }
         },
-        fail: () => { this._privacyReady = true; }
+        fail: () => {
+          this._privacyReady = true;
+          this.setData({ needPrivacy: false });
+        }
       });
     } catch (e) {
       this._privacyReady = true;
+      this.setData({ needPrivacy: false });
+    }
+  },
+
+  onAgreePrivacy() {
+    this._privacyReady = true;
+    this.setData({ needPrivacy: false });
+    wx.showToast({ title: '已授权，请再点选微信头像', icon: 'none' });
+  },
+
+  onAvatarBtnTap() {
+    this._editingProfile = true;
+    if (this.data.needPrivacy) {
+      this._ensurePrivacy();
+      wx.showToast({ title: '请先点击上方同意隐私保护指引', icon: 'none' });
     }
   },
 
@@ -123,7 +147,6 @@ Page({
     wx.navigateTo({ url: '/pages/agreement/privacy-policy' });
   },
 
-  /** 退出账号，回到协议+微信登录步骤 */
   onBackToLogin() {
     this._editingProfile = false;
     wx.removeStorageSync('token');
@@ -136,7 +159,8 @@ Page({
       loading: false,
       avatarUrl: '',
       draftNickname: '',
-      uploadingAvatar: false
+      uploadingAvatar: false,
+      needPrivacy: false
     });
   },
 
