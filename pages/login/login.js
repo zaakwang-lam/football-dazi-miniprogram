@@ -1,6 +1,7 @@
 // pages/login/login.js
 // 流程：勾选协议 → 微信一键登录 → 选择头像+填写昵称 → 选择身份
-// 头像能力对齐 8.18～8.19 可用写法（chooseAvatar + 隐私授权）
+// 微信头像：button open-type=chooseAvatar（勿再绑 bindtap）
+// 微信昵称：input type=nickname（真机键盘可选「使用微信昵称」）
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -81,7 +82,6 @@ Page({
     wx.switchTab({ url: '/pages/mine/mine' });
   },
 
-  /** 微信隐私协议：未授权时 chooseAvatar 真机常完全无响应 */
   _ensurePrivacy() {
     if (typeof wx.getPrivacySetting !== 'function') {
       this._privacyReady = true;
@@ -104,7 +104,6 @@ Page({
                 this.setData({ needPrivacy: false });
               },
               fail: () => {
-                console.warn('[login] privacy authorize fail/cancel');
                 this.setData({ needPrivacy: true });
               }
             });
@@ -125,14 +124,6 @@ Page({
     this._privacyReady = true;
     this.setData({ needPrivacy: false });
     wx.showToast({ title: '已授权，请再点选微信头像', icon: 'none' });
-  },
-
-  onAvatarBtnTap() {
-    this._editingProfile = true;
-    if (this.data.needPrivacy) {
-      this._ensurePrivacy();
-      wx.showToast({ title: '请先点击上方同意隐私保护指引', icon: 'none' });
-    }
   },
 
   onAgreeTap() {
@@ -262,9 +253,11 @@ Page({
     }
   },
 
+  /** 点「选微信头像」→ 微信头像面板 → 本地临时路径再上传 */
   onChooseWechatAvatar(e) {
     this._editingProfile = true;
-    const localPath = e && e.detail && e.detail.avatarUrl;
+    console.log('[login] chooseAvatar', e && e.detail);
+    const localPath = (e && e.detail && e.detail.avatarUrl) || '';
     if (!localPath) {
       return wx.showToast({ title: '未获取到头像，请重试', icon: 'none' });
     }
@@ -274,7 +267,6 @@ Page({
 
   onChooseLocalAvatar() {
     this._editingProfile = true;
-    this._ensurePrivacy();
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
@@ -290,7 +282,7 @@ Page({
       },
       fail: (err) => {
         if (err && err.errMsg && String(err.errMsg).indexOf('cancel') >= 0) return;
-        wx.showToast({ title: '无法打开相册，请检查隐私授权', icon: 'none' });
+        wx.showToast({ title: '无法打开相册', icon: 'none' });
       }
     });
   },
@@ -363,6 +355,15 @@ Page({
     if (val) this.setData({ draftNickname: val });
   },
 
+  onNicknameReview(e) {
+    this._editingProfile = true;
+    const pass = e && e.detail && (e.detail.pass === true || e.detail.pass === 'true');
+    const val = e && e.detail && e.detail.value != null ? String(e.detail.value) : '';
+    if (pass && val) {
+      this.setData({ draftNickname: val });
+    }
+  },
+
   async onConfirmProfile() {
     if (this.data.loading || this.data.uploadingAvatar) return;
 
@@ -370,7 +371,7 @@ Page({
     const nickname = String(this.data.draftNickname || '').trim().slice(0, 20);
 
     if (!avatarUrl) {
-      return wx.showToast({ title: '请选择微信头像', icon: 'none' });
+      return wx.showToast({ title: '请选择微信头像或从相册选择', icon: 'none' });
     }
     if (/^wxfile:\/\//i.test(avatarUrl) || /^http:\/\/tmp\//i.test(avatarUrl)) {
       return wx.showToast({ title: '头像上传中或失败，请重新选择', icon: 'none' });
