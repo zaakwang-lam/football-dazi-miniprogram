@@ -52,8 +52,21 @@
 .feature { display: flex; flex-direction: column; align-items: center; font-size: 24rpx; color: #666; }
 .feature-icon { font-size: 40rpx; margin-bottom: 8rpx; }
 
-/* —— 完善资料：样式对齐「我的」页可用实现 —— */
 .profile-card { align-items: stretch; }
+.btn-privacy {
+  width: 100%;
+  margin: 0 0 24rpx;
+  padding: 20rpx;
+  background: #FFF3E8;
+  color: #FF6B00;
+  font-size: 26rpx;
+  font-weight: 600;
+  border-radius: 16rpx;
+  border: 2rpx solid #FFD0A8;
+  line-height: 1.4;
+}
+.btn-privacy::after { border: none; }
+
 .profile-avatar-row {
   display: flex;
   align-items: stretch;
@@ -62,21 +75,22 @@
   margin: 8rpx 0 32rpx;
   width: 100%;
 }
+/* 与 8.19 可用版接近：普通 button，去掉 plain，避免 open-type 失效 */
 .avatar-choose-btn {
   flex: 1;
-  margin: 0 !important;
-  padding: 20rpx !important;
-  background: #FFF8F2 !important;
-  border-radius: 20rpx !important;
-  border: 2rpx solid #FFE0C8 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  line-height: 1.2 !important;
+  margin: 0;
+  padding: 20rpx;
+  background: #FFF8F2;
+  border-radius: 20rpx;
+  border: 2rpx solid #FFE0C8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
   min-height: 160rpx;
 }
-.avatar-choose-btn::after { border: none !important; }
+.avatar-choose-btn::after { border: none; }
 .avatar-preview {
   width: 96rpx;
   height: 96rpx;
@@ -99,6 +113,8 @@
 }
 .avatar-album-btn {
   flex: 1;
+  margin: 0;
+  padding: 0;
   min-height: 160rpx;
   border-radius: 20rpx;
   background: #F5F6F8;
@@ -109,8 +125,9 @@
   color: #333;
   font-weight: 600;
   border: 2rpx solid #EEEEEE;
-  box-sizing: border-box;
+  line-height: 1.2;
 }
+.avatar-album-btn::after { border: none; }
 .profile-nick-label {
   font-size: 24rpx;
   color: #666;
@@ -127,9 +144,7 @@
   border-radius: 16rpx;
   font-size: 28rpx;
   color: #1A1A1A;
-  margin-bottom: 8rpx;
 }
-.confirm-btn { margin-top: 32rpx !important; }
 .profile-tip {
   margin-top: 24rpx;
   font-size: 22rpx;
