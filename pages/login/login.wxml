@@ -1,5 +1,5 @@
 <!-- pages/login/login.wxml -->
-<!-- 头像能力按 8.18～8.19 可用写法：button open-type="chooseAvatar" + bind:chooseavatar，不加 plain -->
+<!-- 微信官方能力：chooseAvatar 选头像、type=nickname 选昵称（真机） -->
 <view class="page">
   <view class="hero">
     <view class="hero-logo">⚽</view>
@@ -33,25 +33,24 @@
     </view>
   </view>
 
-  <!-- ========== 步骤2：头像 + 昵称 ========== -->
+  <!-- ========== 步骤2：完善资料 ========== -->
   <view class="login-card profile-card" wx:if="{{step === 'profile'}}">
     <view class="login-title">完善资料</view>
-    <view class="login-desc">请选择微信头像并填写昵称，便于队友识别</view>
+    <view class="login-desc">点击下方按钮，选用微信头像和微信昵称</view>
 
-    <!-- 隐私未授权时先点同意，否则 chooseAvatar 真机常无响应 -->
     <button
       wx:if="{{needPrivacy}}"
       class="btn-privacy"
       open-type="agreePrivacyAuthorization"
       bindagreeprivacyauthorization="onAgreePrivacy"
-    >请先同意隐私保护指引（点此授权）</button>
+    >请先同意隐私保护指引</button>
 
-    <view class="profile-avatar-row">
+    <!-- 仅 open-type=chooseAvatar，不要 bindtap，否则真机常无响应 -->
+    <view class="profile-avatar-block">
       <button
         class="avatar-choose-btn"
         open-type="chooseAvatar"
-        bind:chooseavatar="onChooseWechatAvatar"
-        bindtap="onAvatarBtnTap"
+        bindchooseavatar="onChooseWechatAvatar"
       >
         <image wx:if="{{avatarUrl}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill"></image>
         <view wx:else class="avatar-preview placeholder">👤</view>
@@ -65,10 +64,11 @@
       class="profile-nick-input"
       type="nickname"
       maxlength="20"
-      placeholder="点击输入，可选微信昵称"
+      placeholder="点击此处，可选用微信昵称"
       value="{{draftNickname}}"
-      bindinput="onNicknameInput"
       bindblur="onNicknameBlur"
+      bindinput="onNicknameInput"
+      bindnicknamereview="onNicknameReview"
     />
 
     <button
@@ -81,7 +81,10 @@
       <text wx:elif="{{uploadingAvatar}}">头像上传中...</text>
       <text wx:else>确认并继续</text>
     </button>
-    <view class="profile-tip">选头像后应弹出微信头像面板；昵称输入框在真机可选用微信昵称</view>
+
+    <view class="profile-tip">
+      点「选微信头像」弹出微信头像；点昵称框在键盘上选「使用微信昵称」
+    </view>
     <view class="relogin-link" bindtap="onBackToLogin">重新登录 / 退出当前账号</view>
   </view>
 
