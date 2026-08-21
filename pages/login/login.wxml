@@ -32,20 +32,21 @@
     </view>
   </view>
 
-  <!-- ========== 步骤2：头像 + 昵称 ========== -->
+  <!-- ========== 步骤2：头像 + 昵称（与「我的」页可用实现一致） ========== -->
   <view class="login-card profile-card" wx:if="{{step === 'profile'}}">
     <view class="login-title">完善资料</view>
     <view class="login-desc">请选择微信头像并填写昵称，便于队友识别</view>
 
     <view class="profile-avatar-row">
-      <!-- 官方能力：button open-type="chooseAvatar"；bindchooseavatar 兼容性更好 -->
+      <!-- 与 mine 页相同：bind:chooseavatar + open-type="chooseAvatar" -->
       <button
         class="avatar-choose-btn"
+        plain="{{true}}"
         open-type="chooseAvatar"
-        bindchooseavatar="onChooseWechatAvatar"
-        hover-class="avatar-choose-hover"
+        bind:chooseavatar="onChooseWechatAvatar"
+        lang="zh_CN"
       >
-        <image wx:if="{{avatarUrl}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill" />
+        <image wx:if="{{avatarUrl}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill"></image>
         <view wx:else class="avatar-preview placeholder">👤</view>
         <text class="avatar-choose-text">选微信头像</text>
       </button>
@@ -53,21 +54,21 @@
     </view>
 
     <view class="profile-nick-label">微信昵称</view>
-    <!-- type="nickname" 可调起微信昵称填写；blur 时部分机型才回填 -->
+    <!-- 与 mine 页相同：type="nickname"；真机点击可出「使用微信昵称」 -->
     <input
       class="profile-nick-input"
       type="nickname"
       maxlength="20"
-      placeholder="点击填写微信昵称"
+      placeholder="点击输入，可选微信昵称"
       value="{{draftNickname}}"
       bindinput="onNicknameInput"
       bindblur="onNicknameBlur"
-      always-embed="{{true}}"
+      bindchange="onNicknameInput"
+      lang="zh_CN"
     />
 
     <button
-      class="btn-wechat full"
-      style="margin-top: 40rpx;"
+      class="btn-wechat full confirm-btn"
       bindtap="onConfirmProfile"
       disabled="{{loading || uploadingAvatar}}"
     >
@@ -75,21 +76,27 @@
       <text wx:elif="{{uploadingAvatar}}">头像上传中...</text>
       <text wx:else>确认并继续</text>
     </button>
-    <view class="profile-tip">微信已不再返回真实头像昵称，需您主动选择一次</view>
+
+    <view class="profile-tip">若头像无响应，请先允许隐私授权；昵称请在真机点击输入框选用微信昵称</view>
+    <view class="relogin-link" bindtap="onBackToLogin">重新登录 / 退出当前账号</view>
   </view>
 
-  <view class="features">
+  <view class="features" wx:if="{{step === 'login'}}">
     <view class="feature">
-      <text class="feature-icon">🏟</text>
-      <text>订场</text>
+      <view class="feature-icon">📍</view>
+      <text>附近场地</text>
     </view>
     <view class="feature">
-      <text class="feature-icon">👥</text>
-      <text>组队</text>
+      <view class="feature-icon">👥</view>
+      <text>凑人约战</text>
     </view>
     <view class="feature">
-      <text class="feature-icon">⚔️</text>
-      <text>约战</text>
+      <view class="feature-icon">💰</view>
+      <text>队费AA</text>
+    </view>
+    <view class="feature">
+      <view class="feature-icon">📊</view>
+      <text>数据统计</text>
     </view>
   </view>
 </view>
