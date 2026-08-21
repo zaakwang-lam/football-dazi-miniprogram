@@ -1,5 +1,6 @@
 // pages/login/login.js
-// 流程：勾选协议 → 微信一键登录 → 选择头像+填写昵称 → 选择身份（个人方/球场方）
+// 流程：勾选协议 → 微信一键登录 → 选择头像+填写昵称 → 选择身份
+// 头像/昵称能力对齐 pages/mine（用户确认可用的实现）
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -14,11 +15,12 @@ function isDefaultNickname(name) {
 function isProfileComplete(user) {
   if (!user) return false;
   const hasNick = !isDefaultNickname(user.nickname || user.nickName);
-  const hasAvatar = !!(user.avatarUrl && String(user.avatarUrl).trim());
+  const hasAvatar = !!(user.avatarUrl && String(user.avatarUrl).trim()
+    && !/^wxfile:\/\//i.test(user.avatarUrl)
+    && !/^http:\/\/tmp\//i.test(user.avatarUrl));
   return hasNick && hasAvatar;
 }
 
-/** 仅 roles 数组判定已选身份；忽略 ENUM role 默认值 */
 function normalizeRoles(raw) {
   if (!Array.isArray(raw)) return [];
   return raw.filter((r) => r === 'user' || r === 'court');
@@ -35,8 +37,12 @@ Page({
     uploadingAvatar: false
   },
 
-  // 标记用户是否已在本页编辑过头像/昵称，避免 onShow 覆盖
   _editingProfile: false,
+  _privacyReady: false,
+
+  onLoad() {
+    this._ensurePrivacy();
+  },
 
   onShow() {
     const token = wx.getStorageSync('token');
@@ -44,22 +50,18 @@ Page({
     const roles = normalizeRoles(user.roles);
 
     if (!token) {
-      // 未登录保持在登录步骤
       if (this.data.step !== 'login') {
         this.setData({ step: 'login' });
       }
       return;
     }
 
-    // 资料不全 → 进入完善资料
     if (!isProfileComplete(user)) {
-      // 关键：用户正在选择头像/昵称时，微信原生弹层关闭会触发 onShow，
-      // 若这里覆盖 avatarUrl / draftNickname，会导致「选了却不显示、像无法选择」
+      // 编辑中勿覆盖（选头像弹层关闭会触发 onShow）
       if (this.data.step === 'profile' && this._editingProfile) {
         return;
       }
       const patch = { step: 'profile' };
-      // 仅首次进入完善资料时写入服务端已有值，不打断用户编辑
       if (this.data.step !== 'profile') {
         patch.avatarUrl = user.avatarUrl || this.data.avatarUrl || '';
         patch.draftNickname = isDefaultNickname(user.nickname || user.nickName)
@@ -67,17 +69,46 @@ Page({
           : (user.nickname || user.nickName || '');
       }
       this.setData(patch);
+      this._ensurePrivacy();
       return;
     }
 
-    // 资料全但未选身份 → 强制身份选择
     if (roles.length === 0) {
       wx.redirectTo({ url: '/pages/role-select/role-select' });
       return;
     }
 
-    // 已选身份 → 回我的
     wx.switchTab({ url: '/pages/mine/mine' });
+  },
+
+  /** 微信隐私协议：未授权时 chooseAvatar / 相册可能无响应 */
+  _ensurePrivacy() {
+    if (this._privacyReady) return;
+    if (typeof wx.getPrivacySetting !== 'function') {
+      this._privacyReady = true;
+      return;
+    }
+    try {
+      wx.getPrivacySetting({
+        success: (res) => {
+          if (res && res.needAuthorization) {
+            if (typeof wx.requirePrivacyAuthorize === 'function') {
+              wx.requirePrivacyAuthorize({
+                success: () => { this._privacyReady = true; },
+                fail: () => {
+                  console.warn('[login] privacy authorize fail');
+                }
+              });
+            }
+          } else {
+            this._privacyReady = true;
+          }
+        },
+        fail: () => { this._privacyReady = true; }
+      });
+    } catch (e) {
+      this._privacyReady = true;
+    }
   },
 
   onAgreeTap() {
@@ -92,6 +123,23 @@ Page({
     wx.navigateTo({ url: '/pages/agreement/privacy-policy' });
   },
 
+  /** 退出账号，回到协议+微信登录步骤 */
+  onBackToLogin() {
+    this._editingProfile = false;
+    wx.removeStorageSync('token');
+    wx.removeStorageSync('userInfo');
+    app.globalData.token = '';
+    app.globalData.userInfo = null;
+    this.setData({
+      step: 'login',
+      agreed: false,
+      loading: false,
+      avatarUrl: '',
+      draftNickname: '',
+      uploadingAvatar: false
+    });
+  },
+
   onLoginTap() {
     if (!this.data.agreed) {
       return wx.showToast({ title: '请先同意用户协议', icon: 'none' });
@@ -99,6 +147,7 @@ Page({
     if (this.data.loading) return;
 
     this.setData({ loading: true });
+    this._ensurePrivacy();
 
     wx.login({
       success: async (loginRes) => {
@@ -132,6 +181,7 @@ Page({
               avatarUrl: mergedForCheck.avatarUrl || '',
               draftNickname: isDefaultNickname(user.nickname) ? '' : (user.nickname || '')
             });
+            this._ensurePrivacy();
             return;
           }
 
@@ -188,23 +238,19 @@ Page({
     }
   },
 
-  /**
-   * 微信头像（open-type="chooseAvatar"）
-   * e.detail.avatarUrl 为本地临时路径，需上传后才有永久 URL
-   */
   onChooseWechatAvatar(e) {
     this._editingProfile = true;
-    const localPath = (e && e.detail && e.detail.avatarUrl) || '';
+    const localPath = e && e.detail && e.detail.avatarUrl;
     if (!localPath) {
       return wx.showToast({ title: '未获取到头像，请重试', icon: 'none' });
     }
-    // 先展示本地预览，再上传
     this.setData({ avatarUrl: localPath });
     this._uploadLocalAvatar(localPath);
   },
 
   onChooseLocalAvatar() {
     this._editingProfile = true;
+    this._ensurePrivacy();
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
@@ -219,9 +265,8 @@ Page({
         this._uploadLocalAvatar(tempPath);
       },
       fail: (err) => {
-        // 用户取消不提示
-        if (err && err.errMsg && err.errMsg.indexOf('cancel') >= 0) return;
-        wx.showToast({ title: '未选择图片', icon: 'none' });
+        if (err && err.errMsg && String(err.errMsg).indexOf('cancel') >= 0) return;
+        wx.showToast({ title: '无法打开相册，请检查隐私授权', icon: 'none' });
       }
     });
   },
@@ -284,17 +329,14 @@ Page({
 
   onNicknameInput(e) {
     this._editingProfile = true;
-    const val = (e && e.detail && e.detail.value != null) ? String(e.detail.value) : '';
+    const val = e && e.detail && e.detail.value != null ? String(e.detail.value) : '';
     this.setData({ draftNickname: val });
   },
 
   onNicknameBlur(e) {
     this._editingProfile = true;
-    const val = (e && e.detail && e.detail.value != null) ? String(e.detail.value) : '';
-    // type="nickname" 在部分机型上于 blur 时才回填微信昵称
-    if (val) {
-      this.setData({ draftNickname: val });
-    }
+    const val = e && e.detail && e.detail.value != null ? String(e.detail.value) : '';
+    if (val) this.setData({ draftNickname: val });
   },
 
   async onConfirmProfile() {
@@ -306,7 +348,6 @@ Page({
     if (!avatarUrl) {
       return wx.showToast({ title: '请选择微信头像', icon: 'none' });
     }
-    // 本地临时路径未上传成功时，提示重新选择
     if (/^wxfile:\/\//i.test(avatarUrl) || /^http:\/\/tmp\//i.test(avatarUrl)) {
       return wx.showToast({ title: '头像上传中或失败，请重新选择', icon: 'none' });
     }
