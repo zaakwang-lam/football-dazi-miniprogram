@@ -67,7 +67,7 @@
 }
 .btn-privacy::after { border: none; }
 
-.profile-avatar-row {
+.profile-avatar-block {
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -75,7 +75,6 @@
   margin: 8rpx 0 32rpx;
   width: 100%;
 }
-/* 与 8.19 可用版接近：普通 button，去掉 plain，避免 open-type 失效 */
 .avatar-choose-btn {
   flex: 1;
   margin: 0;
