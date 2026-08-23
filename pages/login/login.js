@@ -57,7 +57,6 @@ Page({
       return;
     }
 
-    // 【关键】以后端 profile 为准同步 roles，避免后台重置身份后本地仍缓存旧身份而跳过选择
     let user = wx.getStorageSync('userInfo') || {};
     try {
       const res = await api.getUserProfile();
@@ -218,6 +217,7 @@ Page({
             avatarUrl: user.avatarUrl || (wx.getStorageSync('userInfo') || {}).avatarUrl
           };
 
+          // 新用户：先完善资料，再【必须】选身份，禁止直接进「我的」
           if (!isProfileComplete(mergedForCheck)) {
             this._editingProfile = false;
             this.setData({
@@ -416,7 +416,6 @@ Page({
 
       const savedNick = (res.data && res.data.nickname) || nickname;
       const prev = wx.getStorageSync('userInfo') || {};
-      // 仅信服务端 roles；禁止用本地 prev.roles 回填
       const roles = normalizeRoles(res.data && res.data.roles);
       const userInfo = {
         ...prev,
@@ -434,8 +433,10 @@ Page({
       this.setData({ loading: false });
       wx.hideLoading();
 
+      // 新客户完善资料后【必须】选身份，不可跳过
       if (!roles.length) {
         this.setData({ step: 'role' });
+        wx.showToast({ title: '请选择身份', icon: 'none' });
         return;
       }
       wx.showToast({ title: '登录成功', icon: 'success' });
