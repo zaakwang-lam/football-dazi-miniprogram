@@ -22,10 +22,19 @@
       </view>
     </view>
 
-    <view class="form-label required">行政区</view>
-    <picker mode="selector" range="{{districts}}" value="{{districtIndex}}" bindchange="onDistrictChange">
-      <view class="form-picker">{{districts[districtIndex] || '请选择行政区'}}</view>
-    </picker>
+    <view class="form-label required">所在地区</view>
+    <view class="region-row">
+      <picker mode="selector" range="{{provinces}}" value="{{provinceIndex}}" bindchange="onProvinceChange">
+        <view class="form-picker region-picker">{{form.province || '省'}}</view>
+      </picker>
+      <picker mode="selector" range="{{cities}}" value="{{cityIndex}}" bindchange="onCityChange">
+        <view class="form-picker region-picker">{{form.city || '市'}}</view>
+      </picker>
+      <picker mode="selector" range="{{districts}}" value="{{districtIndex}}" bindchange="onDistrictChange">
+        <view class="form-picker region-picker">{{form.district || '区/县'}}</view>
+      </picker>
+    </view>
+    <view class="loc-hint" wx:if="{{form.regionText}}">已选：{{form.regionText}}</view>
 
     <view class="form-label required">球场地址</view>
     <view class="addr-row">
