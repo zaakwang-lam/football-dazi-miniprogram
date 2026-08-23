@@ -1,7 +1,5 @@
 // pages/login/login.js
-// 流程：勾选协议 → 微信一键登录 → 选择头像+填写昵称 → 选择身份
-// 微信头像：button open-type=chooseAvatar（勿再绑 bindtap）
-// 微信昵称：input type=nickname（真机键盘可选「使用微信昵称」）
+// 流程：勾选协议 → 微信一键登录 → 头像+昵称 → 【必须】选个人/球场方 → 我的
 const api = require('../../utils/api.js');
 const app = getApp();
 
@@ -74,8 +72,11 @@ Page({
       return;
     }
 
+    // 资料完整但未选身份 → 本页展示身份选择（必选，禁止跳过）
     if (roles.length === 0) {
-      wx.redirectTo({ url: '/pages/role-select/role-select' });
+      if (this.data.step !== 'role') {
+        this.setData({ step: 'role' });
+      }
       return;
     }
 
@@ -201,7 +202,7 @@ Page({
           }
 
           if (roles.length === 0) {
-            wx.redirectTo({ url: '/pages/role-select/role-select' });
+            this.setData({ step: 'role' });
             return;
           }
 
@@ -253,10 +254,8 @@ Page({
     }
   },
 
-  /** 点「选微信头像」→ 微信头像面板 → 本地临时路径再上传 */
   onChooseWechatAvatar(e) {
     this._editingProfile = true;
-    console.log('[login] chooseAvatar', e && e.detail);
     const localPath = (e && e.detail && e.detail.avatarUrl) || '';
     if (!localPath) {
       return wx.showToast({ title: '未获取到头像，请重试', icon: 'none' });
@@ -389,15 +388,16 @@ Page({
 
       const savedNick = (res.data && res.data.nickname) || nickname;
       const prev = wx.getStorageSync('userInfo') || {};
-      const roles = normalizeRoles(
-        res.data && res.data.roles != null ? res.data.roles : prev.roles
-      );
+      let roles = normalizeRoles(res.data && res.data.roles);
+      if (!roles.length) {
+        roles = normalizeRoles(prev.roles);
+      }
       const userInfo = {
         ...prev,
         nickname: savedNick,
         nickName: savedNick,
         avatarUrl: (res.data && res.data.avatarUrl) || avatarUrl,
-        roles,
+        roles: roles.length ? roles : [],
         role: roles.length ? (roles.includes(prev.role) ? prev.role : roles[0]) : '',
         registered: roles.length > 0
       };
@@ -408,16 +408,93 @@ Page({
       this.setData({ loading: false });
       wx.hideLoading();
 
-      if (roles.length === 0) {
-        wx.redirectTo({ url: '/pages/role-select/role-select' });
-      } else {
-        wx.showToast({ title: '登录成功', icon: 'success' });
-        setTimeout(() => wx.switchTab({ url: '/pages/mine/mine' }), 500);
+      if (!roles.length) {
+        // 同页进入身份选择，避免 redirect 失败
+        this.setData({ step: 'role' });
+        return;
       }
+      wx.showToast({ title: '登录成功', icon: 'success' });
+      setTimeout(() => wx.switchTab({ url: '/pages/mine/mine' }), 500);
     } catch (e) {
       this.setData({ loading: false });
       wx.hideLoading();
       wx.showToast({ title: (e && e.message) || '保存失败', icon: 'none' });
+    }
+  },
+
+  /** 必须选择个人 / 球场方后才能进入「我的」 */
+  async onSelectRole(e) {
+    const role = e && e.currentTarget && e.currentTarget.dataset
+      ? e.currentTarget.dataset.role
+      : '';
+    if (this.data.loading) return;
+
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({ title: '登录状态已失效，请重新登录', icon: 'none' });
+      this.setData({ step: 'login' });
+      return;
+    }
+
+    if (role === 'court') {
+      wx.navigateTo({ url: '/pages/mine/court-register' });
+      return;
+    }
+    if (role !== 'user') {
+      return wx.showToast({ title: '请选择正确的身份', icon: 'none' });
+    }
+
+    this.setData({ loading: true });
+    wx.showLoading({ title: '注册中...', mask: true });
+    try {
+      let roles = [];
+      try {
+        const roleResult = await api.registerRole({ role: 'user' });
+        if (roleResult && roleResult.code === 0) {
+          roles = normalizeRoles(roleResult.data && roleResult.data.roles);
+          if (!roles.length) roles = ['user'];
+        } else {
+          throw new Error((roleResult && roleResult.message) || '注册失败');
+        }
+      } catch (roleErr) {
+        const message = (roleErr && roleErr.message) || '';
+        if (!message.includes('已注册') && !message.includes('already')) throw roleErr;
+        const profile = await api.getUserProfile();
+        const profileRoles = normalizeRoles(profile && profile.data && profile.data.roles);
+        if (profileRoles.includes('user')) {
+          roles = profileRoles;
+        } else {
+          throw roleErr;
+        }
+      }
+
+      if (!roles.includes('user')) roles = roles.concat(['user']);
+
+      const oldUser = wx.getStorageSync('userInfo') || {};
+      const userInfo = {
+        ...oldUser,
+        roles,
+        role: 'user',
+        registered: true,
+        nickName: oldUser.nickName || oldUser.nickname || '',
+        nickname: oldUser.nickname || oldUser.nickName || ''
+      };
+      wx.setStorageSync('userInfo', userInfo);
+      app.globalData.userInfo = userInfo;
+
+      this.setData({ loading: false });
+      wx.hideLoading();
+      wx.showToast({ title: '登录成功', icon: 'success' });
+      setTimeout(() => wx.switchTab({ url: '/pages/mine/mine' }), 500);
+    } catch (err) {
+      this.setData({ loading: false });
+      wx.hideLoading();
+      console.error('[login] select role error:', err);
+      wx.showToast({
+        title: (err && err.message) || '注册失败，请重试',
+        icon: 'none',
+        duration: 2500
+      });
     }
   },
 
