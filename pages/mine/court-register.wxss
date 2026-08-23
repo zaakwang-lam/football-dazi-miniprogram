@@ -23,7 +23,7 @@
 .form-textarea {
   background: #F5F7FA; border-radius: 16rpx; padding: 24rpx 28rpx;
   font-size: 30rpx; color: #1A1A1A; width: 100%; box-sizing: border-box;
-  min-height: 180rpx; line-height: 1.5; height: auto;
+  min-height: 100rpx; max-height: 160rpx; line-height: 1.5; height: auto;
 }
 .cover-block {
   display: flex; flex-direction: column; align-items: flex-start; gap: 16rpx;
@@ -92,3 +92,6 @@
   font-size: 30rpx; font-weight: 600; height: 88rpx; line-height: 88rpx; border: none;
 }
 .btn-submit::after { border: none; }
+
+.region-row { display: flex; gap: 12rpx; }
+.region-picker { flex: 1; text-align: center; padding: 0 12rpx; font-size: 26rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
