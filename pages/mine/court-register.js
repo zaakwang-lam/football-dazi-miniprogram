@@ -21,6 +21,8 @@ Page({
     districts: DISTRICTS,
     weekDays: WEEK_DAYS,
     districtIndex: -1,
+    coverLocal: '',
+    coverUrl: '',
     form: {
       name: '', types: [], surfaceTypes: [], district: '', address: '', longitude: '', latitude: '',
       phone: '', price: '', openHours: {}, description: ''
@@ -39,11 +41,9 @@ Page({
       'form.longitude': String(loc.longitude),
       'form.latitude': String(loc.latitude)
     };
-    // 若名称仍空，可用地图点名称填充
     if (!this.data.form.name && loc.name) {
       patch['form.name'] = loc.name;
     }
-    // 尝试根据地址匹配行政区
     const addr = loc.address || '';
     const hitIdx = DISTRICTS.findIndex(d => addr.indexOf(d) >= 0);
     if (hitIdx >= 0) {
@@ -106,6 +106,66 @@ Page({
     this.setData({ 'form.openHours': openHours });
   },
 
+  onChooseCover() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      sizeType: ['compressed'],
+      success: (res) => {
+        const path = res.tempFiles && res.tempFiles[0] ? res.tempFiles[0].tempFilePath : '';
+        if (!path) return wx.showToast({ title: '未选择图片', icon: 'none' });
+        this.setData({ coverLocal: path });
+      },
+      fail: (err) => {
+        if (err && err.errMsg && String(err.errMsg).indexOf('cancel') >= 0) return;
+        wx.showToast({ title: '无法选择图片', icon: 'none' });
+      }
+    });
+  },
+
+  onClearCover() {
+    this.setData({ coverLocal: '', coverUrl: '' });
+  },
+
+  _uploadCover(courtId, localPath) {
+    return new Promise((resolve) => {
+      if (!courtId || !localPath) return resolve(null);
+      const doUpload = (filePath) => {
+        wx.getFileSystemManager().readFile({
+          filePath,
+          encoding: 'base64',
+          success: async (fileRes) => {
+            try {
+              const res = await api.uploadCourtImage(courtId, fileRes.data, 'image/jpeg');
+              if (res && res.code === 0) {
+                const url = (res.data && (res.data.imageUrl || (res.data.images && res.data.images[0]))) || '';
+                resolve(url || null);
+              } else {
+                console.warn('[court-register] cover upload fail', res);
+                resolve(null);
+              }
+            } catch (e) {
+              console.warn('[court-register] cover upload error', e);
+              resolve(null);
+            }
+          },
+          fail: () => resolve(null)
+        });
+      };
+      if (wx.compressImage) {
+        wx.compressImage({
+          src: localPath,
+          quality: 80,
+          success: (r) => doUpload((r && r.tempFilePath) || localPath),
+          fail: () => doUpload(localPath)
+        });
+      } else {
+        doUpload(localPath);
+      }
+    });
+  },
+
   async onSubmit() {
     const f = this.data.form;
     if (!f.name) return wx.showToast({ title: '请填写球场名称', icon: 'none' });
@@ -133,7 +193,19 @@ Page({
         userInfo.roles = Array.isArray(res.data?.roles) ? res.data.roles : ['user', 'court'];
         userInfo.role = 'court';
         userInfo.courtId = res.data?.courtId || null;
+        userInfo.registered = true;
         wx.setStorageSync('userInfo', userInfo);
+        const app = getApp();
+        if (app && app.globalData) app.globalData.userInfo = userInfo;
+
+        const courtId = res.data?.courtId;
+        const localCover = this.data.coverLocal;
+        if (courtId && localCover) {
+          wx.showLoading({ title: '上传图片...', mask: true });
+          await this._uploadCover(courtId, localCover);
+          wx.hideLoading();
+        }
+
         wx.showModal({
           title: '提交成功', content: '球场信息已提交，请等待管理员审核（1-3 个工作日）', showCancel: false,
           success: () => wx.switchTab({ url: '/pages/mine/mine' })
