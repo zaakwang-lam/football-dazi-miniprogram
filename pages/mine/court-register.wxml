@@ -43,6 +43,19 @@
     <view class="form-label">基础价格（元/场）</view>
     <input class="form-input" placeholder="如：300" value="{{form.price}}" bindinput="onInput" data-field="price" type="digit" />
 
+    <view class="form-label">球场宣传图片</view>
+    <view class="cover-block">
+      <image wx:if="{{coverLocal || coverUrl}}" class="cover-preview" src="{{coverLocal || coverUrl}}" mode="aspectFill"></image>
+      <view wx:else class="cover-placeholder" bindtap="onChooseCover">
+        <view class="cover-icon">📷</view>
+        <text>点击上传球场宣传图</text>
+      </view>
+      <view class="cover-actions">
+        <button class="btn-cover" bindtap="onChooseCover">{{coverLocal || coverUrl ? '重新选择' : '选择图片'}}</button>
+        <view wx:if="{{coverLocal || coverUrl}}" class="btn-cover-clear" bindtap="onClearCover">清除</view>
+      </view>
+    </view>
+
     <view class="form-label">开放时间（按周设置，可添加多个时段）</view>
     <view class="open-hours-list">
       <view class="open-hours-day" wx:for="{{weekDays}}" wx:key="key" wx:for-item="day">
