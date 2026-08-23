@@ -1,5 +1,5 @@
 <!-- pages/login/login.wxml -->
-<!-- 微信官方能力：chooseAvatar 选头像、type=nickname 选昵称（真机） -->
+<!-- 流程：协议 → 微信登录 → 完善资料 → 必须选身份 → 我的 -->
 <view class="page">
   <view class="hero">
     <view class="hero-logo">⚽</view>
@@ -45,7 +45,6 @@
       bindagreeprivacyauthorization="onAgreePrivacy"
     >请先同意隐私保护指引</button>
 
-    <!-- 仅 open-type=chooseAvatar，不要 bindtap，否则真机常无响应 -->
     <view class="profile-avatar-block">
       <button
         class="avatar-choose-btn"
@@ -86,6 +85,32 @@
       点「选微信头像」弹出微信头像；点昵称框在键盘上选「使用微信昵称」
     </view>
     <view class="relogin-link" bindtap="onBackToLogin">重新登录 / 退出当前账号</view>
+  </view>
+
+  <!-- ========== 步骤3：必须选择身份 ========== -->
+  <view class="login-card role-step-card" wx:if="{{step === 'role'}}">
+    <view class="login-title">选择您的身份</view>
+    <view class="login-desc">请选择后才能使用完整功能（必选）</view>
+
+    <view class="role-option" bindtap="onSelectRole" data-role="user">
+      <view class="role-icon">👤</view>
+      <view class="role-info">
+        <view class="role-name">个人用户</view>
+        <view class="role-desc">发起组队、加入约战、订场报名</view>
+      </view>
+      <view class="role-arrow">›</view>
+    </view>
+
+    <view class="role-option" bindtap="onSelectRole" data-role="court">
+      <view class="role-icon">🏟</view>
+      <view class="role-info">
+        <view class="role-name">球场方</view>
+        <view class="role-desc">登记球场、发布空闲时段、招录球员</view>
+      </view>
+      <view class="role-arrow">›</view>
+    </view>
+
+    <view class="profile-tip">选择后可在「我的」中切换身份（需同时具备两种身份）</view>
   </view>
 
   <view class="features" wx:if="{{step === 'login'}}">
