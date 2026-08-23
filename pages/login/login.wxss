@@ -160,3 +160,37 @@
   width: 100%;
   padding: 12rpx;
 }
+
+/* —— 身份选择步骤 —— */
+.role-step-card { align-items: stretch; padding-bottom: 24rpx; }
+.role-option {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 8rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.role-option:last-of-type { border-bottom: none; }
+.role-option:active { background: #F8F8F8; }
+.role-icon {
+  font-size: 56rpx;
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: #FFE8D6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.role-info { flex: 1; }
+.role-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 6rpx;
+}
+.role-desc { font-size: 24rpx; color: #999; }
+.role-arrow { font-size: 40rpx; color: #CCC; }
