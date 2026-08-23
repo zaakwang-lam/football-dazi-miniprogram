@@ -14,14 +14,9 @@ App({
     this.globalData.systemInfo = systemInfo;
     this.globalData.navBarHeight = (systemInfo.statusBarHeight || 20) + 44;
 
-    // 仅刷新 token / openid，不自动当成「已选个人身份」
     this.silentLogin();
   },
 
-  /**
-   * 静默登录：只拿 openid + token。
-   * PRD：身份必须用户手动选择；roles 为空时不得把用户写成个人方。
-   */
   silentLogin() {
     wx.login({
       success: (res) => {
@@ -43,7 +38,6 @@ App({
             const roles = Array.isArray(user?.roles) ? user.roles.filter(Boolean) : [];
             const existing = wx.getStorageSync('userInfo') || {};
 
-            // 身份只认 roles 数组，忽略服务端 ENUM role 默认值
             const cleanRoles = Array.isArray(roles)
               ? roles.filter((r) => r === 'user' || r === 'court')
               : [];
@@ -62,21 +56,23 @@ App({
               wx.setStorageSync('userInfo', merged);
               this.globalData.userInfo = merged;
             } else {
-              // 未选身份：不得写成个人方
+              // 删号重登：用户 id 变化时不继承旧本地 roles/资料
+              const sameUser = existing && user && existing.id && user.id && Number(existing.id) === Number(user.id);
               const serverNick = (user?.nickname || '').trim();
               const isDefault = !serverNick || serverNick === '微信用户' || serverNick === '微信昵称';
               const nick = isDefault
-                ? ((existing.nickname && existing.nickname !== '微信用户') ? existing.nickname : '')
+                ? (sameUser && existing.nickname && existing.nickname !== '微信用户' ? existing.nickname : '')
                 : serverNick;
               const shell = {
-                id: user?.id || existing.id,
-                openid: user?.openid || existing.openid || '',
+                id: user?.id || '',
+                openid: user?.openid || '',
                 nickname: nick,
                 nickName: nick,
-                avatarUrl: user?.avatarUrl || existing.avatarUrl || '',
+                avatarUrl: (user?.avatarUrl) || (sameUser ? (existing.avatarUrl || '') : '') || '',
                 roles: [],
                 role: '',
-                registered: false
+                registered: false,
+                courtId: null
               };
               wx.setStorageSync('userInfo', shell);
               this.globalData.userInfo = shell;
