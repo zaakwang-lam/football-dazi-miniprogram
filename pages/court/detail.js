@@ -3,6 +3,13 @@ const api = require('../../utils/api.js');
 
 const TIME_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
 
+function formatMonthDay(dateStr) {
+  const s = String(dateStr || '').substring(0, 10);
+  const parts = s.split('-');
+  if (parts.length >= 3) return `${Number(parts[1])}/${Number(parts[2])}`;
+  return s;
+}
+
 Page({
   data: {
     court: null,
@@ -29,14 +36,25 @@ Page({
     // 加载排期（后端返回 { courtId, schedules: { 'YYYY-MM-DD': [...] } }）
     const scheduleRes = await api.getCourtSchedule(id);
     const grouped = scheduleRes.data.schedules || {};
-    const schedule = Object.keys(grouped).slice(0, 7).map(date => ({
-      date: date,
+    const dates = Object.keys(grouped).slice(0, 7);
+    let timeSlots = TIME_SLOTS;
+    if (dates[0] && grouped[dates[0]] && grouped[dates[0]].length) {
+      const fromData = grouped[dates[0]].map(slot => {
+        const raw = String(slot.timeSlot || '');
+        const start = raw.split('-')[0] || raw;
+        return start.length > 5 ? start.slice(0, 5) : start;
+      }).filter(Boolean);
+      if (fromData.length) timeSlots = fromData;
+    }
+    const schedule = dates.map(date => ({
+      date,
+      dateShort: formatMonthDay(date),
       hours: grouped[date].map(slot => ({
         time: slot.timeSlot ? slot.timeSlot.split('-')[0] : '',
         status: slot.status
       }))
     }));
-    this.setData({ schedule });
+    this.setData({ schedule, timeSlots });
   },
 
   onCallTap(e) {
@@ -55,10 +73,6 @@ Page({
 
   onBookTap() {
     wx.navigateTo({ url: `/pages/court/book?id=${this.data.court.id}` });
-  },
-
-  onEvalTap() {
-    wx.navigateTo({ url: `/pages/court/eval?id=${this.data.court.id}` });
   },
 
   onShareAppMessage() {

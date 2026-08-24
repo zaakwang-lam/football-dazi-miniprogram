@@ -61,6 +61,30 @@ function shareConfig(title, desc, path, imageUrl) {
   };
 }
 
+function extractPhone(raw) {
+  const s = String(raw || '').trim();
+  const m = s.match(/1\d{10}/);
+  if (m) return m[0];
+  const digits = s.replace(/[^\d]/g, '');
+  if (digits.length >= 7 && digits.length <= 12) return digits;
+  return '';
+}
+
+function dialPhone(raw) {
+  const phone = extractPhone(raw);
+  if (!phone) {
+    wx.showToast({ title: '暂无有效电话', icon: 'none' });
+    return;
+  }
+  wx.makePhoneCall({
+    phoneNumber: phone,
+    fail: (err) => {
+      if (err && String(err.errMsg || '').indexOf('cancel') >= 0) return;
+      wx.showToast({ title: '无法拨打该电话', icon: 'none' });
+    }
+  });
+}
+
 module.exports = {
   formatTime,
   formatDistance,
@@ -69,5 +93,7 @@ module.exports = {
   toast,
   loading,
   hideLoading,
-  shareConfig
+  shareConfig,
+  extractPhone,
+  dialPhone
 };

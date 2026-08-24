@@ -179,10 +179,28 @@
 .lfg-loc {
   font-size: 24rpx;
   color: #666666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  margin-right: 8rpx;
 }
 
 .lfg-need {
   font-size: 24rpx;
   color: #FF4757;
   font-weight: 600;
+}
+
+.lfg-call {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+  padding: 10rpx 16rpx;
+  background: #FFE8D6;
+  color: #FF6B00;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  white-space: nowrap;
 }

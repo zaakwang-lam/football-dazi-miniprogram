@@ -66,11 +66,6 @@
     <input class="form-input" type="number" maxlength="11" placeholder="请输入11位手机号码" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
   </view>
 
-  <view class="form-group">
-    <view class="form-label">挑战备注</view>
-    <textarea class="form-textarea" placeholder="如：欢迎同水平球队挑战，AA 制" value="{{form.description}}" bindinput="onInput" data-key="description" maxlength="200" />
-  </view>
-
   <view class="bottom-action safe-bottom">
     <view class="btn-primary full" bindtap="onSubmit">发布约战</view>
   </view>

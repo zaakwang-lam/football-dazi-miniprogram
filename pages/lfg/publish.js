@@ -145,7 +145,7 @@ Page({
 
   async onSubmit() {
     if (!this.data.ready) return wx.showToast({ title: '请先加入球队', icon: 'none' });
-    const { teamId, teamName, location, playTime, contact, dateValue, timeValue, description } = this.data.form;
+    const { teamId, teamName, location, playTime, contact, dateValue, timeValue } = this.data.form;
     if (!teamId) return wx.showToast({ title: '请选择已加入的球队', icon: 'none' });
     if (!location) return wx.showToast({ title: '请用地图选择地点', icon: 'none' });
     if (!dateValue || !timeValue) return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
@@ -160,8 +160,7 @@ Page({
         playTime,
         needCount: this.data.form.needCount,
         level: this.data.form.level,
-        contact: String(contact).trim(),
-        description: description || ''
+        contact: String(contact).trim()
       });
       if (res.code === 0) {
         wx.showToast({ title: '发布成功', icon: 'success' });

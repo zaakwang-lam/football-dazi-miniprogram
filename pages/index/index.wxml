@@ -60,6 +60,7 @@
             <text class="lfg-need war-tag" wx:else>约战</text>
           </view>
         </view>
+        <view class="lfg-call" catchtap="onContactCaptain" data-phone="{{item.contact}}">联系队长</view>
       </view>
     </view>
     <view class="empty-lfg" wx:else>

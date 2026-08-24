@@ -63,11 +63,6 @@
     <input class="form-input" type="number" maxlength="11" placeholder="请输入11位手机号码" value="{{form.contact}}" bindinput="onInput" data-key="contact" />
   </view>
 
-  <view class="form-group">
-    <view class="form-label">详细说明</view>
-    <textarea class="form-textarea" placeholder="补充说明（位置/人数/费用）" value="{{form.description}}" bindinput="onInput" data-key="description" maxlength="200"></textarea>
-  </view>
-
   <view class="bottom-action safe-bottom">
     <view class="btn-primary full" bindtap="onSubmit">立即发布</view>
   </view>

@@ -1,5 +1,6 @@
 // pages/index/index.js
 const api = require('../../utils/api.js');
+const { dialPhone } = require('../../utils/util.js');
 
 Page({
   data: {
@@ -86,6 +87,10 @@ Page({
     const id = e.currentTarget.dataset.id;
     if (!id) return wx.showToast({ title: '无效的组队信息', icon: 'none' });
     wx.navigateTo({ url: `/pages/lfg/detail?id=${id}` });
+  },
+
+  onContactCaptain(e) {
+    dialPhone(e.currentTarget.dataset.phone);
   },
 
   onShareAppMessage() {

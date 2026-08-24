@@ -169,8 +169,7 @@ Page({
         playTime,
         needCount: 0,
         level: this.data.form.level,
-        contact: String(contact).trim(),
-        description: this.data.form.description
+        contact: String(contact).trim()
       });
       if (res.code === 0) {
         wx.showToast({ title: '约战已发布！', icon: 'success' });

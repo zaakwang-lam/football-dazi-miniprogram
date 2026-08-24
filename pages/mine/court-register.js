@@ -265,7 +265,11 @@ Page({
         }
 
         wx.showModal({
-          title: '提交成功', content: '球场信息已提交，请等待管理员审核（1-3 个工作日）', showCancel: false,
+          title: res.data?.claimed ? '进驻成功' : '提交成功',
+          content: res.data?.message || (res.data?.claimed
+            ? '已绑定系统收录球场，可直接管理球场与订单'
+            : '球场信息已提交，请等待管理员审核（1-3 个工作日）'),
+          showCancel: false,
           success: () => wx.switchTab({ url: '/pages/mine/mine' })
         });
       } else {

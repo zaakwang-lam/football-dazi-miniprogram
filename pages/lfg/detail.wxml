@@ -47,7 +47,7 @@
     </view>
   </view>
 
-  <view class="desc-block">
+  <view class="desc-block" wx:if="{{detail.desc}}">
     <view class="block-title">详情</view>
     <view class="desc-content">{{detail.desc}}</view>
   </view>

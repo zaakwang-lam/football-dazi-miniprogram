@@ -1,5 +1,6 @@
 // pages/lfg/detail.js
 const api = require('../../utils/api.js');
+const { dialPhone } = require('../../utils/util.js');
 
 const TYPE_CONFIG = {
   sub: { icon: '🙋', cnName: '凑人', actionText: '我要加入', confirmTitle: '确认我要加入', confirmDesc: '队长会通过微信服务通知联系你' },
@@ -73,15 +74,7 @@ Page({
   },
 
   onContactTap() {
-    const contact = this.data.detail?.contact || '';
-    if (!contact) {
-      wx.showToast({ title: '暂无联系方式', icon: 'none' });
-      return;
-    }
-    wx.setClipboardData({
-      data: contact,
-      success: () => wx.showToast({ title: '已复制联系方式', icon: 'success' })
-    });
+    dialPhone(this.data.detail?.contact);
   },
 
   formatPublishTime(dateStr) {
