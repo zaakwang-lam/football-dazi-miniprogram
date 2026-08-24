@@ -96,6 +96,37 @@ Page({
     wx.navigateTo({ url: `/pages/team/edit?id=${this.teamId}` });
   },
 
+  onUploadLogo() {
+    if (!this.data.isCaptain) return;
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const path = res.tempFiles && res.tempFiles[0] && res.tempFiles[0].tempFilePath;
+        if (!path) return;
+        wx.getFileSystemManager().readFile({
+          filePath: path,
+          encoding: 'base64',
+          success: async (fileRes) => {
+            wx.showLoading({ title: '上传中...', mask: true });
+            try {
+              const r = await api.uploadTeamLogo(this.teamId, fileRes.data, 'image/jpeg');
+              wx.hideLoading();
+              if (r.code === 0) {
+                wx.showToast({ title: '队徽已更新', icon: 'success' });
+                this.loadDetail(this.teamId);
+              }
+            } catch (err) {
+              wx.hideLoading();
+              wx.showToast({ title: err.message || '上传失败', icon: 'none' });
+            }
+          }
+        });
+      }
+    });
+  },
+
   onDissolveTap() {
     wx.showModal({
       title: '解散球队',

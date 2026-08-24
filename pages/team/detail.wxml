@@ -1,7 +1,11 @@
 <!-- pages/team/detail.wxml -->
 <view class="page" wx:if="{{team}}">
   <view class="hero" style="background: {{team.bgColor}};">
-    <view class="hero-avatar">{{team.shortName}}</view>
+    <view class="hero-avatar" bindtap="onUploadLogo">
+      <image wx:if="{{team.logo}}" src="{{team.logo}}" mode="aspectFill" />
+      <text wx:else>{{team.shortName}}</text>
+    </view>
+    <view class="hero-upload" wx:if="{{isCaptain}}" bindtap="onUploadLogo">上传球队图片</view>
     <view class="hero-name">{{team.name}}</view>
     <view class="hero-meta">{{team.matchType || ''}} · {{team.city || ''}}{{team.district || ''}} · 成立 {{team.founded}}</view>
     <view class="hero-motto" wx:if="{{team.motto}}">"{{team.motto}}"</view>
@@ -40,7 +44,6 @@
     </view>
   </view>
 
-  <!-- 队长操作 -->
   <view class="captain-actions" wx:if="{{isCaptain}}">
     <view class="cap-btn" bindtap="onEditTap">球队编辑</view>
     <view class="cap-btn danger" bindtap="onDissolveTap">解散球队</view>
