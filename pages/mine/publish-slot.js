@@ -1,12 +1,22 @@
 // pages/mine/publish-slot.js
 const api = require('../../utils/api.js');
 
+function toMinutes(hhmm) {
+  const parts = String(hhmm || '').split(':');
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
+  if (Number.isNaN(h) || Number.isNaN(m)) return -1;
+  return h * 60 + m;
+}
+
 Page({
   data: {
     courts: [],
     courtIndex: 0,
     courtId: null,
     date: '',
+    startTime: '18:00',
+    endTime: '20:00',
     timeSlot: '18:00-20:00',
     price: '',
     slots: []
@@ -68,17 +78,49 @@ Page({
   },
 
   onDateChange(e) { this.setData({ date: e.detail.value }); },
-  onTimeInput(e) { this.setData({ timeSlot: e.detail.value }); },
+
+  _syncTimeSlot(startTime, endTime) {
+    this.setData({
+      startTime,
+      endTime,
+      timeSlot: `${startTime}-${endTime}`
+    });
+  },
+
+  onStartTime(e) {
+    const startTime = e.detail.value;
+    let endTime = this.data.endTime;
+    if (toMinutes(endTime) <= toMinutes(startTime)) {
+      const [h, m] = startTime.split(':').map(Number);
+      const next = Math.min(h + 2, 23);
+      endTime = `${String(next).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    }
+    this._syncTimeSlot(startTime, endTime);
+  },
+
+  onEndTime(e) {
+    const endTime = e.detail.value;
+    if (toMinutes(endTime) <= toMinutes(this.data.startTime)) {
+      wx.showToast({ title: '结束时间需晚于开始时间', icon: 'none' });
+      return;
+    }
+    this._syncTimeSlot(this.data.startTime, endTime);
+  },
+
   onPriceInput(e) { this.setData({ price: e.detail.value }); },
 
   async onPublish() {
-    const { courtId, date, timeSlot, price } = this.data;
+    const { courtId, date, startTime, endTime, price } = this.data;
     if (!courtId) return wx.showToast({ title: '请选择球场', icon: 'none' });
-    if (!date || !timeSlot) return wx.showToast({ title: '请填写日期和时段', icon: 'none' });
+    if (!date) return wx.showToast({ title: '请选择日期', icon: 'none' });
+    if (toMinutes(endTime) <= toMinutes(startTime)) {
+      return wx.showToast({ title: '结束时间需晚于开始时间', icon: 'none' });
+    }
+    const timeSlot = `${startTime}-${endTime}`;
     try {
       const res = await api.publishFreeSlots(courtId, [{
         date,
-        timeSlot: String(timeSlot).trim(),
+        timeSlot,
         price: Number(price) || 0
       }]);
       if (res.code !== 0) throw new Error(res.message || '发布失败');

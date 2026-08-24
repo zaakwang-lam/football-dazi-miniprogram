@@ -10,8 +10,17 @@
       <view class="picker-val">{{date}}</view>
     </picker>
 
-    <view class="label">时段（如 18:00-20:00）</view>
-    <input class="input" value="{{timeSlot}}" bindinput="onTimeInput" placeholder="18:00-20:00" />
+    <view class="label">时段</view>
+    <view class="time-row">
+      <picker mode="time" value="{{startTime}}" bindchange="onStartTime">
+        <view class="picker-val time-picker">{{startTime}}</view>
+      </picker>
+      <text class="time-sep">至</text>
+      <picker mode="time" value="{{endTime}}" bindchange="onEndTime">
+        <view class="picker-val time-picker">{{endTime}}</view>
+      </picker>
+    </view>
+    <view class="time-hint">已选 {{timeSlot}}，点击时间滚动选择</view>
 
     <view class="label">价格（元）</view>
     <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="300" />

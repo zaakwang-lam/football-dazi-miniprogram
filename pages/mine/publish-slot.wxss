@@ -16,3 +16,8 @@
   border-bottom: 1rpx solid #f0f0f0; font-size: 26rpx; color: #333;
 }
 .price { color: #FF6B00; }
+
+.time-row { display: flex; align-items: center; gap: 16rpx; }
+.time-picker { flex: 1; text-align: center; }
+.time-sep { color: #999; font-size: 26rpx; }
+.time-hint { margin-top: 8rpx; font-size: 22rpx; color: #999; }

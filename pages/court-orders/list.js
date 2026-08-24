@@ -39,7 +39,7 @@ Page({
     }
     this.setData({ loading: true });
     try {
-      const res = await api.getAdminOrders({
+      const res = await api.getCourtOrders({
         status: this.data.status,
         page: this.data.page,
         pageSize: this.data.pageSize
@@ -78,7 +78,7 @@ Page({
       success: async (res) => {
         if (!res.confirm) return;
         try {
-          await api.acceptAdminOrder(id);
+          await api.acceptCourtOrder(id);
           wx.showToast({ title: '已接单', icon: 'success' });
           this.loadData();
         } catch (err) {
@@ -99,7 +99,7 @@ Page({
       success: async (res) => {
         if (!res.confirm) return;
         try {
-          await api.cancelAdminOrder(id, res.content || '');
+          await api.cancelCourtOrder(id, res.content || '');
           wx.showToast({ title: '已拒绝', icon: 'success' });
           this.loadData();
         } catch (err) {
