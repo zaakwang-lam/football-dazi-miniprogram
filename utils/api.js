@@ -122,6 +122,27 @@ function getOrderList(params = {}) {
 function getOrderDetail(id) { return request(`/api/v1/orders/${id}`); }
 function cancelOrder(id) { return request(`/api/v1/orders/${id}/cancel`, 'POST'); }
 
+function getCourtOrders(params = {}) {
+  const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
+  return request('/api/user/me/court-orders' + (query ? `?${query}` : ''));
+}
+function acceptCourtOrder(id) {
+  return request(`/api/user/me/court-orders/${id}/accept`, 'POST', {}, { loadingText: '接单中...' });
+}
+function cancelCourtOrder(id, reason = '') {
+  return request(`/api/user/me/court-orders/${id}/cancel`, 'POST', { reason }, { loadingText: '处理中...' });
+}
+function getAdminOrders(params) { return getCourtOrders(params); }
+function acceptAdminOrder(id) { return acceptCourtOrder(id); }
+function cancelAdminOrder(id, reason) { return cancelCourtOrder(id, reason); }
+
+function uploadTeamLogo(id, base64, mimeType = 'image/jpeg') {
+  return request(`/api/v1/teams/${id}/logo`, 'POST', { base64, mimeType }, {
+    loadingText: '上传中...', showLoading: false
+  });
+}
+
 function getLfgList(params = {}) {
   const query = Object.keys(params).filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
@@ -169,7 +190,8 @@ module.exports = {
   getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
+  getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, deleteLfg, closeLfg,
-  getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam,
+  getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam, uploadTeamLogo,
   updateTeamAnnouncement, checkin, createAa, getTeamStats
 };
