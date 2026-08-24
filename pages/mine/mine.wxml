@@ -133,10 +133,14 @@
   <view class="my-teams-card" wx:if="{{currentRole === 'user' && myTeams.length > 0}}">
     <view class="menu-section-title">我的球队</view>
     <view class="my-team-item" wx:for="{{myTeams}}" wx:key="id" bindtap="onMyTeamTap" data-id="{{item.id}}">
-      <view class="team-logo">{{item.name[0] || '⚽'}}</view>
+      <view class="team-logo" catchtap="onUploadTeamLogo" data-id="{{item.id}}" data-role="{{item.role}}">
+        <image wx:if="{{item.logo}}" src="{{item.logo}}" mode="aspectFill" />
+        <text wx:else>{{item.name[0] || '⚽'}}</text>
+      </view>
       <view class="team-info">
         <view class="team-name">{{item.name}}</view>
         <view class="team-meta">{{item.district || '广州'}} · {{item.memberCount || 1}} 人 · {{item.attendance || 0}} 场出勤</view>
+        <view class="team-logo-hint" wx:if="{{item.role === 'captain'}}">点队徽可上传球队图片</view>
       </view>
       <view class="team-role" wx:if="{{item.role === 'captain'}}">队长</view>
       <text class="menu-arrow">›</text>
