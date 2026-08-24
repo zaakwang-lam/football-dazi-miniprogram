@@ -1,8 +1,11 @@
 // pages/mine/court-register.js
 const api = require('../../utils/api.js');
 const { chooseLocationOnMap } = require('../../utils/location.js');
+const REGION_DATA = require('../../utils/region-data.js');
 
-const DISTRICTS = ['天河', '海珠', '越秀', '荔湾', '白云', '黄埔', '番禺', '花都', '南沙', '从化', '增城'];
+const PROVINCES = Object.keys(REGION_DATA || {});
+const DEFAULT_PROVINCE = '广东省';
+const DEFAULT_CITY = '广州市';
 const WEEK_DAYS = [
   { key: '周一', label: '周一' }, { key: '周二', label: '周二' }, { key: '周三', label: '周三' },
   { key: '周四', label: '周四' }, { key: '周五', label: '周五' }, { key: '周六', label: '周六' },
@@ -18,13 +21,20 @@ Page({
     surfaceTypes: [
       { value: '人工草地', selected: false }, { value: '天然草地', selected: false }, { value: '硬地', selected: false }
     ],
-    districts: DISTRICTS,
+    provinces: PROVINCES,
+    cities: PROVINCES.length && REGION_DATA[DEFAULT_PROVINCE] ? Object.keys(REGION_DATA[DEFAULT_PROVINCE]) : [],
+    districts: PROVINCES.length && REGION_DATA[DEFAULT_PROVINCE] && REGION_DATA[DEFAULT_PROVINCE][DEFAULT_CITY]
+      ? REGION_DATA[DEFAULT_PROVINCE][DEFAULT_CITY] : [],
     weekDays: WEEK_DAYS,
+    provinceIndex: PROVINCES.indexOf(DEFAULT_PROVINCE),
+    cityIndex: 0,
     districtIndex: -1,
     coverLocal: '',
     coverUrl: '',
     form: {
-      name: '', types: [], surfaceTypes: [], district: '', address: '', longitude: '', latitude: '',
+      name: '', types: [], surfaceTypes: [],
+      province: DEFAULT_PROVINCE, city: DEFAULT_CITY, district: '', regionText: '',
+      address: '', longitude: '', latitude: '',
       phone: '', price: '', openHours: {}, description: ''
     }
   },
@@ -45,13 +55,61 @@ Page({
       patch['form.name'] = loc.name;
     }
     const addr = loc.address || '';
-    const hitIdx = DISTRICTS.findIndex(d => addr.indexOf(d) >= 0);
+    const distList = this.data.districts || [];
+    const hitIdx = distList.findIndex(d => addr.indexOf(d) >= 0);
     if (hitIdx >= 0) {
       patch.districtIndex = hitIdx;
-      patch['form.district'] = DISTRICTS[hitIdx];
+      patch['form.district'] = distList[hitIdx];
+      patch['form.regionText'] = `${this.data.form.province} ${this.data.form.city} ${distList[hitIdx]}`;
     }
     this.setData(patch);
     wx.showToast({ title: '位置已选择', icon: 'success' });
+  },
+
+  onProvinceChange(e) {
+    const idx = Number(e.detail.value);
+    const province = this.data.provinces[idx] || '';
+    const cities = province && REGION_DATA[province] ? Object.keys(REGION_DATA[province]) : [];
+    const city = cities[0] || '';
+    const districts = (province && city && REGION_DATA[province][city]) ? REGION_DATA[province][city] : [];
+    const district = districts[0] || '';
+    const patch = {
+      cities, districts,
+      provinceIndex: idx, cityIndex: city ? 0 : -1, districtIndex: district ? 0 : -1,
+      'form.province': province,
+      'form.city': city,
+      'form.district': district,
+      'form.regionText': district ? `${province} ${city} ${district}` : ''
+    };
+    this.setData(patch);
+  },
+
+  onCityChange(e) {
+    const idx = Number(e.detail.value);
+    const province = this.data.form.province;
+    const city = this.data.cities[idx] || '';
+    const districts = (province && city && REGION_DATA[province][city]) ? REGION_DATA[province][city] : [];
+    const district = districts[0] || '';
+    const patch = {
+      districts,
+      cityIndex: idx, districtIndex: district ? 0 : -1,
+      'form.city': city,
+      'form.district': district,
+      'form.regionText': district ? `${province} ${city} ${district}` : ''
+    };
+    this.setData(patch);
+  },
+
+  onDistrictChange(e) {
+    const idx = Number(e.detail.value);
+    const district = this.data.districts[idx] || '';
+    const { province, city } = this.data.form;
+    const patch = {
+      districtIndex: idx,
+      'form.district': district,
+      'form.regionText': district ? `${province} ${city} ${district}` : ''
+    };
+    this.setData(patch);
   },
 
   onCourtTypeToggle(e) {
@@ -70,11 +128,6 @@ Page({
     if (idx >= 0) list.splice(idx, 1); else list.push(value);
     const surfaceTypes = this.data.surfaceTypes.map(item => ({ ...item, selected: list.includes(item.value) }));
     this.setData({ 'form.surfaceTypes': list, surfaceTypes });
-  },
-
-  onDistrictChange(e) {
-    const idx = Number(e.detail.value);
-    this.setData({ districtIndex: idx, 'form.district': this.data.districts[idx] });
   },
 
   onAddSlot(e) {
@@ -174,12 +227,17 @@ Page({
     if (!f.types.length) return wx.showToast({ title: '请至少选择一种人制', icon: 'none' });
     if (!f.surfaceTypes.length) return wx.showToast({ title: '请至少选择一种场地性质', icon: 'none' });
 
+    const regionText = (f.province && f.city && f.district)
+      ? `${f.province} ${f.city} ${f.district}` : '';
+
     wx.showLoading({ title: '提交中...', mask: true });
     try {
       const res = await api.registerRole({
         role: 'court',
         courtInfo: {
-          name: f.name, types: f.types, type: f.types[0], district: f.district,
+          name: f.name, types: f.types, type: f.types[0],
+          district: regionText || f.district,
+          province: f.province || '', city: f.city || '',
           surfaceTypes: f.surfaceTypes, surfaceType: f.surfaceTypes[0], address: f.address,
           longitude: f.longitude ? Number(f.longitude) : null, latitude: f.latitude ? Number(f.latitude) : null,
           phone: f.phone, price: Number(f.price) || 0, openHours: f.openHours,
