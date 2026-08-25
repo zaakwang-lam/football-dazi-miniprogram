@@ -53,16 +53,23 @@
   </view>
 
   <view class="joiners-block" wx:if="{{detail.isPublisher}}">
-    <view class="block-title">{{detail.typeKey === 'war' ? '应战队伍' : '报名成员'}}（{{detail.joinsDisplay.length}}）</view>
-    <view class="joiner-row" wx:for="{{detail.joinsDisplay}}" wx:key="id">
-      <view class="joiner-main">
-        <text class="joiner-name">{{item.displayName}}</text>
-        <text class="joiner-meta" wx:if="{{detail.typeKey === 'war' && item.contactName}}">联系人 {{item.contactName}}</text>
-        <text class="joiner-phone">{{item.contactPhone || '未留电话'}}</text>
+    <view class="block-title">{{detail.typeKey === 'war' ? '应战申请' : '报名申请'}}（{{detail.joinsDisplay.length}}）</view>
+    <view class="joiner-card" wx:for="{{detail.joinsDisplay}}" wx:key="id">
+      <view class="joiner-head">
+        <view class="joiner-main">
+          <text class="joiner-name">{{item.displayName}}</text>
+          <text class="joiner-meta" wx:if="{{detail.typeKey === 'war' && item.contactName}}">联系人 {{item.contactName}}</text>
+          <text class="joiner-phone">{{item.contactPhone || '未留电话'}}</text>
+        </view>
+        <view class="status-tag status-{{item.statusCls}}">{{item.statusLabel}}</view>
       </view>
-      <view class="joiner-call" wx:if="{{item.contactPhone}}" catchtap="onCallJoiner" data-phone="{{item.contactPhone}}">拨打</view>
+      <view class="joiner-actions">
+        <view class="btn-call" wx:if="{{item.contactPhone}}" catchtap="onCallJoiner" data-phone="{{item.contactPhone}}">拨打</view>
+        <view class="btn-accept" wx:if="{{item.status === 'pending'}}" catchtap="onConfirmJoin" data-id="{{item.id}}">确认</view>
+        <view class="btn-reject" wx:if="{{item.status === 'pending'}}" catchtap="onRejectJoin" data-id="{{item.id}}">拒绝</view>
+      </view>
     </view>
-    <view class="joiner-empty" wx:if="{{detail.joinsDisplay.length === 0}}">暂无人报名</view>
+    <view class="joiner-empty" wx:if="{{detail.joinsDisplay.length === 0}}">暂无人报名，有人申请后可在此确认</view>
   </view>
 
   <view class="safe-bottom"></view>
@@ -70,6 +77,7 @@
   <view class="bottom-bar">
     <view class="btn-secondary" bindtap="onContactTap">联系队长</view>
     <view class="btn-primary" wx:if="{{!detail.joined && !detail.isPublisher}}" bindtap="onJoinTap">{{detail.actionText}}</view>
+    <view class="btn-secondary btn-wait" wx:elif="{{detail.myJoinStatus === 'pending'}}" bindtap="onQuitTap">待确认 · 取消</view>
     <view class="btn-secondary btn-quit" wx:elif="{{detail.joined && !detail.isPublisher}}" bindtap="onQuitTap">退出组队</view>
   </view>
 </view>
@@ -77,7 +85,7 @@
 <view class="join-mask" wx:if="{{showJoinForm}}" catchtap="onCloseJoin">
   <view class="join-sheet" catchtap="noop">
     <view class="join-title">{{joinFormTitle}}</view>
-    <view class="join-tip">提交后将把姓名/队名和联系方式通知发起方</view>
+    <view class="join-tip">提交后由发起方在小程序确认，请保持电话畅通</view>
 
     <block wx:if="{{detail.typeKey === 'war'}}">
       <view class="join-label">参赛队伍 <text class="req">*</text></view>

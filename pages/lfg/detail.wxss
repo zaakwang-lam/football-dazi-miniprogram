@@ -149,6 +149,22 @@
   border-bottom: none;
 }
 
+.joiner-card {
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #F5F7FA;
+}
+
+.joiner-card:last-of-type {
+  border-bottom: none;
+}
+
+.joiner-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
 .joiner-main {
   flex: 1;
   min-width: 0;
@@ -178,6 +194,45 @@
   border-radius: 999rpx;
   font-size: 24rpx;
   font-weight: 600;
+}
+
+.status-tag {
+  flex-shrink: 0;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  font-weight: 600;
+}
+
+.status-pending { background: #FFF3E0; color: #FF6B00; }
+.status-success { background: #E8F5E9; color: #2E7D32; }
+.status-canceled { background: #F5F5F5; color: #999; }
+
+.joiner-actions {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.btn-call,
+.btn-accept,
+.btn-reject {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.btn-call { background: #FFE8D6; color: #FF6B00; }
+.btn-accept { background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; }
+.btn-reject { background: #fff; color: #FF3B30; border: 2rpx solid #FF3B30; }
+
+.btn-wait {
+  background: #FFF3E0 !important;
+  color: #FF6B00 !important;
+  border: none !important;
 }
 
 .joiner-empty {

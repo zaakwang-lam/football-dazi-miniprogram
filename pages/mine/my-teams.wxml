@@ -16,6 +16,9 @@
           </view>
           <view class="card-role" wx:if="{{item.role === 'creator'}}">发起人</view>
           <view class="card-role joiner" wx:elif="{{item.role === 'joiner'}}">参与者</view>
+          <view class="pending-badge" wx:if="{{item.pendingJoinCount > 0}}">待确认 {{item.pendingJoinCount}}</view>
+          <view class="join-status pending" wx:elif="{{item.joinStatus === 'pending'}}">待确认</view>
+          <view class="join-status ok" wx:elif="{{item.joinStatus === 'confirmed'}}">已确认</view>
           <text class="card-time">{{item.publishTime}}</text>
         </view>
 

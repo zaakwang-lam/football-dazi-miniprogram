@@ -30,6 +30,15 @@
   background: #FFE8D6; color: #FF6B00;
 }
 .card-role.joiner { background: #E3F2FD; color: #1565C0; }
+.pending-badge {
+  font-size: 20rpx; padding: 2rpx 12rpx; border-radius: 8rpx;
+  background: #FF6B00; color: #fff; font-weight: 600;
+}
+.join-status {
+  font-size: 20rpx; padding: 2rpx 12rpx; border-radius: 8rpx;
+}
+.join-status.pending { background: #FFF3E0; color: #FF6B00; }
+.join-status.ok { background: #E8F5E9; color: #2E7D32; }
 .card-time { margin-left: auto; font-size: 22rpx; color: #999; }
 .team-name { font-size: 30rpx; font-weight: 700; color: #1A1A1A; }
 .need-num { font-size: 24rpx; color: #FF6B00; font-weight: 600; }

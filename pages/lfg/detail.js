@@ -3,8 +3,14 @@ const api = require('../../utils/api.js');
 const { dialPhone } = require('../../utils/util.js');
 
 const TYPE_CONFIG = {
-  sub: { icon: '🙋', cnName: '凑人', actionText: '我要加入', confirmTitle: '报名加入', confirmDesc: '请填写姓名和联系方式，提交后通知发起方' },
-  war: { icon: '⚔️', cnName: '约战', actionText: '接受挑战', confirmTitle: '报名应战', confirmDesc: '请填写参赛队伍和联系方式，提交后通知发起方' }
+  sub: { icon: '🙋', cnName: '凑人', actionText: '我要加入', confirmTitle: '报名加入', confirmDesc: '请填写姓名和联系方式，提交后由发起方在小程序确认' },
+  war: { icon: '⚔️', cnName: '约战', actionText: '接受挑战', confirmTitle: '报名应战', confirmDesc: '请填写参赛队伍和联系方式，提交后由发起方在小程序确认' }
+};
+
+const JOIN_STATUS = {
+  pending: { label: '待确认', cls: 'pending' },
+  confirmed: { label: '已确认', cls: 'success' },
+  rejected: { label: '已拒绝', cls: 'canceled' }
 };
 
 Page({
@@ -49,18 +55,26 @@ Page({
       const config = TYPE_CONFIG[typeKey] || TYPE_CONFIG.sub;
       const userInfo = wx.getStorageSync('userInfo') || {};
       const currentUserId = userInfo.id;
-      const joined = !!(detail.joins && detail.joins.find(j => Number(j.userId) === Number(currentUserId)));
+      const myJoin = (detail.joins || []).find(j => Number(j.userId) === Number(currentUserId));
+      const myJoinStatus = detail.myJoinStatus || myJoin?.status || '';
+      const joined = !!(myJoin && myJoin.status !== 'rejected');
       const isPublisher = !!(detail.isPublisher || (currentUserId && Number(detail.publisher?.id || detail.userId) === Number(currentUserId)));
-      const joinsDisplay = (detail.joins || []).map(j => ({
-        ...j,
-        displayName: j.displayName || j.teamName || j.contactName || j.nickname || '未命名'
-      }));
+      const joinsDisplay = (detail.joins || []).map(j => {
+        const st = JOIN_STATUS[j.status] || JOIN_STATUS.pending;
+        return {
+          ...j,
+          displayName: j.displayName || j.teamName || j.contactName || j.nickname || '未命名',
+          statusLabel: st.label,
+          statusCls: st.cls
+        };
+      });
       this.setData({
         currentUserId,
         detail: {
           ...detail,
           typeKey,
           joined,
+          myJoinStatus,
           isPublisher,
           joinsDisplay,
           icon: config.icon,
@@ -105,6 +119,47 @@ Page({
 
   onCallJoiner(e) {
     dialPhone(e.currentTarget.dataset.phone);
+  },
+
+  onConfirmJoin(e) {
+    const joinId = e.currentTarget.dataset.id;
+    const id = this.data.detail?.id;
+    if (!id || !joinId) return;
+    wx.showModal({
+      title: '确认报名',
+      content: '确认后对方将加入本场活动，人数计入已报名。',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.confirmLfgJoin(id, joinId);
+          wx.showToast({ title: '已确认', icon: 'success' });
+          this.loadDetail(id);
+        } catch (err) {
+          wx.showToast({ title: err.message || '确认失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
+  onRejectJoin(e) {
+    const joinId = e.currentTarget.dataset.id;
+    const id = this.data.detail?.id;
+    if (!id || !joinId) return;
+    wx.showModal({
+      title: '拒绝报名',
+      content: '确认拒绝该报名？对方可再次申请。',
+      confirmColor: '#FF3B30',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          await api.rejectLfgJoin(id, joinId);
+          wx.showToast({ title: '已拒绝', icon: 'success' });
+          this.loadDetail(id);
+        } catch (err) {
+          wx.showToast({ title: err.message || '操作失败', icon: 'none' });
+        }
+      }
+    });
   },
 
   formatPublishTime(dateStr) {
@@ -228,7 +283,7 @@ Page({
         teamId: f.teamId || null
       });
       this.setData({ showJoinForm: false });
-      wx.showToast({ title: '已通知发起方', icon: 'success' });
+      wx.showToast({ title: '已提交，待确认', icon: 'success' });
       setTimeout(() => this.loadDetail(id), 800);
     } catch (e) {
       console.error('[joinLfg]', e);
@@ -246,7 +301,7 @@ Page({
     if (!id) return;
     wx.showModal({
       title: '确认退出',
-      content: '退出后将不再收到该组队的通知',
+      content: this.data.detail?.myJoinStatus === 'pending' ? '取消后需重新提交报名' : '退出后将不再参加该组队',
       success: async (res) => {
         if (res.confirm) {
           try {

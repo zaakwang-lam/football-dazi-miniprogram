@@ -153,8 +153,14 @@ function getLfgList(params = {}) {
 }
 function publishLfg(data) { return request('/api/v1/lfg', 'POST', data, { loadingText: '发布中...' }); }
 function getLfgDetail(id) { return request(`/api/v1/lfg/${id}`); }
-function joinLfg(id, data = {}) { return request(`/api/v1/lfg/${id}/join`, 'POST', data || {}, { loadingText: '报名中...' }); }
+function joinLfg(id, data = {}) { return request(`/api/v1/lfg/${id}/join`, 'POST', data || {}, { loadingText: '提交中...' }); }
 function quitLfg(id) { return request(`/api/v1/lfg/${id}/quit`, 'POST', {}, { loadingText: '退出中...' }); }
+function confirmLfgJoin(id, joinId) {
+  return request(`/api/v1/lfg/${id}/joins/${joinId}/confirm`, 'POST', {}, { loadingText: '确认中...' });
+}
+function rejectLfgJoin(id, joinId) {
+  return request(`/api/v1/lfg/${id}/joins/${joinId}/reject`, 'POST', {}, { loadingText: '处理中...' });
+}
 function deleteLfg(id) { return request(`/api/v1/lfg/${id}`, 'DELETE', {}, { loadingText: '删除中...' }); }
 function closeLfg(id) { return request(`/api/v1/lfg/${id}/close`, 'POST', {}); }
 function getTeamList(params = {}) {
@@ -194,7 +200,7 @@ module.exports = {
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,
-  getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, deleteLfg, closeLfg,
+  getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, confirmLfgJoin, rejectLfgJoin, deleteLfg, closeLfg,
   getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam, uploadTeamLogo,
   updateTeamAnnouncement, checkin, createAa, getTeamStats
 };
