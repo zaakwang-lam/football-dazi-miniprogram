@@ -100,20 +100,7 @@ Page({
 
   onActionTap(e) {
     const id = e.currentTarget.dataset.id;
-    wx.showModal({
-      title: '确认我要加入',
-      content: '队长会通过微信服务通知联系你',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            await api.joinLfg(id);
-            wx.showToast({ title: '已报名！请等待联系', icon: 'success' });
-          } catch (e) {
-            console.error(e);
-          }
-        }
-      }
-    });
+    wx.navigateTo({ url: `/pages/lfg/detail?id=${id}&join=1` });
   },
 
   onPublishTap() {

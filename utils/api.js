@@ -103,6 +103,9 @@ function getNearbyCourts(params = {}) {
     .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&');
   return request('/api/v1/courts/nearby' + (query ? `?${query}` : ''));
 }
+function getCourtRegions() {
+  return request('/api/v1/courts/regions', 'GET', {}, { showLoading: false, silent: true });
+}
 function getCourtDetail(id) { return request(`/api/v1/courts/${id}`); }
 function getCourtSchedule(id) { return request(`/api/v1/courts/${id}/schedule`); }
 function evaluateCourt(id, data) { return request(`/api/v1/courts/${id}/evaluate`, 'POST', data); }
@@ -150,7 +153,7 @@ function getLfgList(params = {}) {
 }
 function publishLfg(data) { return request('/api/v1/lfg', 'POST', data, { loadingText: '发布中...' }); }
 function getLfgDetail(id) { return request(`/api/v1/lfg/${id}`); }
-function joinLfg(id) { return request(`/api/v1/lfg/${id}/join`, 'POST', {}, { loadingText: '报名中...' }); }
+function joinLfg(id, data = {}) { return request(`/api/v1/lfg/${id}/join`, 'POST', data || {}, { loadingText: '报名中...' }); }
 function quitLfg(id) { return request(`/api/v1/lfg/${id}/quit`, 'POST', {}, { loadingText: '退出中...' }); }
 function deleteLfg(id) { return request(`/api/v1/lfg/${id}`, 'DELETE', {}, { loadingText: '删除中...' }); }
 function closeLfg(id) { return request(`/api/v1/lfg/${id}/close`, 'POST', {}); }
@@ -187,7 +190,7 @@ function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 module.exports = {
   API_BASE, request, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
   getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
-  getNearbyCourts, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
+  getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,

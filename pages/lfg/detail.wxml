@@ -3,7 +3,7 @@
   <view class="header">
     <view class="type-badge type-{{detail.typeKey}}">
       <text class="type-icon">{{detail.icon}}</text>
-      <text>{{detail.type}}</text>
+      <text>{{detail.typeLabel}}</text>
     </view>
     <view class="status">{{detail.status}}</view>
   </view>
@@ -52,12 +52,66 @@
     <view class="desc-content">{{detail.desc}}</view>
   </view>
 
+  <view class="joiners-block" wx:if="{{detail.isPublisher}}">
+    <view class="block-title">{{detail.typeKey === 'war' ? '应战队伍' : '报名成员'}}（{{detail.joinsDisplay.length}}）</view>
+    <view class="joiner-row" wx:for="{{detail.joinsDisplay}}" wx:key="id">
+      <view class="joiner-main">
+        <text class="joiner-name">{{item.displayName}}</text>
+        <text class="joiner-meta" wx:if="{{detail.typeKey === 'war' && item.contactName}}">联系人 {{item.contactName}}</text>
+        <text class="joiner-phone">{{item.contactPhone || '未留电话'}}</text>
+      </view>
+      <view class="joiner-call" wx:if="{{item.contactPhone}}" catchtap="onCallJoiner" data-phone="{{item.contactPhone}}">拨打</view>
+    </view>
+    <view class="joiner-empty" wx:if="{{detail.joinsDisplay.length === 0}}">暂无人报名</view>
+  </view>
+
   <view class="safe-bottom"></view>
 
   <view class="bottom-bar">
     <view class="btn-secondary" bindtap="onContactTap">联系队长</view>
-    <!-- 加入 / 退出按钮二选一（2026-07-28 新增） -->
-    <view class="btn-primary" wx:if="{{!detail.joined}}" bindtap="onJoinTap">我要{{detail.type === '找人顶' ? '顶' : '加入'}}</view>
-    <view class="btn-secondary btn-quit" wx:else bindtap="onQuitTap">退出组队</view>
+    <view class="btn-primary" wx:if="{{!detail.joined && !detail.isPublisher}}" bindtap="onJoinTap">{{detail.actionText}}</view>
+    <view class="btn-secondary btn-quit" wx:elif="{{detail.joined && !detail.isPublisher}}" bindtap="onQuitTap">退出组队</view>
+  </view>
+</view>
+
+<view class="join-mask" wx:if="{{showJoinForm}}" catchtap="onCloseJoin">
+  <view class="join-sheet" catchtap="noop">
+    <view class="join-title">{{joinFormTitle}}</view>
+    <view class="join-tip">提交后将把姓名/队名和联系方式通知发起方</view>
+
+    <block wx:if="{{detail.typeKey === 'war'}}">
+      <view class="join-label">参赛队伍 <text class="req">*</text></view>
+      <picker wx:if="{{myTeams.length}}" range="{{teamNames}}" value="{{joinForm.teamIndex}}" bindchange="onJoinTeamChange">
+        <view class="join-picker">{{joinForm.teamName || '请选择队伍'}}</view>
+      </picker>
+      <input
+        wx:else
+        class="join-input"
+        placeholder="请填写队伍名称"
+        value="{{joinForm.teamName}}"
+        bindinput="onJoinTeamName"
+      />
+      <view class="join-label">联系人 <text class="req">*</text></view>
+      <input class="join-input" placeholder="请填写联系人姓名" value="{{joinForm.contactName}}" bindinput="onJoinName" />
+    </block>
+    <block wx:else>
+      <view class="join-label">姓名 <text class="req">*</text></view>
+      <input class="join-input" placeholder="请填写真实姓名" value="{{joinForm.contactName}}" bindinput="onJoinName" />
+    </block>
+
+    <view class="join-label">联系电话 <text class="req">*</text></view>
+    <input
+      class="join-input"
+      type="number"
+      maxlength="11"
+      placeholder="11位手机号"
+      value="{{joinForm.contactPhone}}"
+      bindinput="onJoinPhone"
+    />
+
+    <view class="join-actions">
+      <view class="btn-ghost" bindtap="onCloseJoin">取消</view>
+      <view class="btn-primary join-submit" bindtap="onSubmitJoin">确认提交</view>
+    </view>
   </view>
 </view>

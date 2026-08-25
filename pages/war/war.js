@@ -86,20 +86,7 @@ Page({
 
   onActionTap(e) {
     const id = e.currentTarget.dataset.id;
-    wx.showModal({
-      title: '接受约战',
-      content: '确认挑战对方球队？挑战请求将通过微信服务通知联系。',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            await api.joinLfg(id);
-            wx.showToast({ title: '已发起挑战！', icon: 'success' });
-          } catch (e) {
-            console.error(e);
-          }
-        }
-      }
-    });
+    wx.navigateTo({ url: `/pages/lfg/detail?id=${id}&type=war&join=1` });
   },
 
   onPublishTap() {

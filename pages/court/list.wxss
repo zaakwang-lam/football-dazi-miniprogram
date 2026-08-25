@@ -38,12 +38,16 @@
 
 .loc-btn {
   flex-shrink: 0;
+  max-width: 280rpx;
   padding: 14rpx 20rpx;
   background: #FFE8D6;
   color: #FF6B00;
   border-radius: 999rpx;
   font-size: 24rpx;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .filter-bar {

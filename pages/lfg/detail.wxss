@@ -122,9 +122,138 @@
   flex: 1;
   text-align: center;
 }
-/* 退出按钮（2026-07-28 新增） */
+
 .btn-quit {
   background: #fff !important;
   color: #FF3B30 !important;
   border: 2rpx solid #FF3B30 !important;
+}
+
+.joiners-block {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-top: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.joiner-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #F5F7FA;
+}
+
+.joiner-row:last-child {
+  border-bottom: none;
+}
+
+.joiner-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.joiner-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.joiner-meta,
+.joiner-phone {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.joiner-call {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  padding: 10rpx 24rpx;
+  background: #FFE8D6;
+  color: #FF6B00;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.joiner-empty {
+  padding: 24rpx 0 8rpx;
+  color: #999;
+  font-size: 26rpx;
+}
+
+.join-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.join-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 36rpx 32rpx calc(32rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.join-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.join-tip {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 24rpx;
+}
+
+.join-label {
+  font-size: 26rpx;
+  color: #666;
+  margin: 16rpx 0 10rpx;
+}
+
+.join-label .req {
+  color: #FF3B30;
+}
+
+.join-input,
+.join-picker {
+  background: #F5F7FA;
+  border-radius: 16rpx;
+  padding: 22rpx 24rpx;
+  font-size: 28rpx;
+  color: #1A1A1A;
+}
+
+.join-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 36rpx;
+}
+
+.btn-ghost {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 999rpx;
+  background: #F5F7FA;
+  color: #666;
+  font-size: 28rpx;
+}
+
+.join-submit {
+  flex: 1.4;
 }

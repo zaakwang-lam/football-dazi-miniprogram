@@ -1,6 +1,5 @@
 <!-- pages/court/list.wxml -->
 <view class="page">
-  <!-- 搜索 + 定位 -->
   <view class="search-bar">
     <view class="search-box">
       <text class="search-icon">🔍</text>
@@ -14,7 +13,15 @@
       />
       <text class="search-clear" wx:if="{{keyword}}" bindtap="onClearKeyword">✕</text>
     </view>
-    <view class="loc-btn" bindtap="onRelocate">{{locLabel}}</view>
+    <picker
+      mode="selector"
+      range="{{regionLabels}}"
+      value="{{regionIndex}}"
+      bindchange="onRegionChange"
+      disabled="{{!regions.length}}"
+    >
+      <view class="loc-btn">{{regionLabel}} ▾</view>
+    </picker>
   </view>
 
   <view class="filter-bar">
@@ -42,8 +49,7 @@
         <view class="court-name">{{item.name}}</view>
         <view class="court-meta">
           <text class="meta-item">⭐ {{item.rating}}</text>
-          <text class="meta-item distance" wx:if="{{item.distanceText}}">📍 {{item.distanceText}}</text>
-          <text class="meta-item" wx:else>📍 距离未知</text>
+          <text class="meta-item distance" wx:if="{{item.district}}">📍 {{item.district}}</text>
           <text class="meta-item" wx:if="{{item.openTime}}">🕐 {{item.openTime}}</text>
         </view>
         <view class="court-addr" wx:if="{{item.address}}">{{item.address}}</view>
@@ -63,6 +69,6 @@
 
   <view class="empty" wx:if="{{!loading && courts.length === 0}}">
     <view class="empty-icon">🔍</view>
-    <text>暂无符合条件的场地</text>
+    <text>{{regionLabel ? '该省市暂无符合条件的场地' : '暂无符合条件的场地'}}</text>
   </view>
 </view>
