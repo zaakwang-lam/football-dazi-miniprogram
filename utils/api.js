@@ -1,12 +1,23 @@
 // utils/api.js
 const app = getApp();
 const API_BASE = 'https://footballdazi.cn';
+const EXPECTED_WX_APPID = 'wxb3f1e355853399c8';
 
 function extractBody(res) {
   if (!res) return null;
   const body = res.data;
   if (body && typeof body === 'object' && typeof body.code === 'number') return body;
   return null;
+}
+
+function networkFailMessage(err) {
+  const errMsg = String((err && (err.errMsg || err.message)) || '');
+  if (/url not in domain list|not in domain/i.test(errMsg)) {
+    return '未配置服务器域名，请在微信公众平台添加 https://footballdazi.cn';
+  }
+  if (/ssl|certificate|tls/i.test(errMsg)) return 'HTTPS 证书异常';
+  if (/timeout/i.test(errMsg)) return '连接超时，请稍后重试';
+  return '网络连接失败，请检查网络';
 }
 
 function request(url, method = 'GET', data = {}, options = {}) {
@@ -56,14 +67,17 @@ function request(url, method = 'GET', data = {}, options = {}) {
       },
       fail: (err) => {
         if (showLoading) wx.hideLoading();
-        const msg = '网络连接失败，请检查网络';
-        if (options.silent !== true) wx.showToast({ title: msg, icon: 'none', duration: 2000 });
+        const msg = networkFailMessage(err);
+        if (options.silent !== true) wx.showToast({ title: msg, icon: 'none', duration: 2500 });
         reject({ code: -1, message: msg, raw: err });
       }
     });
   });
 }
 
+function getPublicMeta() {
+  return request('/api/v1/meta', 'GET', {}, { showLoading: false, silent: true });
+}
 function wxLogin(code, userInfo = null) {
   return request('/api/user/login', 'POST', { code, userInfo }, { loadingText: '登录中...' });
 }
@@ -194,7 +208,7 @@ function createAa(data) { return request(`/api/v1/teams/${data.teamId}/aa`, 'POS
 function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
-  API_BASE, request, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
+  API_BASE, EXPECTED_WX_APPID, request, getPublicMeta, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
   getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,

@@ -15,6 +15,36 @@ App({
     this.globalData.navBarHeight = (systemInfo.statusBarHeight || 20) + 44;
 
     this.silentLogin();
+    this.probeBackend();
+  },
+
+  probeBackend() {
+    wx.request({
+      url: this.globalData.apiBase + '/api/v1/meta',
+      method: 'GET',
+      timeout: 10000,
+      success: (res) => {
+        const data = (res.data && res.data.data) || {};
+        this.globalData.apiReachable = true;
+        this.globalData.serverWxAppId = data.wxAppId || '';
+        if (data.wxAppId && data.wxAppId !== this.globalData.wxAppId) {
+          console.warn('[probeBackend] 服务器 AppID 与小程序不一致', data.wxAppId, this.globalData.wxAppId);
+        }
+      },
+      fail: (err) => {
+        this.globalData.apiReachable = false;
+        const errMsg = String((err && err.errMsg) || '');
+        console.warn('[probeBackend] fail:', errMsg);
+        if (/url not in domain list|not in domain/i.test(errMsg) && !this.globalData._domainAlerted) {
+          this.globalData._domainAlerted = true;
+          wx.showModal({
+            title: '无法连接服务器',
+            content: '新主体小程序尚未配置服务器域名。请在微信公众平台 → 开发管理 → 开发设置 → 服务器域名，把 https://footballdazi.cn 加入 request / uploadFile / downloadFile 合法域名。',
+            showCancel: false
+          });
+        }
+      }
+    });
   },
 
   silentLogin() {
@@ -80,7 +110,16 @@ App({
             console.log('[silentLogin] token refreshed, roles=', roles);
           },
           fail: (err) => {
-            console.warn('[silentLogin] fail:', err);
+            const errMsg = String((err && err.errMsg) || '');
+            console.warn('[silentLogin] fail:', errMsg);
+            if (/url not in domain list|not in domain/i.test(errMsg) && !this.globalData._domainAlerted) {
+              this.globalData._domainAlerted = true;
+              wx.showModal({
+                title: '无法连接服务器',
+                content: '新主体小程序尚未配置服务器域名。请在微信公众平台把 https://footballdazi.cn 加入 request 合法域名。',
+                showCancel: false
+              });
+            }
           }
         });
       }
@@ -95,6 +134,9 @@ App({
     systemInfo: null,
     navBarHeight: 64,
     apiBase: 'https://footballdazi.cn',
+    wxAppId: 'wxb3f1e355853399c8',
+    apiReachable: null,
+    serverWxAppId: '',
     city: '广州',
     mockData: {}
   },
