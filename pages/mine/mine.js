@@ -264,6 +264,6 @@ Page({
     });
   },
   onShareAppMessage() {
-    return { title: '足球搭子 - 广州业余足球平台', path: '/pages/index/index' };
+    return { title: '一起搭球 - 广州业余足球平台', path: '/pages/index/index' };
   }
 });

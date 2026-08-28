@@ -320,7 +320,7 @@ Page({
   onShareAppMessage() {
     const d = this.data.detail;
     return {
-      title: d ? `${d.teamName} ${d.typeLabel === '凑人' ? '缺人' : '约战'}，快来！` : '来足球搭子',
+      title: d ? `${d.teamName} ${d.typeLabel === '凑人' ? '缺人' : '约战'}，快来！` : '来一起搭球',
       path: `/pages/lfg/detail?id=${d ? d.id : ''}`
     };
   }

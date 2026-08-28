@@ -242,10 +242,15 @@ Page({
           wx.showToast({ title: err.message || '网络错误，请稍后重试', icon: 'none' });
         }
       },
-      fail: (err) => {
+        fail: (err) => {
         this.setData({ loading: false });
         console.error('[login] wx.login fail:', err);
-        wx.showToast({ title: '微信登录失败', icon: 'none' });
+        const errMsg = String((err && err.errMsg) || '');
+        let title = '微信登录失败，请重试';
+        if (/session|relaunch|重新登录/i.test(errMsg)) {
+          title = '请关闭小程序后重新打开再登录';
+        }
+        wx.showToast({ title, icon: 'none', duration: 2500 });
       }
     });
   },

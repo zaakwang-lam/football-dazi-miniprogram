@@ -48,6 +48,9 @@ App({
   },
 
   silentLogin() {
+    const token = this.globalData.token || wx.getStorageSync('token');
+    if (!token) return;
+
     wx.login({
       success: (res) => {
         if (!res.code) return;

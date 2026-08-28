@@ -109,7 +109,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '缺人？来足球搭子凑一波！',
+      title: '缺人？来一起搭球凑一波！',
       path: '/pages/lfg/lfg'
     };
   }

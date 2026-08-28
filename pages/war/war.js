@@ -95,7 +95,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '来足球搭子约一队！',
+      title: '来一起搭球约一队！',
       path: '/pages/war/war'
     };
   }

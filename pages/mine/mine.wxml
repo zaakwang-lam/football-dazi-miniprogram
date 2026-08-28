@@ -3,7 +3,7 @@
   <view class="login-entry" wx:if="{{!userInfo}}" bindtap="onLogin">
     <view class="login-entry-avatar">⚽</view>
     <view class="login-entry-info">
-      <view class="login-entry-title">登录足球搭子</view>
+      <view class="login-entry-title">登录一起搭球</view>
       <view class="login-entry-desc">微信一键登录，开始组队、约战、订场</view>
     </view>
     <text class="login-entry-arrow">›</text>
