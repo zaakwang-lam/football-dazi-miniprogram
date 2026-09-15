@@ -25,7 +25,9 @@ Page({
     }
   },
 
-  onLoad() { this.loadMyCourts(); },
+  onLoad(options) {
+    this._pendingEditId = Number((options && options.edit) || 0) || 0;
+  },
   onShow() { this.loadMyCourts(); },
   onPullDownRefresh() {
     this.loadMyCourts().then(() => wx.stopPullDownRefresh());
@@ -57,6 +59,11 @@ Page({
           };
         });
         this.setData({ courts: list, loading: false });
+        if (this._pendingEditId) {
+          const editId = this._pendingEditId;
+          this._pendingEditId = 0;
+          this.openEdit(editId);
+        }
       } else {
         this.setData({ loading: false });
         wx.showToast({ title: res.message || '加载失败', icon: 'none' });
@@ -88,8 +95,11 @@ Page({
   },
 
   onEditTap(e) {
-    const id = e.currentTarget.dataset.id;
-    const court = this.data.courts.find(c => c.id === id);
+    this.openEdit(e.currentTarget.dataset.id);
+  },
+
+  openEdit(id) {
+    const court = this.data.courts.find(c => Number(c.id) === Number(id));
     if (!court) return;
     const types = Array.isArray(court.types) && court.types.length
       ? court.types.slice()

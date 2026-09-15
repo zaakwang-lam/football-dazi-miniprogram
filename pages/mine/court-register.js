@@ -36,11 +36,84 @@ Page({
       province: DEFAULT_PROVINCE, city: DEFAULT_CITY, district: '', regionText: '',
       address: '', longitude: '', latitude: '',
       phone: '', price: '', openHours: {}, description: ''
-    }
+    },
+    matches: [],
+    searching: false
   },
 
   onInput(e) {
-    this.setData({ [`form.${e.currentTarget.dataset.field}`]: e.detail.value });
+    const field = e.currentTarget.dataset.field;
+    const value = e.detail.value;
+    this.setData({ [`form.${field}`]: value });
+    if (field === 'name') this._onNameChange(value);
+  },
+
+  _onNameChange(value) {
+    if (this._nameTimer) clearTimeout(this._nameTimer);
+    const q = String(value || '').trim();
+    if (q.length < 2) {
+      this.setData({ matches: [], searching: false });
+      return;
+    }
+    this.setData({ searching: true });
+    this._nameTimer = setTimeout(() => this._searchMatches(q), 320);
+  },
+
+  async _searchMatches(keyword) {
+    if (String(this.data.form.name || '').trim() !== String(keyword || '').trim()) return;
+    try {
+      const res = await api.searchClaimableCourts(keyword);
+      const list = (res && res.code === 0 && res.data && res.data.list) ? res.data.list : [];
+      this.setData({ matches: list, searching: false });
+    } catch (e) {
+      this.setData({ searching: false });
+    }
+  },
+
+  _saveCourtUser(resData) {
+    const userInfo = wx.getStorageSync('userInfo') || {};
+    userInfo.roles = Array.isArray(resData && resData.roles) ? resData.roles : ['user', 'court'];
+    userInfo.role = 'court';
+    userInfo.courtId = (resData && resData.courtId) || userInfo.courtId || null;
+    userInfo.registered = true;
+    wx.setStorageSync('userInfo', userInfo);
+    const app = getApp();
+    if (app && app.globalData) app.globalData.userInfo = userInfo;
+    return userInfo;
+  },
+
+  onClaimTap(e) {
+    const id = e.currentTarget.dataset.id;
+    const name = e.currentTarget.dataset.name || '该球场';
+    if (!id || this.data.claiming) return;
+    wx.showModal({
+      title: '认领球场',
+      content: `确认认领「${name}」？认领后可直接编辑信息、接收订单。`,
+      confirmText: '认领',
+      success: (r) => { if (r.confirm) this._doClaim(id); }
+    });
+  },
+
+  async _doClaim(id) {
+    this.setData({ claiming: true });
+    try {
+      const res = await api.claimCourt(id);
+      if (!res || res.code !== 0) throw new Error((res && res.message) || '认领失败');
+      this._saveCourtUser(res.data || {});
+      wx.showToast({ title: '认领成功', icon: 'success' });
+      setTimeout(() => {
+        wx.redirectTo({ url: `/pages/mine/my-courts?edit=${id}` });
+      }, 400);
+    } catch (e) {
+      wx.showToast({ title: (e && e.message) || '认领失败', icon: 'none' });
+    } finally {
+      this.setData({ claiming: false });
+    }
+  },
+
+  onGoMine(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.redirectTo({ url: `/pages/mine/my-courts${id ? ('?edit=' + id) : ''}` });
   },
 
   async onChooseLocation() {
@@ -64,6 +137,8 @@ Page({
     }
     this.setData(patch);
     wx.showToast({ title: '位置已选择', icon: 'success' });
+    const nextName = patch['form.name'] || this.data.form.name;
+    if (nextName) this._onNameChange(nextName);
   },
 
   onProvinceChange(e) {
@@ -247,14 +322,7 @@ Page({
       });
       wx.hideLoading();
       if (res.code === 0) {
-        const userInfo = wx.getStorageSync('userInfo') || {};
-        userInfo.roles = Array.isArray(res.data?.roles) ? res.data.roles : ['user', 'court'];
-        userInfo.role = 'court';
-        userInfo.courtId = res.data?.courtId || null;
-        userInfo.registered = true;
-        wx.setStorageSync('userInfo', userInfo);
-        const app = getApp();
-        if (app && app.globalData) app.globalData.userInfo = userInfo;
+        this._saveCourtUser(res.data || {});
 
         const courtId = res.data?.courtId;
         const localCover = this.data.coverLocal;
@@ -265,12 +333,19 @@ Page({
         }
 
         wx.showModal({
-          title: res.data?.claimed ? '进驻成功' : '提交成功',
+          title: res.data?.claimed ? '认领成功' : '提交成功',
           content: res.data?.message || (res.data?.claimed
             ? '已绑定系统收录球场，可直接管理球场与订单'
             : '球场信息已提交，请等待管理员审核（1-3 个工作日）'),
           showCancel: false,
-          success: () => wx.switchTab({ url: '/pages/mine/mine' })
+          success: () => {
+            const cid = res.data?.courtId;
+            if (res.data?.claimed && cid) {
+              wx.redirectTo({ url: `/pages/mine/my-courts?edit=${cid}` });
+            } else {
+              wx.switchTab({ url: '/pages/mine/mine' });
+            }
+          }
         });
       } else {
         wx.showToast({ title: res.message || '提交失败', icon: 'none', duration: 3000 });

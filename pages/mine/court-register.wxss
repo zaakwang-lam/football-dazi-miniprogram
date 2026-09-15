@@ -68,6 +68,36 @@
 }
 .loc-hint { margin-top: 12rpx; font-size: 22rpx; color: #999; }
 
+.match-box {
+  margin-top: 16rpx;
+  background: #F3FBF6;
+  border: 2rpx solid #CDEBD8;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+}
+.match-hint { font-size: 22rpx; color: #2BB673; margin-bottom: 8rpx; }
+.match-item {
+  display: flex; align-items: center; gap: 16rpx;
+  padding: 16rpx 0;
+  border-top: 1rpx solid #E3F4EA;
+}
+.match-item:first-of-type { border-top: none; }
+.match-info { flex: 1; min-width: 0; }
+.match-name { font-size: 28rpx; font-weight: 600; color: #1A1A1A; }
+.match-addr {
+  margin-top: 4rpx; font-size: 22rpx; color: #888;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.btn-claim {
+  flex-shrink: 0;
+  min-width: 120rpx; height: 56rpx; line-height: 56rpx;
+  padding: 0 20rpx; text-align: center;
+  background: #2BB673; color: #fff;
+  border-radius: 999rpx; font-size: 24rpx; font-weight: 600;
+}
+.btn-claim.mine { background: #FF6B00; }
+.btn-claim.taken { background: #E8E8E8; color: #999; font-weight: 500; }
+
 .open-hours-list { margin-top: 8rpx; }
 .open-hours-day {
   background: #F5F7FA; border-radius: 16rpx; padding: 16rpx 20rpx; margin-bottom: 12rpx;

@@ -95,6 +95,13 @@ function hasRole(userInfo, roleName) {
   return userInfo.roles.includes(roleName);
 }
 function getMyCourts() { return request('/api/user/me/courts', 'GET', {}); }
+function searchClaimableCourts(keyword) {
+  const q = encodeURIComponent(String(keyword || '').trim());
+  return request(`/api/user/courts/claimable?q=${q}`, 'GET', {}, { showLoading: false, silent: true });
+}
+function claimCourt(id) {
+  return request(`/api/user/courts/${id}/claim`, 'POST', {}, { loadingText: '认领中...' });
+}
 function updateMyCourt(id, data) {
   return request(`/api/user/me/courts/${id}`, 'PUT', data, { loadingText: '保存中...' });
 }
@@ -209,7 +216,7 @@ function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
   API_BASE, EXPECTED_WX_APPID, request, getPublicMeta, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
-  getMyCourts, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
+  getMyCourts, searchClaimableCourts, claimCourt, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
   createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
