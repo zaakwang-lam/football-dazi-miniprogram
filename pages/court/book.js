@@ -69,6 +69,7 @@ Page({
         id: slot.id,
         time: slot.timeSlot ? String(slot.timeSlot).split('-')[0] : '',
         timeSlot: slot.timeSlot,
+        pitchType: slot.pitchType || '',
         status: slot.status,
         price: slot.price
       }));
@@ -111,7 +112,9 @@ Page({
     else if (this.data.court) total = Number(this.data.court.price) || 0;
     this.setData({
       'form.dateText': dateItem ? `${dateItem.day}(${dateItem.week})` : '',
-      'form.slotText': slotItem ? (slotItem.timeSlot || slotItem.time) : '',
+      'form.slotText': slotItem
+        ? `${slotItem.timeSlot || slotItem.time}${slotItem.pitchType ? ' · ' + slotItem.pitchType : ''}`
+        : '',
       totalPrice: total
     });
   },

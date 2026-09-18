@@ -28,14 +28,15 @@
 }
 .date-day { font-size: 22rpx; line-height: 1.2; margin-bottom: 6rpx; }
 .date-num { font-size: 28rpx; font-weight: 700; line-height: 1.2; }
-.time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12rpx; }
+.time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12rpx; }
 .time-item {
-  text-align: center; padding: 20rpx 0; background: #F5F7FA;
+  text-align: center; padding: 16rpx 8rpx; background: #F5F7FA;
   border-radius: 16rpx; border: 2rpx solid transparent;
 }
 .time-item.active { background: #FFE8D6; border-color: #FF6B00; color: #FF6B00; }
 .time-item.disabled { background: #F5F7FA; color: #999999; }
-.time-hour { font-size: 28rpx; font-weight: 600; margin-bottom: 4rpx; }
+.time-hour { font-size: 24rpx; font-weight: 600; margin-bottom: 4rpx; }
+.time-type { font-size: 20rpx; color: #FF6B00; margin-bottom: 4rpx; }
 .time-status { font-size: 20rpx; }
 .empty-slots { text-align: center; color: #999; padding: 24rpx 0; font-size: 26rpx; }
 .empty-hint { display: block; font-size: 22rpx; color: #bbb; margin-top: 8rpx; }

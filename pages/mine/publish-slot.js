@@ -18,6 +18,8 @@ Page({
     startTime: '18:00',
     endTime: '20:00',
     timeSlot: '18:00-20:00',
+    pitchTypes: ['5人场', '7人场', '11人场'],
+    pitchType: '5人场',
     price: '',
     slots: []
   },
@@ -109,10 +111,18 @@ Page({
 
   onPriceInput(e) { this.setData({ price: e.detail.value }); },
 
+  onPitchTypeTap(e) {
+    this.setData({ pitchType: e.currentTarget.dataset.value });
+  },
+
   async onPublish() {
-    const { courtId, date, startTime, endTime, price } = this.data;
+    const { courtId, date, startTime, endTime, price, pitchType } = this.data;
     if (!courtId) return wx.showToast({ title: '请选择球场', icon: 'none' });
     if (!date) return wx.showToast({ title: '请选择日期', icon: 'none' });
+    if (!pitchType) return wx.showToast({ title: '请选择球场类型', icon: 'none' });
+    if (price === '' || price == null) return wx.showToast({ title: '请填写场次费用', icon: 'none' });
+    const fee = Number(price);
+    if (Number.isNaN(fee) || fee < 0) return wx.showToast({ title: '场次费用格式不正确', icon: 'none' });
     if (toMinutes(endTime) <= toMinutes(startTime)) {
       return wx.showToast({ title: '结束时间需晚于开始时间', icon: 'none' });
     }
@@ -121,7 +131,8 @@ Page({
       const res = await api.publishFreeSlots(courtId, [{
         date,
         timeSlot,
-        price: Number(price) || 0
+        pitchType,
+        price: fee
       }]);
       if (res.code !== 0) throw new Error(res.message || '发布失败');
       wx.showToast({ title: res.message || '发布成功', icon: 'success' });

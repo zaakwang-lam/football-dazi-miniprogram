@@ -5,6 +5,17 @@
       <view class="picker-val">{{courts[courtIndex].name || '请选择'}}</view>
     </picker>
 
+    <view class="label required">球场类型</view>
+    <view class="type-row">
+      <view
+        class="type-chip {{pitchType === item ? 'active' : ''}}"
+        wx:for="{{pitchTypes}}"
+        wx:key="*this"
+        bindtap="onPitchTypeTap"
+        data-value="{{item}}"
+      >{{item}}</view>
+    </view>
+
     <view class="label">日期</view>
     <picker mode="date" value="{{date}}" bindchange="onDateChange">
       <view class="picker-val">{{date}}</view>
@@ -22,8 +33,8 @@
     </view>
     <view class="time-hint">已选 {{timeSlot}}，点击时间滚动选择</view>
 
-    <view class="label">价格（元）</view>
-    <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="300" />
+    <view class="label required">场次费用（元）</view>
+    <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="例如 300" />
 
     <view class="btn-primary" bindtap="onPublish">发布空闲时段</view>
   </view>
@@ -31,7 +42,10 @@
   <view class="card" wx:if="{{slots.length}}">
     <view class="section-title">已发布空闲</view>
     <view class="slot-row" wx:for="{{slots}}" wx:key="id">
-      <text>{{item.date}} {{item.timeSlot}}</text>
+      <view class="slot-main">
+        <text>{{item.date}} {{item.timeSlot}}</text>
+        <text class="slot-type">{{item.pitchType || '5人场'}}</text>
+      </view>
       <text class="price">¥{{item.price}}</text>
     </view>
   </view>

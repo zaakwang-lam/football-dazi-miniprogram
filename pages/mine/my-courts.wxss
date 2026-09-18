@@ -3,7 +3,7 @@
   min-height: 100vh;
   background: #F5F5F5;
   padding: 24rpx;
-  padding-bottom: 80rpx;
+  padding-bottom: 180rpx;
 }
 
 .empty-state { text-align: center; padding: 120rpx 0; }
@@ -151,3 +151,19 @@
   font-size: 22rpx; color: #fff;
 }
 .checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
+
+.add-bar {
+  margin-top: 8rpx;
+  padding: 12rpx 0 24rpx;
+}
+.btn-add-court {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #fff;
+  color: #FF6B00;
+  border: 2rpx dashed #FF6B00;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}

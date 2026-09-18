@@ -24,6 +24,7 @@
     <view class="time-grid" wx:else>
       <view class="time-item {{form.slotIdx === index ? 'active' : ''}} {{item.status === 'booked' || item.status === 'closed' ? 'disabled' : ''}}" wx:for="{{daySlots}}" wx:key="id" bindtap="onSlotSelect" data-idx="{{index}}">
         <view class="time-hour">{{item.timeSlot || item.time}}</view>
+        <view class="time-type" wx:if="{{item.pitchType}}">{{item.pitchType}}</view>
         <view class="time-status">{{item.status === 'booked' ? '已订' : (item.status === 'closed' ? '关闭' : ('¥' + (item.price != null ? item.price : '')))}}</view>
       </view>
     </view>

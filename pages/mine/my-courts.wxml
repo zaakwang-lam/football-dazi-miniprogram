@@ -28,6 +28,9 @@
       </view>
       <view class="card-footer"><text class="join-time">登记于 {{item.createdAtText}}</text></view>
     </view>
+    <view class="add-bar">
+      <view class="btn-add-court" bindtap="onRegisterTap">+ 添加球场</view>
+    </view>
   </view>
 
   <view class="edit-mask" wx:if="{{editing}}" bindtap="onCancelEdit"></view>
