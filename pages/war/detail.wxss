@@ -21,8 +21,8 @@
 }
 
 .type-badge.type-sub {
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
 }
 
 .type-badge.type-war {

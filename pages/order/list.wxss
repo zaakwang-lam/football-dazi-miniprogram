@@ -22,7 +22,7 @@
 }
 
 .tab.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -105,7 +105,7 @@
 .order-price {
   font-size: 36rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
 }
 
 .order-actions {
@@ -121,7 +121,7 @@
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
 }
 

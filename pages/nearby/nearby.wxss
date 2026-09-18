@@ -10,7 +10,7 @@
 .map-sub { font-size: 24rpx; opacity: 0.9; margin-top: 8rpx; }
 .filter-row { display: flex; gap: 16rpx; padding: 24rpx; background: #fff; margin-top: 16rpx; }
 .filter-item { padding: 12rpx 32rpx; border-radius: 32rpx; background: #F5F5F5; font-size: 26rpx; color: #666; }
-.filter-item.active { background: #FF6B00; color: #fff; }
+.filter-item.active { background: #1B4FD8; color: #fff; }
 .section-title { padding: 24rpx; font-size: 26rpx; color: #666; }
 .court-list { background: #fff; padding: 0 24rpx; }
 .court-item { display: flex; justify-content: space-between; padding: 24rpx 0; border-bottom: 1rpx solid #F0F0F0; }
@@ -18,7 +18,7 @@
 .court-name { font-size: 30rpx; font-weight: 600; color: #333; }
 .court-meta { font-size: 24rpx; color: #999; margin-top: 8rpx; }
 .court-addr { font-size: 24rpx; color: #666; margin-top: 8rpx; }
-.court-distance { font-size: 24rpx; color: #FF6B00; margin-top: 8rpx; }
-.court-price { color: #FF6B00; font-weight: 600; font-size: 32rpx; }
+.court-distance { font-size: 24rpx; color: #1B4FD8; margin-top: 8rpx; }
+.court-price { color: #1B4FD8; font-weight: 600; font-size: 32rpx; }
 .court-price-unit { font-size: 22rpx; color: #999; font-weight: 400; }
 .empty { padding: 80rpx; text-align: center; color: #999; font-size: 28rpx; }

@@ -45,7 +45,7 @@
   width: 96rpx;
   height: 96rpx;
   border-radius: 20rpx;
-  background: #FFE8D6;
+  background: #E8EEFF;
   display: flex;
   align-items: center;
   justify-content: center;

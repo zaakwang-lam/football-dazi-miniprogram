@@ -14,7 +14,7 @@
 .loc-flex { flex: 1; }
 .btn-map {
   flex-shrink: 0; padding: 16rpx 24rpx;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #fff; border-radius: 12rpx; font-size: 26rpx; font-weight: 600;
 }
 .time-row { display: flex; gap: 16rpx; }
@@ -27,19 +27,19 @@
   display: flex; align-items: center; gap: 8rpx; padding: 12rpx 20rpx;
   background: #F5F7FA; border-radius: 999rpx; font-size: 26rpx; color: #666;
 }
-.checkbox-item.active { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.checkbox-item.active { background: #E8EEFF; color: #1B4FD8; font-weight: 600; }
 .radio {
   width: 28rpx; height: 28rpx; border: 2rpx solid #ccc; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-size: 16rpx;
 }
-.radio.checked { border-color: #FF6B00; color: #FF6B00; }
+.radio.checked { border-color: #1B4FD8; color: #1B4FD8; }
 .level-row { display: flex; gap: 16rpx; }
 .level-item {
   flex: 1; text-align: center; padding: 16rpx 0; background: #F5F7FA;
   border-radius: 12rpx; font-size: 28rpx; color: #666;
 }
 .level-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; font-weight: 600;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff; font-weight: 600;
 }
 .bottom-action {
   position: fixed; left: 0; right: 0; bottom: 0; padding: 24rpx;
@@ -47,6 +47,6 @@
   padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 }
 .btn-primary.full {
-  text-align: center; background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  text-align: center; background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #fff; border-radius: 999rpx; padding: 24rpx 0; font-size: 30rpx; font-weight: 600;
 }

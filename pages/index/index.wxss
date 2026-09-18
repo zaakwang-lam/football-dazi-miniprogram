@@ -6,11 +6,12 @@
 .top-bar {
   display: flex;
   align-items: center;
-  padding: 24rpx;
-  background: linear-gradient(135deg, #FF6B00 0%, #FF8C42 100%);
+  padding: 28rpx 24rpx 36rpx;
 }
 
 .search-box {
+  position: relative;
+  z-index: 1;
   flex: 1;
   display: flex;
   align-items: center;
@@ -38,11 +39,11 @@
   margin: 24rpx;
   height: 280rpx;
   border-radius: 32rpx;
-  background: #2BB673;
+  background: #0D2A6B;
   display: flex;
   align-items: center;
   padding: 0;
-  box-shadow: 0 8rpx 24rpx rgba(43, 182, 115, 0.25);
+  box-shadow: 0 8rpx 24rpx rgba(7, 20, 51, 0.28);
   overflow: hidden;
 }
 
@@ -69,8 +70,9 @@
   background: #FFFFFF;
   margin: 0 24rpx;
   border-radius: 32rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8rpx 28rpx rgba(7, 20, 51, 0.08);
   margin-bottom: 24rpx;
+  border: 2rpx solid #E8EEFF;
 }
 
 .entry-item {
@@ -138,8 +140,8 @@
 }
 
 .lfg-type.type-sub {
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
 }
 
 .lfg-type.type-war {
@@ -197,8 +199,8 @@
   flex-shrink: 0;
   margin-left: 12rpx;
   padding: 10rpx 16rpx;
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
   border-radius: 999rpx;
   font-size: 22rpx;
   font-weight: 600;

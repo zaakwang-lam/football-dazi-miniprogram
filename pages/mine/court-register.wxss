@@ -40,7 +40,7 @@
 .cover-actions { display: flex; gap: 16rpx; width: 100%; }
 .btn-cover {
   flex: 1; height: 72rpx; line-height: 72rpx; text-align: center;
-  background: #FFE8D6; color: #FF6B00; border-radius: 16rpx; font-size: 26rpx; font-weight: 600;
+  background: #E8EEFF; color: #1B4FD8; border-radius: 16rpx; font-size: 26rpx; font-weight: 600;
   border: none;
 }
 .btn-cover::after { border: none; }
@@ -53,17 +53,17 @@
   display: flex; align-items: center; gap: 8rpx; padding: 12rpx 20rpx;
   background: #F5F7FA; border-radius: 999rpx; font-size: 26rpx; color: #666;
 }
-.checkbox-item.active { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.checkbox-item.active { background: #E8EEFF; color: #1B4FD8; font-weight: 600; }
 .checkbox {
   width: 28rpx; height: 28rpx; border: 2rpx solid #CCC; border-radius: 6rpx;
   display: flex; align-items: center; justify-content: center; font-size: 18rpx; color: #fff;
 }
-.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
+.checkbox.checked { background: #1B4FD8; border-color: #1B4FD8; }
 
 .addr-row { display: flex; gap: 16rpx; align-items: center; }
 .addr-input { flex: 1; }
 .btn-map {
-  flex-shrink: 0; padding: 20rpx 24rpx; background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  flex-shrink: 0; padding: 20rpx 24rpx; background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #fff; border-radius: 16rpx; font-size: 26rpx; font-weight: 600; white-space: nowrap;
 }
 .loc-hint { margin-top: 12rpx; font-size: 22rpx; color: #999; }
@@ -95,7 +95,7 @@
   background: #2BB673; color: #fff;
   border-radius: 999rpx; font-size: 24rpx; font-weight: 600;
 }
-.btn-claim.mine { background: #FF6B00; }
+.btn-claim.mine { background: #1B4FD8; }
 .btn-claim.taken { background: #E8E8E8; color: #999; font-weight: 500; }
 
 .open-hours-list { margin-top: 8rpx; }
@@ -104,7 +104,7 @@
 }
 .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
 .day-name { font-size: 26rpx; font-weight: 600; color: #333; }
-.add-slot { font-size: 24rpx; color: #FF6B00; }
+.add-slot { font-size: 24rpx; color: #1B4FD8; }
 .time-row { display: flex; align-items: center; gap: 12rpx; margin-top: 8rpx; }
 .time-picker {
   background: #fff; padding: 10rpx 20rpx; border-radius: 12rpx; font-size: 26rpx; color: #333;
@@ -118,7 +118,7 @@
   background: #fff; box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.06);
 }
 .btn-submit {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; border-radius: 999rpx;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff; border-radius: 999rpx;
   font-size: 30rpx; font-weight: 600; height: 88rpx; line-height: 88rpx; border: none;
 }
 .btn-submit::after { border: none; }

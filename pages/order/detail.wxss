@@ -111,12 +111,12 @@
 }
 
 .price-val {
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 600;
 }
 
 .price-total {
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 700;
   font-size: 36rpx;
 }

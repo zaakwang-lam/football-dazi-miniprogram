@@ -3,7 +3,7 @@ const api = require('../../utils/api.js');
 
 const COLOR_PAIRS = [
   ['#4FACFE', '#00F2FE'],
-  ['#FF6B00', '#FF8C42'],
+  ['#1B4FD8', '#4C8DFF'],
   ['#2ECC71', '#58D68D'],
   ['#9B59B6', '#BE7BDB'],
   ['#FFB800', '#FFD75E']

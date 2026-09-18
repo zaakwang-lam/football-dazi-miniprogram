@@ -2,7 +2,7 @@
 const api = require('../../utils/api.js');
 
 const COLORS = [
-  'linear-gradient(135deg, #FF6B00, #FF8C42)',
+  'linear-gradient(135deg, #1B4FD8, #4C8DFF)',
   'linear-gradient(135deg, #007AFF, #4FACFE)',
   'linear-gradient(135deg, #2ECC71, #58D68D)',
   'linear-gradient(135deg, #9B59B6, #BE7BDB)'

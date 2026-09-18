@@ -40,8 +40,8 @@
   flex-shrink: 0;
   max-width: 280rpx;
   padding: 14rpx 20rpx;
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
   border-radius: 999rpx;
   font-size: 24rpx;
   font-weight: 600;
@@ -70,7 +70,7 @@
 }
 
 .filter-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -118,7 +118,7 @@
   padding: 4rpx 16rpx;
   border-radius: 999rpx;
   font-size: 20rpx;
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 700;
 }
 
@@ -149,7 +149,7 @@
 }
 
 .meta-item.distance {
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 600;
 }
 
@@ -192,7 +192,7 @@
 .price-num {
   font-size: 36rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
 }
 
 .price-unit {

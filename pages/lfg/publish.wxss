@@ -50,7 +50,7 @@
 .loc-flex { flex: 1; }
 .btn-map {
   flex-shrink: 0; padding: 16rpx 24rpx;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #fff; border-radius: 12rpx; font-size: 26rpx; font-weight: 600;
 }
 
@@ -65,7 +65,7 @@
   height: 56rpx;
   border-radius: 50%;
   background: #F5F7FA;
-  color: #FF6B00;
+  color: #1B4FD8;
   font-size: 36rpx;
   font-weight: 700;
   display: flex;
@@ -76,7 +76,7 @@
 .picker-num {
   font-size: 36rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
   min-width: 60rpx;
   text-align: center;
 }
@@ -96,7 +96,7 @@
 }
 
 .level-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -116,7 +116,7 @@
   display: block;
   width: 100%;
   text-align: center;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #fff;
   border-radius: 999rpx;
   padding: 24rpx 0;

@@ -18,7 +18,14 @@
     <text class="login-entry-arrow">›</text>
   </view>
 
-  <view class="user-card" wx:else>
+  <view class="user-card night-header" wx:else>
+    <view class="star-field">
+      <text class="star s1">✦</text>
+      <text class="star s3 silver">★</text>
+      <text class="star s4">✦</text>
+      <text class="star s6">★</text>
+    </view>
+    <view class="night-streak"></view>
     <view class="user-avatar" wx:if="{{userInfo.avatarUrl}}" bindtap="onAvatarTap">
       <image src="{{userInfo.avatarUrl}}" mode="aspectFill" />
     </view>

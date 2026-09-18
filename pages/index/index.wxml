@@ -1,6 +1,17 @@
 <!-- pages/index/index.wxml -->
 <view class="page">
-  <view class="top-bar">
+  <view class="top-bar night-header">
+    <view class="star-field">
+      <text class="star s1">✦</text>
+      <text class="star s2 silver">★</text>
+      <text class="star s3">✦</text>
+      <text class="star s4">★</text>
+      <text class="star s5 silver">✦</text>
+      <text class="star s6">✦</text>
+      <text class="star s7">★</text>
+      <text class="star s8 silver">✦</text>
+    </view>
+    <view class="night-streak"></view>
     <view class="search-box" bindtap="onSearchTap">
       <text class="search-icon">🔍</text>
       <text class="search-placeholder">搜索场地 / 球队</text>

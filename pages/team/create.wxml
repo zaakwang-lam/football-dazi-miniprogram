@@ -49,7 +49,7 @@
     <view class="form-label">是否招募</view>
     <view class="switch-row">
       <text>允许散客申请加入</text>
-      <switch checked="{{form.recruitment}}" bindchange="onSwitchChange" color="#FF6B00" />
+      <switch checked="{{form.recruitment}}" bindchange="onSwitchChange" color="#1B4FD8" />
     </view>
   </view>
 

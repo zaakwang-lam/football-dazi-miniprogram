@@ -72,12 +72,12 @@
 }
 
 .info-value.phone {
-  color: #FF6B00;
+  color: #1B4FD8;
   text-decoration: underline;
 }
 
 .info-value.price {
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 700;
   font-size: 32rpx;
 }
@@ -126,7 +126,7 @@
 .time-cell.header {
   font-weight: 700;
   color: #1A1A1A;
-  background: #FFE8D6;
+  background: #E8EEFF;
 }
 
 .day-col {
@@ -148,7 +148,7 @@
 .day-cell.header {
   font-weight: 700;
   color: #1A1A1A;
-  background: #FFE8D6;
+  background: #E8EEFF;
 }
 
 .day-cell.status-free {

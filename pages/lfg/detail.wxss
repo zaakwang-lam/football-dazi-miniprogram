@@ -21,8 +21,8 @@
 }
 
 .type-badge.type-sub {
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
 }
 
 .type-badge.type-war {
@@ -189,8 +189,8 @@
   flex-shrink: 0;
   margin-left: 16rpx;
   padding: 10rpx 24rpx;
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
   border-radius: 999rpx;
   font-size: 24rpx;
   font-weight: 600;
@@ -204,7 +204,7 @@
   font-weight: 600;
 }
 
-.status-pending { background: #FFF3E0; color: #FF6B00; }
+.status-pending { background: #E8EEFF; color: #1B4FD8; }
 .status-success { background: #E8F5E9; color: #2E7D32; }
 .status-canceled { background: #F5F5F5; color: #999; }
 
@@ -225,13 +225,13 @@
   font-weight: 600;
 }
 
-.btn-call { background: #FFE8D6; color: #FF6B00; }
-.btn-accept { background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff; }
+.btn-call { background: #E8EEFF; color: #1B4FD8; }
+.btn-accept { background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff; }
 .btn-reject { background: #fff; color: #FF3B30; border: 2rpx solid #FF3B30; }
 
 .btn-wait {
-  background: #FFF3E0 !important;
-  color: #FF6B00 !important;
+  background: #E8EEFF !important;
+  color: #1B4FD8 !important;
   border: none !important;
 }
 

@@ -21,7 +21,7 @@
   border-radius: 24rpx; padding: 32rpx 0; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.06);
 }
 .stat-item { flex: 1; text-align: center; }
-.stat-num { display: block; font-size: 40rpx; font-weight: 700; color: #FF6B00; margin-bottom: 8rpx; }
+.stat-num { display: block; font-size: 40rpx; font-weight: 700; color: #1B4FD8; margin-bottom: 8rpx; }
 .stat-label { font-size: 22rpx; color: #999999; }
 .section-title { font-size: 30rpx; font-weight: 700; color: #1A1A1A; padding: 16rpx 32rpx; }
 .announce-box {
@@ -41,13 +41,13 @@
   color: #FFFFFF; font-size: 26rpx; font-weight: 700;
 }
 .member-name { display: block; font-size: 24rpx; color: #1A1A1A; margin-bottom: 4rpx; }
-.member-role { font-size: 20rpx; color: #FF6B00; }
+.member-role { font-size: 20rpx; color: #1B4FD8; }
 .captain-actions {
   display: flex; gap: 24rpx; margin: 0 24rpx 24rpx;
 }
 .cap-btn {
   flex: 1; text-align: center; padding: 20rpx 0; border-radius: 12rpx;
-  background: #FFE8D6; color: #FF6B00; font-size: 28rpx; font-weight: 600;
+  background: #E8EEFF; color: #1B4FD8; font-size: 28rpx; font-weight: 600;
 }
 .cap-btn.danger { background: #FFEBEE; color: #FF4757; }
 .bottom-bar {
@@ -63,7 +63,7 @@
 .btn-share::after { border: none; }
 .btn-primary {
   flex: 1; text-align: center; height: 80rpx; line-height: 80rpx;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff;
   border-radius: 999rpx; font-size: 28rpx; font-weight: 600;
 }
 .btn-leave {

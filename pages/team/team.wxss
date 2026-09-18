@@ -13,7 +13,7 @@
 
 /* 我的球队 */
 .my-team {
-  background: linear-gradient(135deg, #FF6B00 0%, #FF8C42 100%);
+  background: linear-gradient(135deg, #1B4FD8 0%, #4C8DFF 100%);
   color: #FFFFFF;
 }
 
@@ -138,7 +138,7 @@
 
 .section-more {
   font-size: 24rpx;
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 600;
 }
 

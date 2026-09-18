@@ -35,14 +35,14 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#FF6B00",
+    "navigationBarBackgroundColor": "#071433",
     "navigationBarTitleText": "一起搭球",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F5F5F5"
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#2BB673",
+    "selectedColor": "#1B4FD8",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [

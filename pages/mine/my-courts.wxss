@@ -11,7 +11,7 @@
 .empty-title { font-size: 32rpx; color: #333; font-weight: bold; margin-bottom: 12rpx; }
 .empty-desc { font-size: 26rpx; color: #999; margin-bottom: 40rpx; }
 .btn-register {
-  background: #FF6B00; color: white; border-radius: 48rpx;
+  background: #1B4FD8; color: white; border-radius: 48rpx;
   font-size: 28rpx; padding: 16rpx 48rpx; display: inline-block;
 }
 .loading-state { text-align: center; padding: 80rpx 0; color: #999; font-size: 28rpx; }
@@ -45,7 +45,7 @@
   font-size: 26rpx; color: #666; line-height: 1.6;
 }
 .card-row .icon { margin-right: 12rpx; flex-shrink: 0; }
-.card-row .district { color: #FF6B00; font-weight: bold; margin-right: 8rpx; }
+.card-row .district { color: #1B4FD8; font-weight: bold; margin-right: 8rpx; }
 
 .card-actions {
   display: flex; gap: 16rpx; margin-top: 20rpx; padding-top: 16rpx;
@@ -55,7 +55,7 @@
   flex: 1; text-align: center; font-size: 26rpx; padding: 16rpx 0;
   border-radius: 12rpx; background: #f5f5f5; color: #333;
 }
-.action-btn.primary { background: #FF6B00; color: #fff; }
+.action-btn.primary { background: #1B4FD8; color: #fff; }
 
 .card-footer { margin-top: 12rpx; }
 .join-time { font-size: 22rpx; color: #999; }
@@ -84,12 +84,12 @@
   flex: 1; text-align: center; padding: 22rpx 0; border-radius: 48rpx; font-size: 28rpx;
 }
 .edit-btn.cancel { background: #f0f0f0; color: #666; }
-.edit-btn.primary { background: #FF6B00; color: #fff; }
+.edit-btn.primary { background: #1B4FD8; color: #fff; }
 
 .addr-row { display: flex; gap: 12rpx; align-items: center; }
 .addr-flex { flex: 1; }
 .btn-map-sm {
-  flex-shrink: 0; padding: 16rpx 20rpx; background: #FF6B00; color: #fff;
+  flex-shrink: 0; padding: 16rpx 20rpx; background: #1B4FD8; color: #fff;
   border-radius: 12rpx; font-size: 24rpx; white-space: nowrap;
 }
 .loc-hint { font-size: 22rpx; color: #999; margin-top: 8rpx; }
@@ -126,7 +126,7 @@
 .cover-actions { display: flex; flex-direction: column; gap: 12rpx; }
 .cover-btn {
   padding: 12rpx 28rpx;
-  background: #FF6B00;
+  background: #1B4FD8;
   color: #fff;
   border-radius: 999rpx;
   font-size: 24rpx;
@@ -144,13 +144,13 @@
   display: flex; align-items: center; padding: 12rpx 20rpx;
   background: #f5f5f5; border-radius: 12rpx; font-size: 26rpx; color: #333;
 }
-.checkbox-item.active { background: #FFE8D6; color: #FF6B00; }
+.checkbox-item.active { background: #E8EEFF; color: #1B4FD8; }
 .checkbox {
   width: 32rpx; height: 32rpx; border-radius: 6rpx; border: 2rpx solid #ccc;
   margin-right: 10rpx; display: flex; align-items: center; justify-content: center;
   font-size: 22rpx; color: #fff;
 }
-.checkbox.checked { background: #FF6B00; border-color: #FF6B00; }
+.checkbox.checked { background: #1B4FD8; border-color: #1B4FD8; }
 
 .add-bar {
   margin-top: 8rpx;
@@ -161,8 +161,8 @@
   line-height: 88rpx;
   text-align: center;
   background: #fff;
-  color: #FF6B00;
-  border: 2rpx dashed #FF6B00;
+  color: #1B4FD8;
+  border: 2rpx dashed #1B4FD8;
   border-radius: 16rpx;
   font-size: 30rpx;
   font-weight: 600;

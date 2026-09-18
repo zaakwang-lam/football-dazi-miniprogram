@@ -27,7 +27,7 @@
   margin: 12rpx 0 40rpx;
 }
 .btn-save {
-  background: #FF6B00;
+  background: #1B4FD8;
   color: #fff;
   border-radius: 48rpx;
   font-size: 30rpx;

@@ -11,26 +11,26 @@
 .lfg-card { background: #fff; border-radius: 16rpx; padding: 24rpx; margin-bottom: 16rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
 .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16rpx; }
 .card-type { display: inline-flex; align-items: center; gap: 8rpx; padding: 6rpx 16rpx; border-radius: 999rpx; font-size: 22rpx; font-weight: 600; }
-.card-type.type-war { background: #FFE8D6; color: #FF6B00; }
+.card-type.type-war { background: #E8EEFF; color: #1B4FD8; }
 .card-type.type-sub { background: #E6F2FF; color: #007AFF; }
 .card-time { font-size: 22rpx; color: #999; }
 
 .card-main { margin-bottom: 16rpx; }
 .main-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
 .team-name { font-size: 32rpx; font-weight: 700; color: #333; }
-.need-num { font-size: 26rpx; color: #FF6B00; font-weight: 600; }
+.need-num { font-size: 26rpx; color: #1B4FD8; font-weight: 600; }
 .main-info { display: flex; flex-wrap: wrap; gap: 16rpx; margin-bottom: 12rpx; }
 .info-item { font-size: 24rpx; color: #666; }
 .main-desc { font-size: 24rpx; color: #999; line-height: 1.6; }
 
 .card-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 16rpx; border-top: 1rpx solid #F0F0F0; }
 .contact-info { font-size: 24rpx; color: #666; flex: 1; }
-.action-btn { background: #FF6B00; color: #fff; padding: 12rpx 24rpx; border-radius: 999rpx; font-size: 26rpx; font-weight: 600; }
+.action-btn { background: #1B4FD8; color: #fff; padding: 12rpx 24rpx; border-radius: 999rpx; font-size: 26rpx; font-weight: 600; }
 
-.fab { position: fixed; bottom: 120rpx; right: 32rpx; width: 110rpx; height: 110rpx; border-radius: 50%; background: #FF6B00; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8rpx 24rpx rgba(255,107,0,0.4); z-index: 99; }
+.fab { position: fixed; bottom: 120rpx; right: 32rpx; width: 110rpx; height: 110rpx; border-radius: 50%; background: #1B4FD8; color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8rpx 24rpx rgba(27,79,216,0.4); z-index: 99; }
 .fab text { font-size: 64rpx; line-height: 1; }
 
 .empty { padding: 120rpx 32rpx; text-align: center; }
 .empty-icon { font-size: 100rpx; margin-bottom: 24rpx; }
 .empty text { display: block; font-size: 28rpx; color: #999; }
-.empty-tip { font-size: 24rpx; color: #FF6B00; margin-top: 8rpx; }
+.empty-tip { font-size: 24rpx; color: #1B4FD8; margin-top: 8rpx; }

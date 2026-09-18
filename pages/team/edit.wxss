@@ -11,11 +11,11 @@
 .chip {
   padding: 12rpx 24rpx; background: #F5F5F5; border-radius: 999rpx; font-size: 26rpx; color: #666;
 }
-.chip.on { background: #FFE8D6; color: #FF6B00; font-weight: 600; }
+.chip.on { background: #E8EEFF; color: #1B4FD8; font-weight: 600; }
 .row-between { display: flex; justify-content: space-between; align-items: center; }
-.toggle { color: #FF6B00; font-weight: 600; }
+.toggle { color: #1B4FD8; font-weight: 600; }
 .btn-save {
   margin-top: 40rpx; text-align: center; padding: 28rpx;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff;
   border-radius: 999rpx; font-size: 30rpx; font-weight: 600;
 }

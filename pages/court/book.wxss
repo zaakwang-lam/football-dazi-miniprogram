@@ -1,7 +1,7 @@
 /* pages/court/book.wxss */
 .page { padding: 24rpx; padding-bottom: 200rpx; }
 .court-summary {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF; padding: 32rpx; border-radius: 24rpx; margin-bottom: 20rpx;
 }
 .cs-name { font-size: 34rpx; font-weight: 700; margin-bottom: 8rpx; }
@@ -24,7 +24,7 @@
   flex-shrink: 0;
 }
 .date-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #FFFFFF;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #FFFFFF;
 }
 .date-day { font-size: 22rpx; line-height: 1.2; margin-bottom: 6rpx; }
 .date-num { font-size: 28rpx; font-weight: 700; line-height: 1.2; }
@@ -33,10 +33,10 @@
   text-align: center; padding: 16rpx 8rpx; background: #F5F7FA;
   border-radius: 16rpx; border: 2rpx solid transparent;
 }
-.time-item.active { background: #FFE8D6; border-color: #FF6B00; color: #FF6B00; }
+.time-item.active { background: #E8EEFF; border-color: #1B4FD8; color: #1B4FD8; }
 .time-item.disabled { background: #F5F7FA; color: #999999; }
 .time-hour { font-size: 24rpx; font-weight: 600; margin-bottom: 4rpx; }
-.time-type { font-size: 20rpx; color: #FF6B00; margin-bottom: 4rpx; }
+.time-type { font-size: 20rpx; color: #1B4FD8; margin-bottom: 4rpx; }
 .time-status { font-size: 20rpx; }
 .empty-slots { text-align: center; color: #999; padding: 24rpx 0; font-size: 26rpx; }
 .empty-hint { display: block; font-size: 22rpx; color: #bbb; margin-top: 8rpx; }
@@ -51,8 +51,8 @@
 .summary-row.total {
   border-top: 2rpx solid #F5F7FA; padding-top: 20rpx; margin-top: 8rpx; font-size: 32rpx;
 }
-.summary-price { color: #FF6B00; font-weight: 600; }
-.summary-total { color: #FF6B00; font-weight: 700; font-size: 36rpx; }
+.summary-price { color: #1B4FD8; font-weight: 600; }
+.summary-total { color: #1B4FD8; font-weight: 700; font-size: 36rpx; }
 .bottom-bar {
   position: fixed; left: 0; right: 0; bottom: 0; padding: 24rpx;
   background: #FFFFFF; border-top: 2rpx solid #F5F7FA;
@@ -64,6 +64,6 @@
 .summary-tip { font-size: 22rpx; color: #999999; }
 .bottom-bar .btn-primary {
   flex: 1; text-align: center; padding: 24rpx 0;
-  background: linear-gradient(135deg, #FF6B00, #FF8C42); color: #fff;
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff;
   border-radius: 999rpx; font-size: 28rpx; font-weight: 600;
 }

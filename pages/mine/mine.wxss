@@ -7,7 +7,7 @@
   padding: 32rpx; margin-bottom: 20rpx; box-shadow: 0 4rpx 16rpx rgba(0,0,0,.04);
 }
 .login-entry-avatar {
-  width: 96rpx; height: 96rpx; border-radius: 50%; background: #FFF1E8;
+  width: 96rpx; height: 96rpx; border-radius: 50%; background: #F0F4FF;
   display:flex; align-items:center; justify-content:center; font-size:46rpx; margin-right:24rpx;
 }
 .login-entry-info { flex: 1; }
@@ -17,18 +17,19 @@
 
 /* 已登录用户 */
 .user-card {
-  display:flex; align-items:center; background:linear-gradient(135deg,#FF6B00,#FF8C42);
+  display:flex; align-items:center; position: relative; overflow: hidden;
   padding:36rpx 30rpx; border-radius:30rpx; margin-bottom:20rpx; color:#FFFFFF;
-  box-shadow:0 8rpx 24rpx rgba(255,107,0,.16);
+  box-shadow:0 12rpx 32rpx rgba(7,20,51,.28);
 }
 .user-avatar {
+  position: relative; z-index: 1;
   width:112rpx; height:112rpx; border-radius:50%; background:rgba(255,255,255,.24);
   display:flex; align-items:center; justify-content:center; margin-right:24rpx;
-  overflow:hidden; border:4rpx solid rgba(255,255,255,.35);
+  overflow:hidden; border:4rpx solid rgba(240,199,94,.55);
 }
+.user-info { flex:1; min-width:0; position: relative; z-index: 1; }
 .user-avatar image { width:100%; height:100%; }
 .user-avatar.placeholder { font-size:54rpx; }
-.user-info { flex:1; min-width:0; }
 .user-name { font-size:36rpx; font-weight:700; margin-bottom:8rpx; }
 .user-role {
   display:inline-block; font-size:23rpx; background:rgba(255,255,255,.18);
@@ -36,7 +37,7 @@
 }
 .user-actions { display:flex; align-items:center; margin-top:14rpx; }
 .login-btn {
-  display:inline-block; background:#FFFFFF; color:#FF6B00; padding:8rpx 20rpx;
+  display:inline-block; background:#FFFFFF; color:#1B4FD8; padding:8rpx 20rpx;
   border-radius:999rpx; font-size:23rpx; font-weight:600;
 }
 .logout-btn {
@@ -66,12 +67,12 @@
 .avatar-choose-btn::after { border: none; }
 .avatar-preview {
   width: 96rpx; height: 96rpx; border-radius: 50%; overflow: hidden;
-  background: #FFE8D6; margin-bottom: 12rpx;
+  background: #E8EEFF; margin-bottom: 12rpx;
 }
 .avatar-preview.placeholder {
   display: flex; align-items: center; justify-content: center; font-size: 42rpx;
 }
-.avatar-choose-text { font-size: 24rpx; color: #FF6B00; font-weight: 600; }
+.avatar-choose-text { font-size: 24rpx; color: #1B4FD8; font-weight: 600; }
 .avatar-album-btn {
   flex: 1; height: 148rpx; border-radius: 20rpx; background: #F5F6F8;
   display: flex; align-items: center; justify-content: center;
@@ -88,7 +89,7 @@
   align-items: center; justify-content: center; font-size: 28rpx; font-weight: 600;
 }
 .profile-btn.cancel { background: #F5F6F8; color: #666; }
-.profile-btn.primary { background: #FF6B00; color: #FFFFFF; }
+.profile-btn.primary { background: #1B4FD8; color: #FFFFFF; }
 
 /* 身份选择 */
 .register-card {
@@ -102,7 +103,7 @@
   flex:1; background:#FFF8F2; border-radius:20rpx; padding:28rpx 12rpx;
   text-align:center; border:2rpx solid #FFF0E5;
 }
-.register-option:active { border-color:#FF6B00; background:#FFF1E8; }
+.register-option:active { border-color:#1B4FD8; background:#F0F4FF; }
 .register-icon { font-size:58rpx; margin-bottom:12rpx; }
 .register-name { font-size:29rpx; font-weight:600; color:#333; margin-bottom:6rpx; }
 .register-desc { font-size:21rpx; color:#999; line-height:1.5; }
@@ -120,10 +121,10 @@
 .menu-row:last-child { border-bottom:none; }
 .menu-icon {
   width:58rpx; height:58rpx; border-radius:16rpx; display:flex; align-items:center;
-  justify-content:center; font-size:27rpx; margin-right:20rpx; background:#FFE8D6;
+  justify-content:center; font-size:27rpx; margin-right:20rpx; background:#E8EEFF;
 }
 .icon-team { background:#E6F2FF; } .icon-join { background:#EEF7FF; }
-.icon-create { background:#FFF1E8; } .icon-court { background:#E8F8EE; }
+.icon-create { background:#F0F4FF; } .icon-court { background:#E8F8EE; }
 .icon-info { background:#F0E8FF; } .icon-publish { background:#FFF7E6; }
 .icon-list { background:#E8F8EE; } .icon-switch { background:#E8F2FF; }
 .menu-label { flex:1; font-size:28rpx; color:#1A1A1A; font-weight:500; }
@@ -137,13 +138,13 @@
 .my-team-item { display:flex; align-items:center; padding:18rpx 0; border-bottom:2rpx solid #F5F5F5; }
 .my-team-item:last-child { border-bottom:none; }
 .team-logo {
-  width:72rpx; height:72rpx; border-radius:50%; background:#FFF1E8; color:#FF6B00;
+  width:72rpx; height:72rpx; border-radius:50%; background:#F0F4FF; color:#1B4FD8;
   font-size:32rpx; font-weight:700; display:flex; align-items:center; justify-content:center; margin-right:20rpx;
   overflow: hidden; position: relative;
 }
 .team-info { flex:1; min-width:0; }
 .team-name { font-size:29rpx; font-weight:600; color:#1A1A1A; margin-bottom:6rpx; }
 .team-meta { font-size:22rpx; color:#999; }
-.team-role { font-size:21rpx; color:#FF6B00; background:#FFF1E8; padding:4rpx 10rpx; border-radius:999rpx; margin-right:12rpx; }
+.team-role { font-size:21rpx; color:#1B4FD8; background:#F0F4FF; padding:4rpx 10rpx; border-radius:999rpx; margin-right:12rpx; }
 .team-logo image { width: 100%; height: 100%; }
-.team-logo-hint { font-size: 20rpx; color: #FF6B00; margin-top: 4rpx; }
+.team-logo-hint { font-size: 20rpx; color: #1B4FD8; margin-top: 4rpx; }

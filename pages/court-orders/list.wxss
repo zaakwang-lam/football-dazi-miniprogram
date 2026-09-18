@@ -26,7 +26,7 @@
 }
 
 .tab.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -71,7 +71,7 @@
   font-weight: 600;
 }
 
-.status-pending { background: #FFF3E0; color: #FF6B00; }
+.status-pending { background: #E8EEFF; color: #1B4FD8; }
 .status-success { background: #E8F5E9; color: #2E7D32; }
 .status-canceled { background: #F5F5F5; color: #999999; }
 .status-unknown { background: #F5F5F5; color: #999999; }
@@ -99,7 +99,7 @@
 }
 
 .info-val.highlight {
-  color: #FF6B00;
+  color: #1B4FD8;
   font-weight: 600;
 }
 
@@ -121,19 +121,19 @@
 }
 
 .btn-call {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
-  box-shadow: 0 4rpx 12rpx rgba(255, 107, 0, 0.3);
+  box-shadow: 0 4rpx 12rpx rgba(27, 79, 216, 0.3);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
 }
 
 .btn-secondary {
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
 }
 
 .btn-danger {

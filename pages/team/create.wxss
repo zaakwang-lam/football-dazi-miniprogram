@@ -49,7 +49,7 @@
 }
 
 .dist-item.active {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   color: #FFFFFF;
   font-weight: 600;
 }
@@ -95,6 +95,6 @@
 }
 .logo-actions { display: flex; gap: 16rpx; }
 .btn-logo {
-  padding: 12rpx 24rpx; background: #FFE8D6; color: #FF6B00; border-radius: 12rpx; font-size: 24rpx; font-weight: 600;
+  padding: 12rpx 24rpx; background: #E8EEFF; color: #1B4FD8; border-radius: 12rpx; font-size: 24rpx; font-weight: 600;
 }
 .btn-logo-clear { padding: 12rpx 24rpx; background: #F5F7FA; color: #999; border-radius: 12rpx; font-size: 24rpx; }

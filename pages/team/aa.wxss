@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   padding: 60rpx 32rpx 80rpx;
   text-align: center;
   color: #FFFFFF;
@@ -52,14 +52,14 @@
 .amount-sign {
   font-size: 36rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
   margin-right: 8rpx;
 }
 
 .amount-num {
   font-size: 80rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
   line-height: 1;
 }
 
@@ -85,8 +85,8 @@
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  background: #FFE8D6;
-  color: #FF6B00;
+  background: #E8EEFF;
+  color: #1B4FD8;
   font-size: 40rpx;
   font-weight: 700;
   display: flex;
@@ -183,7 +183,7 @@
 .member-amount {
   font-size: 30rpx;
   font-weight: 700;
-  color: #FF6B00;
+  color: #1B4FD8;
 }
 
 .bottom-action {

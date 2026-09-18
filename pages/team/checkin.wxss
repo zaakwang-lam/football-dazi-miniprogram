@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #FF6B00, #FF8C42);
+  background: linear-gradient(135deg, #1B4FD8, #4C8DFF);
   padding: 60rpx 32rpx;
   text-align: center;
   color: #FFFFFF;
@@ -125,5 +125,5 @@
 }
 
 .attendList-count {
-  color: #FF6B00;
+  color: #1B4FD8;
 }
