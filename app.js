@@ -137,7 +137,7 @@ App({
     systemInfo: null,
     navBarHeight: 64,
     apiBase: 'https://footballdazi.cn',
-    wxAppId: 'wxb3f1e355853399c8',
+    wxAppId: 'wx08b512fda8bed423',
     apiReachable: null,
     serverWxAppId: '',
     city: '广州',
