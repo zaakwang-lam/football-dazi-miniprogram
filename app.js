@@ -89,7 +89,6 @@ App({
               wx.setStorageSync('userInfo', merged);
               this.globalData.userInfo = merged;
             } else {
-              // 删号重登：用户 id 变化时不继承旧本地 roles/资料
               const sameUser = existing && user && existing.id && user.id && Number(existing.id) === Number(user.id);
               const serverNick = (user?.nickname || '').trim();
               const isDefault = !serverNick || serverNick === '微信用户' || serverNick === '微信昵称';
@@ -137,7 +136,7 @@ App({
     systemInfo: null,
     navBarHeight: 64,
     apiBase: 'https://footballdazi.cn',
-    wxAppId: 'wxb3f1e355853399c8',
+    wxAppId: 'wx08b512fda8bed423',
     apiReachable: null,
     serverWxAppId: '',
     city: '广州',
