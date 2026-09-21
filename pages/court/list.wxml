@@ -58,6 +58,6 @@
 
   <view class="empty" wx:if="{{!loading && courts.length === 0}}">
     <view class="empty-icon">🔍</view>
-    <text>{{区域内暂无符合条件的场地}}</text>
+    <text>暂无符合条件的场地</text>
   </view>
 </view>
