@@ -125,7 +125,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '一起搭球 - 组队列表',
+      title: '爱拍球 - 组队列表',
       path: '/pages/mine/my-teams'
     };
   }

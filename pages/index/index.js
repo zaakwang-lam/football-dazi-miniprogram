@@ -95,7 +95,7 @@ Page({
 
   onShareAppMessage() {
     return {
-      title: '一起搭球 - 广州业余足球一站式平台',
+      title: '爱拍球 - 广州业余足球一站式平台',
       path: '/pages/index/index'
     };
   }

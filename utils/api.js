@@ -1,7 +1,7 @@
 // utils/api.js
 const app = getApp();
 const API_BASE = 'https://footballdazi.cn';
-const EXPECTED_WX_APPID = 'wxb3f1e355853399c8';
+const EXPECTED_WX_APPID = 'wx08b512fda8bed423';
 
 function extractBody(res) {
   if (!res) return null;
