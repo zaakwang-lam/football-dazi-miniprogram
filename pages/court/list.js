@@ -1,5 +1,6 @@
 // pages/court/list.js
 const api = require('../../utils/api.js');
+const { chooseLocationOnMap, getSavedLocation, formatDistance } = require('../../utils/location.js');
 
 const COLOR_PAIRS = [
   ['#4FACFE', '#00F2FE'],
@@ -13,7 +14,12 @@ Page({
   data: {
     filters: { type: 'all' },
     keyword: '',
-    sortBy: 'rating',
+    sortBy: 'distance',
+    radiusKm: 0,
+    radiusLabel: '不限距离',
+    locName: '',
+    userLat: null,
+    userLng: null,
     regions: [],
     regionLabels: [],
     regionIndex: 0,
@@ -26,6 +32,7 @@ Page({
   },
 
   onLoad() {
+    this.restoreLocation();
     this.init();
   },
 
@@ -36,6 +43,17 @@ Page({
 
   onPullDownRefresh() {
     this.init().then(() => wx.stopPullDownRefresh());
+  },
+
+  restoreLocation() {
+    const loc = getSavedLocation();
+    if (!loc) return;
+    this.setData({
+      locName: loc.name || '已选位置',
+      userLat: loc.latitude,
+      userLng: loc.longitude,
+      sortBy: 'distance'
+    });
   },
 
   async init() {
@@ -49,10 +67,7 @@ Page({
       const regions = res.data?.list || [];
       const regionLabels = regions.map(r => `${r.label}（${r.count}）`);
       let index = 0;
-      const patch = {
-        regions,
-        regionLabels
-      };
+      const patch = { regions, regionLabels };
       if (regions.length) {
         const currentKey = `${this.data.province}|${this.data.city}`;
         const keep = regions.findIndex(r => `${r.province}|${r.city}` === currentKey);
@@ -87,6 +102,36 @@ Page({
     this.loadData();
   },
 
+  async onLocateTap() {
+    const loc = await chooseLocationOnMap();
+    if (!loc) return;
+    this.setData({
+      locName: loc.name || loc.address || '已选位置',
+      userLat: loc.latitude,
+      userLng: loc.longitude,
+      sortBy: 'distance'
+    });
+    wx.showToast({ title: '已按距离排序', icon: 'none' });
+    this.loadData();
+  },
+
+  onRadiusTap() {
+    wx.showActionSheet({
+      itemList: ['不限距离', '3 公里内', '5 公里内', '10 公里内'],
+      success: (res) => {
+        const map = [0, 3, 5, 10];
+        const labels = ['不限距离', '3km内', '5km内', '10km内'];
+        const radiusKm = map[res.tapIndex] || 0;
+        this.setData({ radiusKm, radiusLabel: labels[res.tapIndex] || '不限距离' });
+        if (radiusKm && !this.data.userLat) {
+          wx.showToast({ title: '请先点「定位」选位置', icon: 'none' });
+          return;
+        }
+        this.applyFilters();
+      }
+    });
+  },
+
   onKeywordInput(e) {
     this.setData({ keyword: e.detail.value || '' });
   },
@@ -103,31 +148,32 @@ Page({
   async loadData() {
     this.setData({ loading: true });
     try {
-      const params = { pageSize: 500 };
+      const params = { pageSize: 500, radiusKm: 200 };
       if (this.data.province) params.province = this.data.province;
       if (this.data.city) params.city = this.data.city;
       if (this.data.keyword) params.keyword = this.data.keyword.trim();
-
+      if (this.data.userLat && this.data.userLng) {
+        params.latitude = this.data.userLat;
+        params.longitude = this.data.userLng;
+      }
       const res = await api.getNearbyCourts(params);
-      const total = res.data?.total;
       const allCourts = (res.data?.list || []).map((c, i) => {
         const types = Array.isArray(c.types) && c.types.length ? c.types : (c.type ? [c.type] : []);
         const coverUrl = c.coverUrl || (Array.isArray(c.images) && c.images[0]) || '';
+        const km = c.distanceKm != null ? Number(c.distanceKm) : (c.distance != null ? Number(c.distance) : null);
         return {
-          ...c,
-          types,
+          ...c, types,
           typeLabel: types.length ? types.join('/') : (c.type || ''),
           coverUrl,
           bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
           bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
-          freeSlots: c.freeSlots || []
+          freeSlots: c.freeSlots || [],
+          distanceKm: km,
+          distanceText: formatDistance(km)
         };
       });
       this.setData({ _allCourts: allCourts });
       this.applyFilters();
-      if (typeof total === 'number' && this.data.regionLabel && !this.data.regionLabel.includes('（')) {
-        this.setData({ regionLabel: `${this.data.regions[this.data.regionIndex]?.label || this.data.regionLabel}` });
-      }
     } catch (e) {
       console.error('加载场地失败:', e);
     } finally {
@@ -138,6 +184,7 @@ Page({
   applyFilters() {
     const { type } = this.data.filters;
     const sortBy = this.data.sortBy;
+    const radiusKm = Number(this.data.radiusKm) || 0;
     let courts = (this.data._allCourts || []).slice();
     if (type !== 'all') {
       courts = courts.filter(c => {
@@ -145,13 +192,18 @@ Page({
         return c.type === type;
       });
     }
-    if (sortBy === 'price') {
-      courts.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
-    } else if (sortBy === 'rating') {
-      courts.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
-    } else {
-      courts.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'zh-CN'));
+    if (radiusKm > 0) {
+      courts = courts.filter(c => c.distanceKm != null && c.distanceKm <= radiusKm);
     }
+    if (sortBy === 'price') courts.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+    else if (sortBy === 'rating') courts.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
+    else if (sortBy === 'distance') {
+      courts.sort((a, b) => {
+        const da = a.distanceKm != null ? a.distanceKm : 9999;
+        const db = b.distanceKm != null ? b.distanceKm : 9999;
+        return da - db;
+      });
+    } else courts.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'zh-CN'));
     this.setData({ courts });
   },
 
@@ -164,18 +216,20 @@ Page({
 
   onSortTap() {
     wx.showActionSheet({
-      itemList: ['评分最高', '价格最低', '名称'],
+      itemList: ['距离最近', '评分最高', '价格最低', '名称'],
       success: (res) => {
-        const map = ['rating', 'price', 'name'];
-        this.setData({ sortBy: map[res.tapIndex] || 'rating' });
+        const map = ['distance', 'rating', 'price', 'name'];
+        const sortBy = map[res.tapIndex] || 'distance';
+        if (sortBy === 'distance' && !this.data.userLat) {
+          wx.showToast({ title: '请先点「定位」选位置', icon: 'none' });
+        }
+        this.setData({ sortBy });
         this.applyFilters();
-        wx.showToast({ title: '已应用排序', icon: 'none' });
       }
     });
   },
 
   onCourtTap(e) {
-    const id = e.currentTarget.dataset.id;
-    wx.navigateTo({ url: `/pages/court/detail?id=${id}` });
+    wx.navigateTo({ url: `/pages/court/detail?id=${e.currentTarget.dataset.id}` });
   }
 });
