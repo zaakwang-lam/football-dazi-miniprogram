@@ -3,25 +3,20 @@
   <view class="search-bar">
     <view class="search-box">
       <text class="search-icon">🔍</text>
-      <input
-        class="search-input"
-        placeholder="搜索球场名称 / 地址"
-        value="{{keyword}}"
-        confirm-type="search"
-        bindinput="onKeywordInput"
-        bindconfirm="onSearch"
-      />
+      <input class="search-input" placeholder="搜索球场名称 / 地址" value="{{keyword}}" confirm-type="search" bindinput="onKeywordInput" bindconfirm="onSearch" />
       <text class="search-clear" wx:if="{{keyword}}" bindtap="onClearKeyword">✕</text>
     </view>
-    <picker
-      mode="selector"
-      range="{{regionLabels}}"
-      value="{{regionIndex}}"
-      bindchange="onRegionChange"
-      disabled="{{!regions.length}}"
-    >
+    <picker mode="selector" range="{{regionLabels}}" value="{{regionIndex}}" bindchange="onRegionChange" disabled="{{!regions.length}}">
       <view class="loc-btn">{{regionLabel}} ▾</view>
     </picker>
+  </view>
+
+  <view class="locate-bar">
+    <view class="locate-main" bindtap="onLocateTap">
+      <text class="locate-ico">📍</text>
+      <text class="locate-text">{{locName ? locName : '点此选位置，计算到球场距离'}}</text>
+    </view>
+    <view class="radius-btn" bindtap="onRadiusTap">{{radiusLabel}} ▾</view>
   </view>
 
   <view class="filter-bar">
@@ -37,20 +32,15 @@
   <view class="court-list">
     <view class="court-row" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
       <view class="court-img" style="background: linear-gradient(135deg, {{item.bgColor1}}, {{item.bgColor2}});">
-        <image
-          wx:if="{{item.coverUrl}}"
-          class="court-cover"
-          src="{{item.coverUrl}}"
-          mode="aspectFill"
-        />
+        <image wx:if="{{item.coverUrl}}" class="court-cover" src="{{item.coverUrl}}" mode="aspectFill" />
         <view class="court-type-badge">{{item.typeLabel || item.type}}</view>
       </view>
       <view class="court-info">
         <view class="court-name">{{item.name}}</view>
         <view class="court-meta">
+          <text class="meta-item distance" wx:if="{{item.distanceText}}">📍 {{item.distanceText}}</text>
           <text class="meta-item">⭐ {{item.rating}}</text>
-          <text class="meta-item distance" wx:if="{{item.district}}">📍 {{item.district}}</text>
-          <text class="meta-item" wx:if="{{item.openTime}}">🕐 {{item.openTime}}</text>
+          <text class="meta-item" wx:if="{{item.district}}">{{item.district}}</text>
         </view>
         <view class="court-addr" wx:if="{{item.address}}">{{item.address}}</view>
         <view class="court-tags">
@@ -61,7 +51,6 @@
             <text class="price-num">¥{{item.price}}</text>
             <text class="price-unit">/场</text>
           </view>
-          <view class="tag tag-success" wx:if="{{item.freeSlots.length > 0}}">{{item.freeSlots[0]}}</view>
         </view>
       </view>
     </view>
@@ -69,6 +58,6 @@
 
   <view class="empty" wx:if="{{!loading && courts.length === 0}}">
     <view class="empty-icon">🔍</view>
-    <text>{{regionLabel ? '该省市暂无符合条件的场地' : '暂无符合条件的场地'}}</text>
+    <text>{{区域内暂无符合条件的场地}}</text>
   </view>
 </view>
