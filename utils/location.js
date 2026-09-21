@@ -1,28 +1,61 @@
 // utils/location.js
 // 仅使用已开通的 wx.chooseLocation（不要调用 wx.getLocation，公众平台未开通会无法提审）
 
-/** 广州市区默认中心（无选点时兜底，仅广州业务） */
+const STORAGE_KEY = 'user_chosen_location';
+
 const DEFAULT_GUANGZHOU = {
   latitude: 23.1291,
   longitude: 113.2644,
   name: '广州市'
 };
 
-/**
- * 打开地图选点（wx.chooseLocation）
- * @returns {Promise<{name:string, address:string, latitude:number, longitude:number}|null>}
- */
+function formatDistance(km) {
+  if (km == null || Number.isNaN(Number(km))) return '';
+  const n = Number(km);
+  if (n < 0.1) return '<100m';
+  if (n < 1) return `${Math.round(n * 1000)}m`;
+  if (n < 10) return `${n.toFixed(1)}km`;
+  return `${Math.round(n)}km`;
+}
+
+function getSavedLocation() {
+  try {
+    const loc = wx.getStorageSync(STORAGE_KEY);
+    if (loc && loc.latitude && loc.longitude) return loc;
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+function saveChosenLocation(loc) {
+  if (!loc || !loc.latitude || !loc.longitude) return;
+  const packed = {
+    name: loc.name || loc.address || '已选位置',
+    address: loc.address || loc.name || '',
+    latitude: Number(loc.latitude),
+    longitude: Number(loc.longitude),
+    updatedAt: Date.now()
+  };
+  wx.setStorageSync(STORAGE_KEY, packed);
+  return packed;
+}
+
+function clearSavedLocation() {
+  wx.removeStorageSync(STORAGE_KEY);
+}
+
 function chooseLocationOnMap() {
   return new Promise((resolve) => {
     const openPicker = () => {
       wx.chooseLocation({
         success: (res) => {
-          resolve({
+          const loc = {
             name: res.name || '',
             address: res.address || res.name || '',
             latitude: res.latitude,
             longitude: res.longitude
-          });
+          };
+          saveChosenLocation(loc);
+          resolve(loc);
         },
         fail: (err) => {
           console.warn('[location] chooseLocation fail:', err);
@@ -34,11 +67,9 @@ function chooseLocationOnMap() {
           if (msg.indexOf('auth deny') >= 0 || msg.indexOf('authorize') >= 0) {
             wx.showModal({
               title: '需要位置权限',
-              content: '请允许使用位置信息，以便在地图上选择位置',
+              content: '请允许使用位置信息，以便计算到球场的距离',
               confirmText: '去设置',
-              success: (m) => {
-                if (m.confirm) wx.openSetting({});
-              }
+              success: (m) => { if (m.confirm) wx.openSetting({}); }
             });
           } else {
             wx.showToast({ title: '打开地图失败', icon: 'none' });
@@ -47,7 +78,6 @@ function chooseLocationOnMap() {
         }
       });
     };
-
     wx.getSetting({
       success: (setting) => {
         const authed = setting.authSetting && setting.authSetting['scope.userLocation'];
@@ -76,17 +106,16 @@ function chooseLocationOnMap() {
   });
 }
 
-/**
- * 兼容旧调用名：不再使用 getLocation，改为地图选点或返回 null
- * 业务页请优先调用 chooseLocationOnMap
- */
 async function getCurrentLocation() {
-  // 故意不调用 wx.getLocation，避免提审「接口无权限」
-  return null;
+  return getSavedLocation();
 }
 
 module.exports = {
   DEFAULT_GUANGZHOU,
   getCurrentLocation,
-  chooseLocationOnMap
+  chooseLocationOnMap,
+  getSavedLocation,
+  saveChosenLocation,
+  clearSavedLocation,
+  formatDistance
 };
