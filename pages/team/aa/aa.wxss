@@ -1,0 +1,28 @@
+.page{padding:24rpx 32rpx 160rpx}
+.page-title{font-size:36rpx;font-weight:700;color:#1a1a1a;margin-bottom:8rpx}
+.page-sub{font-size:24rpx;color:#888;margin-bottom:32rpx}
+.card{background:#fff;border-radius:16rpx;padding:24rpx;margin-bottom:24rpx;box-shadow:0 2rpx 8rpx rgba(0,0,0,0.04)}
+.card-title{font-size:30rpx;font-weight:600;color:#1a1a1a;margin-bottom:16rpx;display:flex;align-items:center;justify-content:space-between}
+.card-title-text{flex:1}
+.badge{display:inline-block;padding:4rpx 12rpx;border-radius:8rpx;font-size:22rpx;margin-left:12rpx}
+.badge.draft{background:#fff7e6;color:#fa8c16}
+.badge.collecting{background:#e6f7ff;color:#1890ff}
+.badge.done{background:#f6ffed;color:#52c41a}
+.row{display:flex;align-items:center;padding:16rpx 0;border-bottom:1rpx solid #f0f0f0}
+.row:last-child{border-bottom:0}
+.checkbox{width:40rpx;height:40rpx;border:2rpx solid #d9d9d9;border-radius:50%;margin-right:16rpx;display:flex;align-items:center;justify-content:center;font-size:28rpx;color:#fff}
+.checkbox.checked{background:#1890ff;border-color:#1890ff}
+.avatar{width:64rpx;height:64rpx;border-radius:50%;background:#f0f5ff;color:#1890ff;display:flex;align-items:center;justify-content:center;font-size:28rpx;margin-right:16rpx}
+.member-info{flex:1}
+.member-name{font-size:28rpx;color:#1a1a1a;font-weight:500}
+.member-role{font-size:22rpx;color:#888;margin-top:4rpx}
+.amount-input{width:120rpx;text-align:right;font-size:28rpx;color:#1a1a1a;border-bottom:1rpx solid #f0f0f0;padding:4rpx 0}
+.pay-status{font-size:22rpx;color:#52c41a;margin-left:12rpx}
+.pay-status.unpaid{color:#ff4d4f}
+.summary{display:flex;justify-content:space-between;padding:20rpx 0;font-size:28rpx;color:#666;border-top:2rpx solid #f0f0f0;margin-top:12rpx}
+.summary strong{color:#1890ff;font-size:32rpx}
+.btn{display:block;width:100%;padding:24rpx;border-radius:48rpx;text-align:center;font-size:30rpx;font-weight:600;margin-top:24rpx}
+.btn-primary{background:linear-gradient(135deg,#1890ff,#4C8DFF);color:#fff}
+.btn-default{background:#f0f0f0;color:#666}
+.btn-danger{background:#fff1f0;color:#ff4d4f;border:1rpx solid #ffa39e}
+.empty{text-align:center;padding:80rpx 0;color:#888;font-size:26rpx}

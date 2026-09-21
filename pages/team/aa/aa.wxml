@@ -1,0 +1,102 @@
+<!-- pages/team/aa/aa.wxml -->
+<view class="page">
+  <view class="page-title">{{status === 'draft' ? '编辑 AA 草稿' : status === 'collecting' ? 'AA 收集中' : 'AA 已完成'}}</view>
+  <view class="page-sub">球队 ID: {{teamId}}</view>
+
+  <block wx:if="{{!loaded}}">
+    <view class="empty">加载中...</view>
+  </block>
+
+  <block wx:elif="{{!current}}">
+    <view class="card">
+      <view class="card-title"><text class="card-title-text">本队暂无 AA</text></view>
+      <view class="empty" wx:if="{{!aaList.length}}">点击下方按钮发起新 AA</view>
+    </view>
+
+    <view class="card" wx:if="{{aaList.length > 0}}">
+      <view class="card-title"><text class="card-title-text">历史 AA</text></view>
+      <view class="row" wx:for="{{aaList}}" wx:key="id" bindtap="onOpenHistory" data-id="{{item.id}}">
+        <view class="member-info">
+          <view class="member-name">{{item.title || '队费 AA'}}</view>
+          <view class="member-role">总额 ¥{{item.totalAmount}} · {{item.itemCount}} 人 · {{item.status === 'collecting' ? '收集中' : item.status === 'draft' ? '草稿' : '已完成'}}</view>
+        </view>
+        <view class="badge {{item.status}}">{{item.status === 'draft' ? '草稿' : item.status === 'collecting' ? '收集中' : '已完成'}}</view>
+      </view>
+    </view>
+
+    <button class="btn btn-primary" bindtap="onCreateDraft">+ 发起新 AA</button>
+  </block>
+
+  <block wx:elif="{{loaded && current}}">
+    <view class="card">
+      <view class="card-title">
+        <text class="card-title-text">AA 详情</text>
+        <view class="badge {{current.status}}">{{current.status === 'draft' ? '草稿' : current.status === 'collecting' ? '收集中' : '已完成'}}</view>
+      </view>
+      <view class="row">
+        <view class="member-info">
+          <view class="member-name">总金额</view>
+        </view>
+        <view style="color:#1890ff;font-size:32rpx;font-weight:600">¥{{current.totalAmount || 0}}</view>
+      </view>
+      <view class="row">
+        <view class="member-info">
+          <view class="member-name">人均</view>
+        </view>
+        <view style="color:#666;font-size:28rpx">¥{{current.perAmount || 0}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title"><text class="card-title-text">队员明细</text></view>
+      <view class="row" wx:for="{{current.items}}" wx:key="id">
+        <view class="checkbox {{item.included ? 'checked' : ''}}" bindtap="onToggleItem" data-idx="{{index}}">
+          <text wx:if="{{item.included}}">✓</text>
+        </view>
+        <view class="avatar">{{item.displayName.slice(0, 1) || '队'}}</view>
+        <view class="member-info">
+          <view class="member-name">{{item.displayName || '队员'}}</view>
+          <view class="member-role">{{item.userId === userId ? '我' : '队员'}}</view>
+        </view>
+        <input class="amount-input"
+          wx:if="{{current.status === 'draft'}}"
+          type="digit"
+          value="{{item.amount}}"
+          bindinput="onAmountInput"
+          data-idx="{{index}}"
+          placeholder="金额" />
+        <view wx:elif="{{current.status === 'collecting'}}" style="display:flex;align-items:center">
+          <view style="color:#1a1a1a;font-size:28rpx;margin-right:12rpx">¥{{item.amount}}</view>
+          <view class="pay-status {{item.payStatus === 'paid' ? '' : 'unpaid'}}">
+            {{item.payStatus === 'paid' ? '已付' : '待付'}}
+          </view>
+        </view>
+        <view wx:else style="color:#666;font-size:28rpx">¥{{item.amount}}</view>
+      </view>
+      <view class="summary">
+        <text>参与人数 <strong>{{itemIncludedCount}}</strong></text>
+        <text>总金额 <strong>¥{{current.totalAmount || 0}}</strong></text>
+      </view>
+    </view>
+
+    <block wx:if="{{current.status === 'draft'}}">
+      <button class="btn btn-default" bindtap="onEvenSplit">人均平摊</button>
+      <button class="btn btn-primary" bindtap="onSaveDraft">保存草稿</button>
+      <button class="btn btn-primary" bindtap="onInitiate">确认赛后发起收款</button>
+    </block>
+
+    <block wx:elif="{{current.status === 'collecting'}}">
+      <button class="btn btn-default" bindtap="onBack">返回列表</button>
+      <view class="row" wx:for="{{current.items}}" wx:key="id" wx:if="{{item.payStatus !== 'paid'}}" bindtap="onMarkPaid" data-id="{{item.id}}">
+        <view class="member-info">
+          <view class="member-name">标记 {{item.displayName}} 已付</view>
+        </view>
+        <view style="color:#52c41a;font-size:24rpx">标记已付</view>
+      </view>
+    </block>
+
+    <block wx:elif="{{current.status === 'done'}}">
+      <button class="btn btn-default" bindtap="onBack">返回列表</button>
+    </block>
+  </block>
+</view>

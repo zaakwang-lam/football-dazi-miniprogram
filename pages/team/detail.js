@@ -96,6 +96,13 @@ Page({
     wx.navigateTo({ url: `/pages/team/edit?id=${this.teamId}` });
   },
 
+  onAaTap() {
+    if (!this.data.isCaptain) {
+      return wx.showToast({ title: '仅队长可发起 AA', icon: 'none' });
+    }
+    wx.navigateTo({ url: `/pages/team/aa/aa?teamId=${this.teamId}` });
+  },
+
   onUploadLogo() {
     if (!this.data.isCaptain) return;
     wx.chooseMedia({
