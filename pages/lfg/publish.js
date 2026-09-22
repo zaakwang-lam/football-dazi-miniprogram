@@ -26,10 +26,12 @@ Page({
       playTime: '',
       playTimeLabel: '',
       needCount: 2,
-      level: '业余',
+      level: '养生',
+      matchType: '11人制',
       contact: '',
       description: ''
     },
+    matchTypeOptions: ['11人制', '8人制', '7人制', '5人制', '3人制'],
     dateMin: fmtDate(new Date()),
     dateMax: (() => { const d = new Date(); d.setDate(d.getDate() + 60); return fmtDate(d); })(),
     ready: false
@@ -111,6 +113,12 @@ Page({
     this.setData({ 'form.level': e.currentTarget.dataset.level });
   },
 
+  onMatchTypeSelect(e) {
+    const value = e.currentTarget.dataset.value;
+    if (!value) return;
+    this.setData({ 'form.matchType': value });
+  },
+
   onDateChange(e) {
     const dateStr = e.detail.value;
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -145,17 +153,19 @@ Page({
 
   async onSubmit() {
     if (!this.data.ready) return wx.showToast({ title: '请先加入球队', icon: 'none' });
-    const { teamId, teamName, location, playTime, contact, dateValue, timeValue } = this.data.form;
+    const { teamId, teamName, location, playTime, contact, dateValue, timeValue, matchType } = this.data.form;
     if (!teamId) return wx.showToast({ title: '请选择已加入的球队', icon: 'none' });
     if (!location) return wx.showToast({ title: '请用地图选择地点', icon: 'none' });
     if (!dateValue || !timeValue) return wx.showToast({ title: '请选择比赛时间', icon: 'none' });
+    if (!matchType) return wx.showToast({ title: '请选择人制', icon: 'none' });
     if (!isMobile(contact)) return wx.showToast({ title: '请填写11位手机号码', icon: 'none' });
 
     try {
       const res = await api.publishLfg({
         type: 'sub',
         teamId,
-        title: teamName ? `${teamName} 凑人` : `${location} ${this.data.form.playTimeLabel}`,
+        matchTypes: [matchType],
+        title: teamName ? `${teamName} ${matchType} 凑人` : `${location} ${this.data.form.playTimeLabel}`,
         location,
         playTime,
         needCount: this.data.form.needCount,

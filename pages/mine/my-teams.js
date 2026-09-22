@@ -120,7 +120,7 @@ Page({
   },
 
   onPublishTap() {
-    wx.navigateTo({ url: '/pages/mine/lfg-publish' });
+    wx.navigateTo({ url: '/pages/lfg/publish' });
   },
 
   onShareAppMessage() {

@@ -204,7 +204,7 @@ Page({
     if (api.hasRole(userInfo, 'user')) {
       if (type === 'my-teams') return wx.navigateTo({ url: '/pages/mine/my-teams?type=created' });
       if (type === 'joined-teams') return wx.navigateTo({ url: '/pages/mine/my-teams?type=joined' });
-      if (type === 'create-team') return wx.navigateTo({ url: '/pages/mine/lfg-publish' });
+      if (type === 'create-team') return wx.navigateTo({ url: '/pages/lfg/publish' });
       if (type === 'join-team') return wx.navigateTo({ url: '/pages/mine/my-teams?type=browse' });
     }
     if (api.hasRole(userInfo, 'court')) {
