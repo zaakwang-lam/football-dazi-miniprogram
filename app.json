@@ -21,6 +21,7 @@
     "pages/team/checkin",
     "pages/team/announce",
     "pages/team/aa",
+    "pages/team/aa/aa",
     "pages/login/login",
     "pages/role-select/role-select",
     "pages/court/eval",
@@ -68,10 +69,11 @@
   },
   "permission": {
     "scope.userLocation": {
-      "desc": "用于在地图上选择球场、凑人/约战地点及计算距离"
+      "desc": "用于自动定位、计算你到球场的直线距离，并在地图上导航"
     }
   },
   "requiredPrivateInfos": [
+    "getLocation",
     "chooseLocation"
   ],
   "style": "v2",
