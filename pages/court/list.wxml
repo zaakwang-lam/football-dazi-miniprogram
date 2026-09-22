@@ -14,7 +14,7 @@
   <view class="locate-bar">
     <view class="locate-main" bindtap="onLocateTap">
       <text class="locate-ico">📍</text>
-      <text class="locate-text">{{locName ? locName : '点此选位置，计算到球场距离'}}</text>
+      <text class="locate-text">{{locName ? locName : (locating ? '正在定位…' : '点击定位，计算到球场距离')}}</text>
     </view>
     <view class="radius-btn" bindtap="onRadiusTap">{{radiusLabel}} ▾</view>
   </view>
@@ -42,7 +42,7 @@
           <text class="meta-item">⭐ {{item.rating}}</text>
           <text class="meta-item" wx:if="{{item.district}}">{{item.district}}</text>
         </view>
-        <view class="court-addr" wx:if="{{item.address}}">{{item.address}}</view>
+        <view class="court-addr" wx:if="{{item.address}}" catchtap="onAddressTap" data-id="{{item.id}}">{{item.address}} · 导航</view>
         <view class="court-tags">
           <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
         </view>
