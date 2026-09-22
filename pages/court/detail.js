@@ -1,5 +1,6 @@
 // pages/court/detail.js
 const api = require('../../utils/api.js');
+const { openInMaps } = require('../../utils/location.js');
 
 const TIME_SLOTS = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
 
@@ -33,7 +34,6 @@ Page({
     });
     wx.setNavigationBarTitle({ title: court.name });
 
-    // 加载排期（后端返回 { courtId, schedules: { 'YYYY-MM-DD': [...] } }）
     const scheduleRes = await api.getCourtSchedule(id);
     const grouped = scheduleRes.data.schedules || {};
     const dates = Object.keys(grouped).slice(0, 7);
@@ -55,6 +55,17 @@ Page({
       }))
     }));
     this.setData({ schedule, timeSlots });
+  },
+
+  onAddressTap() {
+    const court = this.data.court;
+    if (!court) return;
+    openInMaps({
+      latitude: court.latitude,
+      longitude: court.longitude,
+      name: court.name,
+      address: court.address
+    });
   },
 
   onCallTap(e) {
