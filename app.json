@@ -73,25 +73,8 @@
     }
   },
   "requiredPrivateInfos": [
-    {
-      "getLocation": {
-        "desc": "用于自动定位、计算你到球场的直线距离"
-      },
-      "chooseLocation": {
-        "desc": "用于地图选点"
-      },
-      "openLocation": {
-        "desc": "用于打开位置设置"
-      }
-    },
-    {
-      "getLocation": {
-        "desc": "用于自动定位、计算你到球场的直线距离"
-      },
-      "chooseLocation": {
-        "desc": "用于地图选点"
-      }
-    },
+    "getLocation",
+    "chooseLocation",
     "chooseAddress"
   ],
   "style": "v2",
