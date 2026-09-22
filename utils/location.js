@@ -159,9 +159,9 @@ function openInMaps({ latitude, longitude, name, address }) {
   const lng = toNum(longitude);
   const title = name || '球场';
   const addr = address || '';
+  const text = [title, addr, (lat != null && lng != null) ? `${lat},${lng}` : ''].filter(Boolean).join(' ');
 
   const copyAndHint = (hint) => {
-    const text = [title, addr, (lat != null && lng != null) ? `${lat},${lng}` : ''].filter(Boolean).join(' ');
     wx.setClipboardData({
       data: text || addr || title,
       success: () => wx.showToast({ title: hint || '地址已复制，可粘贴到地图', icon: 'none' })
@@ -179,17 +179,21 @@ function openInMaps({ latitude, longitude, name, address }) {
       name: title,
       address: addr,
       scale: 16,
-      fail: () => copyAndHint('无法打开系统地图，已复制地址')
+      fail: (err) => {
+        console.warn('[location] openLocation fail:', err);
+        copyAndHint('无法打开系统地图，已复制地址');
+      }
     });
   };
 
   wx.showActionSheet({
-    itemList: ['系统地图导航', '复制地址去高德', '复制地址去百度'],
+    itemList: ['手机系统地图', '复制地址打开高德', '复制地址打开百度'],
     success: (res) => {
       if (res.tapIndex === 0) openSystem();
-      else if (res.tapIndex === 1) copyAndHint('已复制，请打开高德地图搜索');
-      else copyAndHint('已复制，请打开百度地图搜索');
-    }
+      else if (res.tapIndex === 1) copyAndHint('已复制，请打开高德地图搜索或粘贴导航');
+      else copyAndHint('已复制，请打开百度地图搜索或粘贴导航');
+    },
+    fail: () => openSystem()
   });
 }
 
