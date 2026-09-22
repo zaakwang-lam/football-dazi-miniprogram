@@ -81,7 +81,8 @@ Page({
         locating: false
       });
       if (this.data._allCourts && this.data._allCourts.length) {
-        this.attachDistances();
+        const withDist = this.attachDistances();
+        this.setData({ _allCourts: withDist });
         this.applyFilters();
       }
     } catch (e) {
@@ -222,6 +223,7 @@ Page({
       if (this.data.userLat && this.data.userLng) {
         params.latitude = this.data.userLat;
         params.longitude = this.data.userLng;
+        params.radiusKm = 0;
       }
       const res = await api.getNearbyCourts(params);
       const allCourts = (res.data?.list || []).map((c, i) => {
@@ -263,8 +265,12 @@ Page({
     if (radiusKm > 0) {
       const measured = courts.filter(c => c.distanceKm != null);
       const within = measured.filter(c => c.distanceKm <= radiusKm);
-      if (measured.length === 0) {
-        wx.showToast({ title: '这批球场尚未标注坐标，暂无法按距离筛选', icon: 'none' });
+      if (!this.data.userLat || !this.data.userLng) {
+        wx.showToast({ title: '尚未定位成功，先显示全部球场', icon: 'none' });
+      } else if (measured.length === 0) {
+        wx.showToast({ title: '球场暂无坐标，无法按距离筛，已显示全部', icon: 'none' });
+      } else if (within.length === 0) {
+        wx.showToast({ title: radiusKm + 'km内没有球场，已显示全部并按距离排序', icon: 'none' });
       } else {
         courts = within;
       }
