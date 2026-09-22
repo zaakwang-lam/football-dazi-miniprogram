@@ -74,7 +74,8 @@
   },
   "requiredPrivateInfos": [
     "getLocation",
-    "chooseLocation"
+    "chooseLocation",
+    "openLocation"
   ],
   "style": "v2",
   "sitemapLocation": "sitemap.json"
