@@ -75,7 +75,32 @@
   "requiredPrivateInfos": [
     "getLocation",
     "chooseLocation",
-    "openLocation"
+    {
+      "chooseAddress": {
+        "desc": "你的位置"
+      },
+      "chooseLocation": {
+        "desc": "你的位置"
+      },
+      "choosePoi": {
+        "desc": "你的位置"
+      },
+      "getFuzzyLocation": {
+        "desc": "你的位置"
+      },
+      "getLocation": {
+        "desc": "你的位置"
+      },
+      "onLocationChange": {
+        "desc": "你的位置"
+      },
+      "startLocationUpdate": {
+        "desc": "你的位置"
+      },
+      "startLocationUpdateBackground": {
+        "desc": "你的位置"
+      }
+    }
   ],
   "style": "v2",
   "sitemapLocation": "sitemap.json"
