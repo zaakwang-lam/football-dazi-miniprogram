@@ -1,6 +1,5 @@
 <!-- pages/court/detail.wxml -->
 <view class="page" wx:if="{{court}}">
-  <!-- 顶部封面 -->
   <view class="hero" style="background: linear-gradient(135deg, {{court.bgColor1}}, {{court.bgColor2}});">
     <view class="hero-type">{{court.type}}</view>
     <view class="hero-name">{{court.name}}</view>
@@ -9,11 +8,10 @@
     </view>
   </view>
 
-  <!-- 信息块 -->
   <view class="info-block">
-    <view class="info-row">
+    <view class="info-row" bindtap="onAddressTap">
       <text class="info-label">📍 地址</text>
-      <text class="info-value">{{court.address}}</text>
+      <text class="info-value">{{court.address}} · 导航</text>
     </view>
     <view class="info-row">
       <text class="info-label">📞 电话</text>
@@ -33,7 +31,6 @@
     </view>
   </view>
 
-  <!-- 排期表 -->
   <view class="section-title">📅 排期表</view>
   <view class="schedule-block">
     <scroll-view scroll-x class="schedule-scroll">
