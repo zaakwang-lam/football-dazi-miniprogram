@@ -87,7 +87,8 @@ function loginTest(secret) {
 function phoneLogin(code, phoneCode) {
   return request('/api/user/login-phone', 'POST', { code, phoneCode }, { loadingText: '登录中...' });
 }
-function getUserProfile() { return request('/api/user/profile', 'GET'); }
+function getUserProfile() { return request('/api/user/profile', 'GET');
+}
 function updateUserProfile(data) { return request('/api/v1/user/profile', 'PUT', data); }
 function registerRole(data) { return request('/api/user/register-role', 'POST', data); }
 function hasRole(userInfo, roleName) {
@@ -217,7 +218,7 @@ function listAa(teamId) { return request(`/api/v1/teams/${teamId}/aa`, 'GET'); }
 function getAa(teamId, aaId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}`, 'GET'); }
 function updateAa(teamId, aaId, data) { return request(`/api/v1/teams/${teamId}/aa/${aaId}`, 'PUT', data, { loadingText: '保存中...' }); }
 function initiateAa(teamId, aaId, data) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/initiate`, 'POST', data, { loadingText: '发起中...' }); }
-function markAaPaid(teamId, aaId, itemId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/items/${itemId}/mark-paid`, 'POST', {}, { loadingText: '标记中...' });
+function markAaPaid(teamId, aaId, itemId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/items/${itemId}/mark-paid`, 'POST', {}, { loadingText: '标记中...' }); }
 function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
