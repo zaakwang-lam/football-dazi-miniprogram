@@ -1,6 +1,13 @@
 // pages/court/list.js
 const api = require('../../utils/api.js');
-const { chooseLocationOnMap, getSavedLocation, formatDistance } = require('../../utils/location.js');
+const {
+  chooseLocationOnMap,
+  getSavedLocation,
+  getCurrentLocation,
+  formatDistance,
+  haversineKm,
+  openInMaps
+} = require('../../utils/location.js');
 
 const COLOR_PAIRS = [
   ['#4FACFE', '#00F2FE'],
@@ -18,6 +25,7 @@ Page({
     radiusKm: 0,
     radiusLabel: '不限距离',
     locName: '',
+    locating: false,
     userLat: null,
     userLng: null,
     regions: [],
@@ -33,6 +41,7 @@ Page({
 
   onLoad() {
     this.restoreLocation();
+    this.autoLocate();
     this.init();
   },
 
@@ -42,18 +51,42 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.init().then(() => wx.stopPullDownRefresh());
+    this.autoLocate(true).then(() => this.init()).then(() => wx.stopPullDownRefresh());
   },
 
   restoreLocation() {
     const loc = getSavedLocation();
     if (!loc) return;
     this.setData({
-      locName: loc.name || '已选位置',
+      locName: loc.name || '当前位置',
       userLat: loc.latitude,
       userLng: loc.longitude,
       sortBy: 'distance'
     });
+  },
+
+  async autoLocate(force) {
+    this.setData({ locating: true });
+    try {
+      const loc = await getCurrentLocation({ force: !!force });
+      if (!loc) {
+        this.setData({ locating: false });
+        return;
+      }
+      this.setData({
+        locName: loc.name || '当前位置',
+        userLat: loc.latitude,
+        userLng: loc.longitude,
+        sortBy: 'distance',
+        locating: false
+      });
+      if (this.data._allCourts && this.data._allCourts.length) {
+        this.attachDistances();
+        this.applyFilters();
+      }
+    } catch (e) {
+      this.setData({ locating: false });
+    }
   },
 
   async init() {
@@ -103,16 +136,32 @@ Page({
   },
 
   async onLocateTap() {
-    const loc = await chooseLocationOnMap();
-    if (!loc) return;
-    this.setData({
-      locName: loc.name || loc.address || '已选位置',
-      userLat: loc.latitude,
-      userLng: loc.longitude,
-      sortBy: 'distance'
+    wx.showActionSheet({
+      itemList: ['重新定位当前位置', '在地图上选点'],
+      success: async (res) => {
+        if (res.tapIndex === 0) {
+          const loc = await getCurrentLocation({ force: true, askSetting: true });
+          if (!loc) return wx.showToast({ title: '定位失败，请检查权限', icon: 'none' });
+          this.setData({
+            locName: loc.name || '当前位置',
+            userLat: loc.latitude,
+            userLng: loc.longitude,
+            sortBy: 'distance'
+          });
+          this.loadData();
+          return;
+        }
+        const picked = await chooseLocationOnMap();
+        if (!picked) return;
+        this.setData({
+          locName: picked.name || picked.address || '已选位置',
+          userLat: picked.latitude,
+          userLng: picked.longitude,
+          sortBy: 'distance'
+        });
+        this.loadData();
+      }
     });
-    wx.showToast({ title: '已按距离排序', icon: 'none' });
-    this.loadData();
   },
 
   onRadiusTap() {
@@ -124,8 +173,8 @@ Page({
         const radiusKm = map[res.tapIndex] || 0;
         this.setData({ radiusKm, radiusLabel: labels[res.tapIndex] || '不限距离' });
         if (radiusKm && !this.data.userLat) {
-          wx.showToast({ title: '请先点「定位」选位置', icon: 'none' });
-          return;
+          wx.showToast({ title: '正在定位，请稍候再筛', icon: 'none' });
+          this.autoLocate(true);
         }
         this.applyFilters();
       }
@@ -145,10 +194,28 @@ Page({
     this.loadData();
   },
 
+  attachDistances(list) {
+    const src = list || this.data._allCourts || [];
+    const lat = this.data.userLat;
+    const lng = this.data.userLng;
+    return src.map((c) => {
+      let km = c.distanceKm;
+      if (lat && lng) {
+        const local = haversineKm(lat, lng, c.latitude, c.longitude);
+        if (local != null) km = local;
+      }
+      return {
+        ...c,
+        distanceKm: km,
+        distanceText: formatDistance(km) || (lat && lng ? '距离未测' : '')
+      };
+    });
+  },
+
   async loadData() {
     this.setData({ loading: true });
     try {
-      const params = { pageSize: 500, radiusKm: 200 };
+      const params = { pageSize: 500 };
       if (this.data.province) params.province = this.data.province;
       if (this.data.city) params.city = this.data.city;
       if (this.data.keyword) params.keyword = this.data.keyword.trim();
@@ -168,11 +235,12 @@ Page({
           bgColor1: COLOR_PAIRS[i % COLOR_PAIRS.length][0],
           bgColor2: COLOR_PAIRS[i % COLOR_PAIRS.length][1],
           freeSlots: c.freeSlots || [],
-          distanceKm: km,
+          distanceKm: Number.isFinite(km) ? km : null,
           distanceText: formatDistance(km)
         };
       });
-      this.setData({ _allCourts: allCourts });
+      const withDist = this.attachDistances(allCourts);
+      this.setData({ _allCourts: withDist });
       this.applyFilters();
     } catch (e) {
       console.error('加载场地失败:', e);
@@ -193,7 +261,13 @@ Page({
       });
     }
     if (radiusKm > 0) {
-      courts = courts.filter(c => c.distanceKm != null && c.distanceKm <= radiusKm);
+      const measured = courts.filter(c => c.distanceKm != null);
+      const within = measured.filter(c => c.distanceKm <= radiusKm);
+      if (measured.length === 0) {
+        wx.showToast({ title: '这批球场尚未标注坐标，暂无法按距离筛选', icon: 'none' });
+      } else {
+        courts = within;
+      }
     }
     if (sortBy === 'price') courts.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
     else if (sortBy === 'rating') courts.sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0));
@@ -220,9 +294,6 @@ Page({
       success: (res) => {
         const map = ['distance', 'rating', 'price', 'name'];
         const sortBy = map[res.tapIndex] || 'distance';
-        if (sortBy === 'distance' && !this.data.userLat) {
-          wx.showToast({ title: '请先点「定位」选位置', icon: 'none' });
-        }
         this.setData({ sortBy });
         this.applyFilters();
       }
@@ -231,5 +302,16 @@ Page({
 
   onCourtTap(e) {
     wx.navigateTo({ url: `/pages/court/detail?id=${e.currentTarget.dataset.id}` });
+  },
+
+  onAddressTap(e) {
+    const item = (this.data.courts || []).find(c => String(c.id) === String(e.currentTarget.dataset.id));
+    if (!item) return;
+    openInMaps({
+      latitude: item.latitude,
+      longitude: item.longitude,
+      name: item.name,
+      address: item.address
+    });
   }
 });
