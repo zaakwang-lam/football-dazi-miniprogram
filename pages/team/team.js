@@ -47,7 +47,6 @@ Page({
       if (myTeamId) {
         myTeam = teams.find(t => t.id === Number(myTeamId));
       }
-      // 若本地无 myTeamId，尝试用「我的球队」接口
       if (!myTeam) {
         try {
           const mine = await api.getMyTeams();
@@ -91,9 +90,22 @@ Page({
       return;
     }
     if (type === 'find') {
-      // 约战 → 约战板块（非场地预订）
       wx.navigateTo({ url: '/pages/war/war' });
       return;
+    }
+    if (type === 'aa') {
+      if (!teamId) {
+        return wx.showToast({ title: '请先加入或创建球队', icon: 'none' });
+      }
+      wx.navigateTo({
+        url: `/pages/team/aa/aa?teamId=${teamId}`,
+        fail: () => {
+          wx.navigateTo({
+            url: `/pages/team/aa?teamId=${teamId}`,
+            fail: () => wx.showToast({ title: 'AA 页面打开失败，请重新编译上传', icon: 'none' })
+          });
+        }
+      });
     }
   },
 
