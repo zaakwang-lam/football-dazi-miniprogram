@@ -219,6 +219,7 @@ function getAa(teamId, aaId) { return request(`/api/v1/teams/${teamId}/aa/${aaId
 function updateAa(teamId, aaId, data) { return request(`/api/v1/teams/${teamId}/aa/${aaId}`, 'PUT', data, { loadingText: '保存中...' }); }
 function initiateAa(teamId, aaId, data) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/initiate`, 'POST', data, { loadingText: '发起中...' }); }
 function markAaPaid(teamId, aaId, itemId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/items/${itemId}/mark-paid`, 'POST', {}, { loadingText: '标记中...' }); }
+function markAaPaid(teamId, aaId, itemId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/items/${itemId}/mark-paid`, 'POST', {}, { loadingText: '标记中...' });}
 function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
@@ -232,3 +233,4 @@ module.exports = {
   getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam, uploadTeamLogo,
   updateTeamAnnouncement, checkin, createAa, listAa, getAa, updateAa, initiateAa, markAaPaid, getTeamStats
 };
+
