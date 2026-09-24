@@ -97,19 +97,7 @@ Page({
   },
 
   onAaTap() {
-    const teamId = this.teamId;
-    if (!teamId) {
-      return wx.showToast({ title: '球队信息缺失', icon: 'none' });
-    }
-    wx.navigateTo({
-      url: `/pages/team/aa/aa?teamId=${teamId}`,
-      fail: () => {
-        wx.navigateTo({
-          url: `/pages/team/aa?teamId=${teamId}`,
-          fail: () => wx.showToast({ title: 'AA 页面打开失败，请重新编译上传小程序', icon: 'none' })
-        });
-      }
-    });
+    wx.showToast({ title: '队费 AA 暂未开放', icon: 'none' });
   },
 
   onUploadLogo() {

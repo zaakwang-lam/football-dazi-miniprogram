@@ -46,11 +46,7 @@
 
   <view class="captain-actions" wx:if="{{isCaptain}}">
     <view class="cap-btn" bindtap="onEditTap">球队编辑</view>
-    <view class="cap-btn" bindtap="onAaTap">队费 AA</view>
     <view class="cap-btn danger" bindtap="onDissolveTap">解散球队</view>
-  </view>
-  <view class="captain-actions" wx:elif="{{isMember}}">
-    <view class="cap-btn" bindtap="onAaTap">队费 AA</view>
   </view>
 
   <view class="bottom-bar">
