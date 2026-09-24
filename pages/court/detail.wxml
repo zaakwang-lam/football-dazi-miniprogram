@@ -1,7 +1,7 @@
 <!-- pages/court/detail.wxml -->
 <view class="page" wx:if="{{court}}">
   <view class="hero" style="background: linear-gradient(135deg, {{court.bgColor1}}, {{court.bgColor2}});">
-    <view class="hero-type">{{court.type}}</view>
+    <view class="hero-type" wx:if="{{court.type}}">{{court.type}}</view>
     <view class="hero-name">{{court.name}}</view>
     <view class="hero-tags">
       <text class="hero-tag" wx:for="{{court.tags}}" wx:key="*this">{{item}}</text>

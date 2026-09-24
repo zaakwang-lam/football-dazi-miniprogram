@@ -33,7 +33,7 @@
     <view class="court-row" wx:for="{{courts}}" wx:key="id" bindtap="onCourtTap" data-id="{{item.id}}">
       <view class="court-img" style="background: linear-gradient(135deg, {{item.bgColor1}}, {{item.bgColor2}});">
         <image wx:if="{{item.coverUrl}}" class="court-cover" src="{{item.coverUrl}}" mode="aspectFill" />
-        <view class="court-type-badge">{{item.typeLabel || item.type}}</view>
+        <view class="court-type-badge" wx:if="{{item.typeLabel}}">{{item.typeLabel}}</view>
       </view>
       <view class="court-info">
         <view class="court-name">{{item.name}}</view>
