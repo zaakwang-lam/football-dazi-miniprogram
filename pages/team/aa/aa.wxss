@@ -26,3 +26,9 @@
 .btn-default{background:#f0f0f0;color:#666}
 .btn-danger{background:#fff1f0;color:#ff4d4f;border:1rpx solid #ffa39e}
 .empty{text-align:center;padding:80rpx 0;color:#888;font-size:26rpx}
+
+.total-input{font-size:40rpx;font-weight:700;color:#1a1a1a;padding:12rpx 0;border-bottom:2rpx solid #f0f0f0}
+.em{color:#1890ff;font-weight:700}
+.money{color:#1890ff;font-size:32rpx;font-weight:700;margin-left:auto}
+.pay-line{display:flex;align-items:center;gap:12rpx;font-size:28rpx;color:#1a1a1a}
+.row{position:relative}

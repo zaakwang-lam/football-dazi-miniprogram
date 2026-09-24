@@ -213,6 +213,7 @@ function checkin(data) {
   }, { loadingText: '打卡中...' });
 }
 function createAa(data) { return request(`/api/v1/teams/${data.teamId}/aa`, 'POST', data, { loadingText: '发起收款...' }); }
+function payAa(teamId, aaId, data) { return request(`/api/v1/teams/${teamId}/aa/${aaId}/pay`, 'POST', data || {}, { loadingText: '调起支付...' }); }
 
 function listAa(teamId) { return request(`/api/v1/teams/${teamId}/aa`, 'GET'); }
 function getAa(teamId, aaId) { return request(`/api/v1/teams/${teamId}/aa/${aaId}`, 'GET'); }
@@ -231,6 +232,6 @@ module.exports = {
   getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, confirmLfgJoin, rejectLfgJoin, deleteLfg, closeLfg,
   getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam, uploadTeamLogo,
-  updateTeamAnnouncement, checkin, createAa, listAa, getAa, updateAa, initiateAa, markAaPaid, getTeamStats
+  updateTeamAnnouncement, checkin, createAa, payAa, listAa, getAa, updateAa, initiateAa, markAaPaid, getTeamStats
 };
 
