@@ -119,6 +119,13 @@
   box-sizing:border-box; border-bottom:2rpx solid #F5F6F8;
 }
 .menu-row:last-child { border-bottom:none; }
+.menu-row.contact-btn {
+  width: 100%; margin: 0; background: transparent; border: none; border-radius: 0;
+  line-height: normal; text-align: left; font-weight: normal; font-size: inherit; color: inherit;
+  overflow: visible;
+}
+.menu-row.contact-btn::after { border: none; }
+.contact-btn-hover { background: #F7F8FA; }
 .menu-icon {
   width:58rpx; height:58rpx; border-radius:16rpx; display:flex; align-items:center;
   justify-content:center; font-size:27rpx; margin-right:20rpx; background:#E8EEFF;
@@ -127,6 +134,7 @@
 .icon-create { background:#F0F4FF; } .icon-court { background:#E8F8EE; }
 .icon-info { background:#F0E8FF; } .icon-publish { background:#FFF7E6; }
 .icon-list { background:#E8F8EE; } .icon-switch { background:#E8F2FF; }
+.icon-service { background:#FFF3E8; }
 .menu-label { flex:1; font-size:28rpx; color:#1A1A1A; font-weight:500; }
 .menu-arrow { font-size:34rpx; color:#CCCCCC; }
 .status-tag { padding:4rpx 14rpx; border-radius:999rpx; font-size:21rpx; margin-right:12rpx; }
