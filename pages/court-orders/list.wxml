@@ -46,13 +46,13 @@
 
       <view class="order-actions">
         <!-- 一键拨号 CTA -->
-        <view class="btn btn-primary btn-call" bindtap="onPhoneTap" data-phone="{{item.contactPhone}}" wx:if="{{item.contactPhone && item.status === 'booked'}}">
+        <view class="btn btn-primary btn-call" bindtap="onPhoneTap" data-phone="{{item.contactPhone}}" wx:if="{{item.contactPhone && item.status === 'booked' || item.status === 'paid'}}">
           📞 联系预订人
         </view>
-        <view class="btn btn-secondary" bindtap="onAccept" data-id="{{item.id}}" data-no="{{item.orderNo}}" wx:if="{{item.status === 'booked'}}">
+        <view class="btn btn-secondary" bindtap="onAccept" data-id="{{item.id}}" data-no="{{item.orderNo}}" wx:if="{{item.status === 'booked' || item.status === 'paid'}}">
           确认接单
         </view>
-        <view class="btn btn-danger btn-outline" bindtap="onDecline" data-id="{{item.id}}" data-no="{{item.orderNo}}" wx:if="{{item.status === 'booked'}}">
+        <view class="btn btn-danger btn-outline" bindtap="onDecline" data-id="{{item.id}}" data-no="{{item.orderNo}}" data-status="{{item.status}}" wx:if="{{item.status === 'booked' || item.status === 'paid'}}">
           拒绝
         </view>
       </view>

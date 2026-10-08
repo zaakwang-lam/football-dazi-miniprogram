@@ -136,7 +136,35 @@ function getBanners() {
 }
 function createOrder(data) { return request('/api/v1/orders', 'POST', data, { loadingText: '下单中...' }); }
 function payOrder(orderId, openid) {
-  return request('/api/v1/payment/unified-order', 'POST', { orderId, openid }, { loadingText: '调起支付...' });
+  const data = { orderId };
+  if (openid) data.openid = openid;
+  return request('/api/v1/payment/unified-order', 'POST', data, { loadingText: '调起支付...' });
+}
+function requestWxPay(payParams) {
+  return new Promise((resolve, reject) => {
+    if (!payParams || !payParams.paySign) {
+      reject(new Error('缺少支付参数'));
+      return;
+    }
+    wx.requestPayment({
+      timeStamp: String(payParams.timeStamp),
+      nonceStr: payParams.nonceStr,
+      package: payParams.package,
+      signType: payParams.signType || 'MD5',
+      paySign: payParams.paySign,
+      success: resolve,
+      fail: (err) => {
+        const msg = String((err && err.errMsg) || '');
+        if (msg.indexOf('cancel') >= 0) {
+          const e = new Error('已取消支付');
+          e.cancelled = true;
+          reject(e);
+          return;
+        }
+        reject(new Error('支付未完成'));
+      }
+    });
+  });
 }
 function applyRefund(data) { return request('/api/v1/payment/refund', 'POST', data, { loadingText: '提交退款...' }); }
 function getOrderList(params = {}) {
@@ -228,7 +256,7 @@ module.exports = {
   getMyCourts, searchClaimableCourts, claimCourt, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
-  createOrder, payOrder, applyRefund, getOrderList, getOrderDetail, cancelOrder,
+  createOrder, payOrder, requestWxPay, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,
   getLfgList, publishLfg, getLfgDetail, joinLfg, quitLfg, confirmLfgJoin, rejectLfgJoin, deleteLfg, closeLfg,
   getTeamList, getTeamDetail, createTeam, joinTeam, leaveTeam, updateTeam, dissolveTeam, uploadTeamLogo,

@@ -30,12 +30,20 @@
 
   <view class="price-block">
     <view class="price-row">
-      <text>场地费（到场结算）</text>
+      <text>{{order.paidOnline ? '场地费（在线支付）' : '场地费'}}</text>
       <text class="price-val">¥{{order.price}}</text>
     </view>
   </view>
 
-  <view class="bottom-bar" wx:if="{{order.status === '已预订'}}">
+  <view class="bottom-bar" wx:if="{{order.rawStatus === 'pending'}}">
+    <view class="btn-secondary" bindtap="onCancelBook">取消订单</view>
+    <view class="btn-primary" bindtap="onPay">去支付</view>
+  </view>
+  <view class="bottom-bar" wx:elif="{{order.rawStatus === 'paid' || (order.rawStatus === 'completed' && order.paidOnline)}}">
+    <view class="btn-secondary" bindtap="onRefund">退订退款</view>
+    <view class="btn-primary" bindtap="onContactCourt">联系球场方</view>
+  </view>
+  <view class="bottom-bar" wx:elif="{{order.status === '已预订'}}">
     <view class="btn-secondary" bindtap="onCancelBook">取消预订</view>
     <view class="btn-primary" bindtap="onContactCourt">联系球场方</view>
   </view>

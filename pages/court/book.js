@@ -149,28 +149,52 @@ Page({
   },
 
   doBook(court, slot, name, phone) {
-    wx.showLoading({ title: '预订中...', mask: true });
+    wx.showLoading({ title: '提交中...', mask: true });
     api.createOrder({
       courtId: court.id,
       scheduleId: slot.id,
       contactName: name,
       contactPhone: phone,
       remark: this.data.form.remark
-    }).then(orderRes => {
+    }).then(async (orderRes) => {
       wx.hideLoading();
       if (orderRes.code !== 0) {
         return wx.showToast({ title: orderRes.message || '预订失败', icon: 'none' });
       }
-      const orderId = orderRes.data.orderId;
-      wx.showModal({
-        title: '预订成功',
-        content: '已通知球场方，请保持电话畅通。费用请到球场现场结算。',
-        showCancel: false,
-        confirmText: '查看订单',
-        success: () => {
-          wx.redirectTo({ url: `/pages/order/detail?id=${orderId}` });
-        }
-      });
+      const data = orderRes.data || {};
+      const orderId = data.orderId;
+      if (!data.needPay) {
+        wx.showModal({
+          title: '预订成功',
+          content: '该场次免费，已通知球场方。',
+          showCancel: false,
+          confirmText: '查看订单',
+          success: () => wx.redirectTo({ url: `/pages/order/detail?id=${orderId}` })
+        });
+        return;
+      }
+      try {
+        const payRes = await api.payOrder(orderId);
+        await api.requestWxPay(payRes.data && payRes.data.payParams);
+        wx.showModal({
+          title: '支付成功',
+          content: '款项已支付到平台对公账户，球场方会收到预订通知。',
+          showCancel: false,
+          confirmText: '查看订单',
+          success: () => wx.redirectTo({ url: `/pages/order/detail?id=${orderId}` })
+        });
+      } catch (err) {
+        const cancelled = err && err.cancelled;
+        wx.showModal({
+          title: cancelled ? '待支付' : '支付未完成',
+          content: cancelled
+            ? '订单已生成。可在「我的订单」继续支付或取消，时段暂时为你保留。'
+            : (err.message || '支付未完成，可在「我的订单」重新支付'),
+          showCancel: false,
+          confirmText: '查看订单',
+          success: () => wx.redirectTo({ url: `/pages/order/detail?id=${orderId}` })
+        });
+      }
     }).catch(err => {
       wx.hideLoading();
       wx.showToast({ title: err.message || '预订失败，请重试', icon: 'none' });

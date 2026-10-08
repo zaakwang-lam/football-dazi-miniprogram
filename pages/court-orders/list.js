@@ -2,8 +2,11 @@
 const api = require('../../utils/api.js');
 
 const STATUS_MAP = {
+  pending: { label: '待支付', icon: '⏰', cls: 'pending' },
   booked: { label: '已预订', icon: '⏰', cls: 'pending' },
+  paid: { label: '已支付', icon: '¥', cls: 'success' },
   completed: { label: '已接单', icon: '✓', cls: 'success' },
+  refunded: { label: '已退款', icon: '↩', cls: 'canceled' },
   canceled: { label: '已拒绝', icon: '✕', cls: 'canceled' }
 };
 
@@ -91,9 +94,12 @@ Page({
   async onDecline(e) {
     const id = e.currentTarget.dataset.id;
     const orderNo = e.currentTarget.dataset.no;
+    const paid = e.currentTarget.dataset.status === 'paid';
     wx.showModal({
       title: '拒绝预订',
-      content: `确认拒绝 ${orderNo} 吗？拒绝后该时段会重新开放。`,
+      content: paid
+        ? `拒绝 ${orderNo} 后将立即发起原路退款，时段重新开放。`
+        : `确认拒绝 ${orderNo} 吗？拒绝后该时段会重新开放。`,
       editable: true,
       placeholderText: '可选：拒绝原因',
       success: async (res) => {

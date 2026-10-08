@@ -3,6 +3,7 @@
   <!-- Tabs -->
   <view class="tabs">
     <view class="tab {{status === 'all' ? 'active' : ''}}" bindtap="onTabTap" data-status="all">全部</view>
+    <view class="tab {{status === '待支付' ? 'active' : ''}}" bindtap="onTabTap" data-status="待支付">待支付</view>
     <view class="tab {{status === '已预订' ? 'active' : ''}}" bindtap="onTabTap" data-status="已预订">已预订</view>
     <view class="tab {{status === '已支付' ? 'active' : ''}}" bindtap="onTabTap" data-status="已支付">已支付</view>
     <view class="tab {{status === '已完成' ? 'active' : ''}}" bindtap="onTabTap" data-status="已完成">已完成</view>
@@ -23,7 +24,7 @@
         <view class="order-actions">
           <view class="action-btn secondary" wx:if="{{item.status === '待支付'}}" catchtap="onCancel" data-id="{{item.id}}">取消</view>
           <view class="action-btn primary" wx:if="{{item.status === '待支付'}}" catchtap="onPay" data-id="{{item.id}}">支付</view>
-          <view class="action-btn secondary" wx:if="{{item.status === '已支付'}}" catchtap="onRefund" data-id="{{item.id}}">退订</view>
+          <view class="action-btn secondary" wx:if="{{item.status === '已支付' || (item.status === '已完成' && item.payAmount > 0)}}" catchtap="onRefund" data-id="{{item.id}}">退订</view>
         </view>
       </view>
     </view>

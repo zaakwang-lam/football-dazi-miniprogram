@@ -47,7 +47,7 @@
 
   <view class="summary-card">
     <view class="summary-row">
-      <text>场地费（到场结算）</text>
+      <text>场地费（在线支付）</text>
       <text class="summary-price">¥{{totalPrice}}</text>
     </view>
     <view class="summary-row">
@@ -63,8 +63,8 @@
   <view class="bottom-bar" wx:if="{{form.slotIdx >= 0}}">
     <view class="summary-left">
       <text class="summary-price">¥{{totalPrice}}/场</text>
-      <text class="summary-tip">付款请到球场</text>
+      <text class="summary-tip">{{totalPrice > 0 ? '支付到对公账户' : '免费预订'}}</text>
     </view>
-    <view class="btn-primary" bindtap="onSubmit">立即预订</view>
+    <view class="btn-primary" bindtap="onSubmit">{{totalPrice > 0 ? '确认支付' : '立即预订'}}</view>
   </view>
 </view>

@@ -54,6 +54,7 @@ Page({
         const cn = CN_MAP[o.status] || o.status;
         return {
           ...o,
+          payAmount: parseFloat(o.payAmount || 0),
           status: cn,
           statusKey: STATUS_KEY_MAP[cn] || 'canceled',
           price: parseFloat(o.amount)
@@ -77,13 +78,23 @@ Page({
     wx.navigateTo({ url: `/pages/order/detail?id=${id}` });
   },
 
-  onPay(e) {
+  async onPay(e) {
     const id = e.currentTarget.dataset.id;
     if (!id) {
       wx.showToast({ title: '订单ID缺失', icon: 'none' });
       return;
     }
-    wx.navigateTo({ url: `/pages/order/detail?id=${id}` });
+    try {
+      wx.showLoading({ title: '调起支付...', mask: true });
+      const payRes = await api.payOrder(id);
+      wx.hideLoading();
+      await api.requestWxPay(payRes.data && payRes.data.payParams);
+      wx.showToast({ title: '支付成功', icon: 'success' });
+      this.loadData();
+    } catch (err) {
+      wx.hideLoading();
+      wx.showToast({ title: (err && err.cancelled) ? '已取消支付' : (err.message || '支付失败'), icon: 'none' });
+    }
   },
 
   onCancel(e) {
@@ -94,7 +105,7 @@ Page({
     }
     wx.showModal({
       title: '确认取消',
-      content: '取消后定金将原路退回',
+      content: '取消后将释放该时段，无需退款',
       success: async (res) => {
         if (res.confirm) {
           try {
@@ -117,11 +128,19 @@ Page({
       return;
     }
     wx.showModal({
-      title: '申请退订',
-      content: '提前 24h 全额退款，是否继续？',
-      success: (res) => {
-        if (res.confirm) {
+      title: '确认退订',
+      content: '退订后将立即向微信发起退款，款项原路退回。',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          wx.showLoading({ title: '退款中...', mask: true });
+          await api.cancelOrder(id);
+          wx.hideLoading();
           wx.showToast({ title: '退款已提交', icon: 'success' });
+          this.loadData();
+        } catch (err) {
+          wx.hideLoading();
+          wx.showToast({ title: err.message || '退订失败', icon: 'none' });
         }
       }
     });
