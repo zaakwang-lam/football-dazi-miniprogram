@@ -20,7 +20,6 @@
 
   <swiper
     class="hero-swiper"
-    style="height: {{bannerHeight}}rpx;"
     indicator-dots="{{banners.length > 1}}"
     autoplay="{{banners.length > 1}}"
     interval="4000"
@@ -29,7 +28,7 @@
   >
     <swiper-item wx:for="{{banners}}" wx:key="id">
       <view class="hero-banner" bindtap="onBannerTap" data-url="{{item.linkUrl}}">
-        <image class="hero-bg" src="{{item.imageUrl}}" mode="aspectFit" bindload="onBannerLoad"></image>
+        <image class="hero-bg" src="{{item.imageUrl}}" mode="aspectFit"></image>
       </view>
     </swiper-item>
   </swiper>

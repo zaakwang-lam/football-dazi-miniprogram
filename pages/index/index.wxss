@@ -29,10 +29,10 @@
 /* 首页轮播 */
 .hero-swiper {
   margin: 24rpx;
-  height: 360rpx;
+  height: 280rpx;
   border-radius: 32rpx;
   overflow: hidden;
-  background: #F4F6FA;
+  background: #F5F7FA;
 }
 
 .hero-banner {
@@ -52,7 +52,7 @@
   margin: 0;
   height: 100%;
   border-radius: 32rpx;
-  background: #F4F6FA;
+  background: #F5F7FA;
   box-shadow: none;
 }
 
