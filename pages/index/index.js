@@ -5,6 +5,7 @@ const { dialPhone } = require('../../utils/util.js');
 Page({
   data: {
     banners: [],
+    bannerHeight: 360,
     lfgList: []
   },
 
@@ -39,7 +40,18 @@ Page({
       ? (bannerRes.value.data?.list || []).filter(b => b.imageUrl)
       : [];
 
-    this.setData({ lfgList, banners });
+    this._bannerHeight = 0;
+    this.setData({ lfgList, banners, bannerHeight: 360 });
+  },
+
+  onBannerLoad(e) {
+    const w = Number(e.detail.width);
+    const h = Number(e.detail.height);
+    if (!w || !h) return;
+    const heightRpx = Math.min(1200, Math.max(200, Math.round((750 - 48) * h / w)));
+    const next = Math.max(this._bannerHeight || 0, heightRpx);
+    this._bannerHeight = next;
+    if (next !== this.data.bannerHeight) this.setData({ bannerHeight: next });
   },
 
   formatTime(dateStr) {
