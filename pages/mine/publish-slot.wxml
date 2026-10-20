@@ -36,7 +36,8 @@
     <view class="label required">场次费用（元）</view>
     <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="例如 300" />
 
-    <view class="btn-primary" bindtap="onPublish">发布空闲时段</view>
+    <view class="btn-primary" bindtap="onPublish">{{editingId ? '保存修改' : '发布空闲时段'}}</view>
+    <view class="btn-cancel" wx:if="{{editingId}}" bindtap="onCancelEdit">取消修改</view>
   </view>
 
   <view class="card" wx:if="{{slots.length}}">
@@ -46,7 +47,10 @@
         <text>{{item.date}} {{item.timeSlot}}</text>
         <text class="slot-type">{{item.pitchType || '5人场'}}</text>
       </view>
-      <text class="price">¥{{item.price}}</text>
+      <view class="slot-side">
+        <text class="price">¥{{item.price}}</text>
+        <text class="slot-edit" catchtap="onEditSlot" data-id="{{item.id}}">修改</text>
+      </view>
     </view>
   </view>
 </view>

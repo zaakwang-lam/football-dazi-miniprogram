@@ -21,7 +21,8 @@ Page({
     pitchTypes: ['5人场', '7人场', '11人场'],
     pitchType: '5人场',
     price: '',
-    slots: []
+    slots: [],
+    editingId: null
   },
 
   onLoad(options) {
@@ -74,7 +75,8 @@ Page({
     this.setData({
       courtIndex: idx,
       courtId: court.id,
-      price: court.price != null ? String(court.price) : ''
+      price: court.price != null ? String(court.price) : '',
+      editingId: null
     });
     this.loadSlots(court.id);
   },
@@ -115,8 +117,31 @@ Page({
     this.setData({ pitchType: e.currentTarget.dataset.value });
   },
 
+  onEditSlot(e) {
+    const id = e.currentTarget.dataset.id;
+    const slot = (this.data.slots || []).find(s => String(s.id) === String(id));
+    if (!slot) return;
+    const parts = String(slot.timeSlot || '').split('-');
+    const startTime = parts[0] || '18:00';
+    const endTime = parts[1] || '20:00';
+    this.setData({
+      editingId: slot.id,
+      date: slot.date,
+      startTime,
+      endTime,
+      timeSlot: `${startTime}-${endTime}`,
+      pitchType: slot.pitchType || '5人场',
+      price: slot.price != null ? String(slot.price) : ''
+    });
+    wx.pageScrollTo({ scrollTop: 0, duration: 200 });
+  },
+
+  onCancelEdit() {
+    this.setData({ editingId: null });
+  },
+
   async onPublish() {
-    const { courtId, date, startTime, endTime, price, pitchType } = this.data;
+    const { courtId, date, startTime, endTime, price, pitchType, editingId } = this.data;
     if (!courtId) return wx.showToast({ title: '请选择球场', icon: 'none' });
     if (!date) return wx.showToast({ title: '请选择日期', icon: 'none' });
     if (!pitchType) return wx.showToast({ title: '请选择球场类型', icon: 'none' });
@@ -127,18 +152,17 @@ Page({
       return wx.showToast({ title: '结束时间需晚于开始时间', icon: 'none' });
     }
     const timeSlot = `${startTime}-${endTime}`;
+    const payload = { date, timeSlot, pitchType, price: fee };
     try {
-      const res = await api.publishFreeSlots(courtId, [{
-        date,
-        timeSlot,
-        pitchType,
-        price: fee
-      }]);
-      if (res.code !== 0) throw new Error(res.message || '发布失败');
-      wx.showToast({ title: res.message || '发布成功', icon: 'success' });
+      const res = editingId
+        ? await api.updateFreeSlot(courtId, editingId, payload)
+        : await api.publishFreeSlots(courtId, [payload]);
+      if (res.code !== 0) throw new Error(res.message || '保存失败');
+      wx.showToast({ title: res.message || (editingId ? '已更新' : '发布成功'), icon: 'success' });
+      this.setData({ editingId: null });
       this.loadSlots(courtId);
     } catch (e) {
-      wx.showToast({ title: e.message || '发布失败', icon: 'none' });
+      wx.showToast({ title: e.message || '保存失败', icon: 'none' });
     }
   }
 });

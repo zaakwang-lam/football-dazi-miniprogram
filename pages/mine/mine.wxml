@@ -122,7 +122,7 @@
     </view>
     <view class="menu-row" bindtap="onMenuTap" data-type="publish-slot">
       <view class="menu-icon icon-publish">📅</view>
-      <text class="menu-label">发布空闲时段</text>
+      <text class="menu-label">发布 / 修改空闲时段</text>
       <text class="menu-arrow">›</text>
     </view>
     <view class="menu-row" bindtap="onMenuTap" data-type="court-orders">
