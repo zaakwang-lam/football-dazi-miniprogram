@@ -140,6 +140,31 @@ Page({
     this.setData({ editingId: null });
   },
 
+  onDeleteSlot(e) {
+    const id = e.currentTarget.dataset.id;
+    const label = e.currentTarget.dataset.label || '该时段';
+    const courtId = this.data.courtId;
+    if (!id || !courtId) return;
+    wx.showModal({
+      title: '删除空闲时段',
+      content: `删除「${label}」后，用户将无法再预约该时段。确定删除？`,
+      confirmText: '删除',
+      confirmColor: '#e54d42',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          const result = await api.deleteFreeSlot(courtId, id);
+          if (result.code !== 0) throw new Error(result.message || '删除失败');
+          if (String(this.data.editingId) === String(id)) this.setData({ editingId: null });
+          wx.showToast({ title: '已删除', icon: 'success' });
+          this.loadSlots(courtId);
+        } catch (err) {
+          wx.showToast({ title: err.message || '删除失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
   async onPublish() {
     const { courtId, date, startTime, endTime, price, pitchType, editingId } = this.data;
     if (!courtId) return wx.showToast({ title: '请选择球场', icon: 'none' });

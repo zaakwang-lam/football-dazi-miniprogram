@@ -122,6 +122,9 @@ function publishFreeSlots(courtId, slots) {
 function updateFreeSlot(courtId, slotId, data) {
   return request(`/api/v1/courts/${courtId}/free-slots/${slotId}`, 'PUT', data, { loadingText: '保存中...' });
 }
+function deleteFreeSlot(courtId, slotId) {
+  return request(`/api/v1/courts/${courtId}/free-slots/${slotId}`, 'DELETE', {}, { loadingText: '删除中...' });
+}
 function getFreeSlots(courtId, params = {}) {
   const qs = Object.keys(params).map(k => `${k}=${params[k]}`).join('&');
   return request(`/api/v1/courts/${courtId}/free-slots${qs ? '?' + qs : ''}`, 'GET');
@@ -260,7 +263,7 @@ function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 module.exports = {
   API_BASE, EXPECTED_WX_APPID, request, getPublicMeta, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
   getMyCourts, searchClaimableCourts, claimCourt, unbindCourt, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
-  getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots, updateFreeSlot,
+  getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots, updateFreeSlot, deleteFreeSlot,
   getBanners,
   createOrder, payOrder, requestWxPay, applyRefund, getOrderList, getOrderDetail, cancelOrder,
   getCourtOrders, acceptCourtOrder, cancelCourtOrder, getAdminOrders, acceptAdminOrder, cancelAdminOrder,

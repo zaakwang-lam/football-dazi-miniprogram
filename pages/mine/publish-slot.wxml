@@ -50,6 +50,7 @@
       <view class="slot-side">
         <text class="price">¥{{item.price}}</text>
         <text class="slot-edit" catchtap="onEditSlot" data-id="{{item.id}}">修改</text>
+        <text class="slot-del" catchtap="onDeleteSlot" data-id="{{item.id}}" data-label="{{item.date}} {{item.timeSlot}}">删除</text>
       </view>
     </view>
   </view>

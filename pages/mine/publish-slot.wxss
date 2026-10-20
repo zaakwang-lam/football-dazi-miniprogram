@@ -30,6 +30,7 @@
 .price { color: #1B4FD8; font-weight: 600; }
 .slot-side { display: flex; align-items: center; gap: 20rpx; }
 .slot-edit { color: #FF6B00; font-size: 26rpx; }
+.slot-del { color: #e54d42; font-size: 26rpx; }
 
 .time-row { display: flex; align-items: center; gap: 16rpx; }
 .time-picker { flex: 1; text-align: center; }
