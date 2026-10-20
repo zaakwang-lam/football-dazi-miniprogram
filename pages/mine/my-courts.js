@@ -94,6 +94,36 @@ Page({
     } catch (e) { return isoStr; }
   },
 
+  onUnbind(e) {
+    const id = e.currentTarget.dataset.id;
+    const name = e.currentTarget.dataset.name || '该球场';
+    if (!id) return;
+    wx.showModal({
+      title: '解绑球场',
+      content: `解绑「${name}」后，其他人可以重新认领。确定解绑？`,
+      confirmText: '解绑',
+      confirmColor: '#e54d42',
+      success: async (res) => {
+        if (!res.confirm) return;
+        try {
+          const result = await api.unbindCourt(id);
+          const app = getApp();
+          const userInfo = wx.getStorageSync('userInfo') || {};
+          const data = result.data || {};
+          if (data.roles) userInfo.roles = data.roles;
+          if (data.role) userInfo.role = data.role;
+          userInfo.courtId = data.courtIdLeft || '';
+          wx.setStorageSync('userInfo', userInfo);
+          if (app && app.globalData) app.globalData.userInfo = userInfo;
+          wx.showToast({ title: '已解绑', icon: 'success' });
+          this.loadMyCourts();
+        } catch (err) {
+          wx.showToast({ title: err.message || '解绑失败', icon: 'none' });
+        }
+      }
+    });
+  },
+
   onEditTap(e) {
     this.openEdit(e.currentTarget.dataset.id);
   },

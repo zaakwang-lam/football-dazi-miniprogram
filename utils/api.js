@@ -103,6 +103,9 @@ function searchClaimableCourts(keyword) {
 function claimCourt(id) {
   return request(`/api/user/courts/${id}/claim`, 'POST', {}, { loadingText: '认领中...' });
 }
+function unbindCourt(id) {
+  return request(`/api/user/me/courts/${id}/unbind`, 'POST', {}, { loadingText: '解绑中...' });
+}
 function updateMyCourt(id, data) {
   return request(`/api/user/me/courts/${id}`, 'PUT', data, { loadingText: '保存中...' });
 }
@@ -253,7 +256,7 @@ function getTeamStats(id) { return request(`/api/v1/teams/${id}/stats`); }
 
 module.exports = {
   API_BASE, EXPECTED_WX_APPID, request, getPublicMeta, wxLogin, loginTest, phoneLogin, getUserProfile, updateUserProfile, registerRole, hasRole,
-  getMyCourts, searchClaimableCourts, claimCourt, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
+  getMyCourts, searchClaimableCourts, claimCourt, unbindCourt, updateMyCourt, uploadCourtImage, getMyTeams, getMyLfgPosts,
   getNearbyCourts, getCourtRegions, getCourtDetail, getCourtSchedule, evaluateCourt, getFreeSlots, publishFreeSlots,
   getBanners,
   createOrder, payOrder, requestWxPay, applyRefund, getOrderList, getOrderDetail, cancelOrder,

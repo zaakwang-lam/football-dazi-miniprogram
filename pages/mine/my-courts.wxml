@@ -25,6 +25,7 @@
       <view class="card-actions">
         <view class="action-btn" bindtap="onEditTap" data-id="{{item.id}}">编辑信息</view>
         <view class="action-btn primary" wx:if="{{item.status === 1}}" bindtap="onPublishSlot" data-id="{{item.id}}">发布空闲</view>
+        <view class="action-btn danger" bindtap="onUnbind" data-id="{{item.id}}" data-name="{{item.name}}">解绑</view>
       </view>
       <view class="card-footer"><text class="join-time">登记于 {{item.createdAtText}}</text></view>
     </view>
