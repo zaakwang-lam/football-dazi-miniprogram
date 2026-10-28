@@ -95,6 +95,10 @@ Page({
     wx.navigateTo({ url: dest });
   },
 
+  onAiTap() {
+    wx.navigateTo({ url: '/pages/ai/assistant' });
+  },
+
   onLfgTap(e) {
     const id = e.currentTarget.dataset.id;
     if (!id) return wx.showToast({ title: '无效的组队信息', icon: 'none' });

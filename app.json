@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/ai/assistant",
     "pages/search/search",
     "pages/lfg/lfg",
     "pages/war/war",
@@ -78,5 +79,11 @@
     "chooseAddress"
   ],
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "plugins": {
+    "hermitkit": {
+      "version": "1.0.0",
+      "provider": "wx5817321c8df4844e"
+    }
+  }
 }

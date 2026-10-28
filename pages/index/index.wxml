@@ -52,6 +52,14 @@
     </view>
   </view>
 
+  <view class="ai-entry" bindtap="onAiTap">
+    <view>
+      <view class="ai-entry-title">AI 助手</view>
+      <view class="ai-entry-desc">订场、退订、找球场、改空闲时段，直接问</view>
+    </view>
+    <text class="ai-entry-go">问一下</text>
+  </view>
+
   <view class="section">
     <view class="section-header">
       <text class="section-title">⚡ 进行中</text>

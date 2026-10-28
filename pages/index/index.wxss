@@ -96,6 +96,19 @@
   font-weight: 500;
 }
 
+.ai-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 24rpx 24rpx;
+  padding: 24rpx 28rpx;
+  background: #071433;
+  border-radius: 24rpx;
+}
+.ai-entry-title { color: #fff; font-size: 30rpx; font-weight: 700; }
+.ai-entry-desc { margin-top: 6rpx; color: rgba(255,255,255,.72); font-size: 22rpx; }
+.ai-entry-go { color: #fff; font-size: 24rpx; border: 1rpx solid rgba(255,255,255,.4); border-radius: 999rpx; padding: 8rpx 18rpx; }
+
 .section {
   margin: 0 24rpx 24rpx;
   background: #FFFFFF;
