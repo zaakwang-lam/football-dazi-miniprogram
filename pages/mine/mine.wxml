@@ -156,11 +156,6 @@
 
   <view class="menu-card">
     <view class="menu-section-title">帮助</view>
-    <view class="menu-row" bindtap="onMenuTap" data-type="ai">
-      <view class="menu-icon icon-service">✦</view>
-      <text class="menu-label">AI 助手</text>
-      <text class="menu-arrow">›</text>
-    </view>
     <button class="menu-row contact-btn" hover-class="contact-btn-hover" open-type="contact" session-from="mine">
       <view class="menu-icon icon-service">💬</view>
       <text class="menu-label">联系客服</text>

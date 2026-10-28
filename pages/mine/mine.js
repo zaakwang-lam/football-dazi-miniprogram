@@ -200,7 +200,6 @@ Page({
   },
   onMenuTap(e) {
     const type = e.currentTarget.dataset.type;
-    if (type === 'ai') return wx.navigateTo({ url: '/pages/ai/assistant' });
     const userInfo = this.data.userInfo || {};
     if (api.hasRole(userInfo, 'user')) {
       if (type === 'my-teams') return wx.navigateTo({ url: '/pages/mine/my-teams?type=created' });
