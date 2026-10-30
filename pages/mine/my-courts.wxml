@@ -83,6 +83,22 @@
     <input class="edit-input" type="number" maxlength="20" value="{{editForm.phone}}" data-field="phone" bindinput="onEditInput" placeholder="联系电话" />
     <view class="edit-label">场地费用（元/场）</view>
     <input class="edit-input" type="digit" value="{{editForm.price}}" data-field="price" bindinput="onEditInput" placeholder="例如 300" />
+    <view class="edit-label">主体类型</view>
+    <input class="edit-input" value="{{editForm.entityType}}" data-field="entityType" bindinput="onEditInput" placeholder="企业 / 个体工商户 / 自然人" />
+    <view class="edit-label">信用代码或身份证号</view>
+    <input class="edit-input" value="{{editForm.creditCode}}" data-field="creditCode" bindinput="onEditInput" placeholder="签约主体证件号" />
+    <view class="edit-label">纳税人身份</view>
+    <input class="edit-input" value="{{editForm.taxpayerType}}" data-field="taxpayerType" bindinput="onEditInput" placeholder="一般纳税人 / 小规模纳税人 / 自然人" />
+    <view class="edit-label">开票名称</view>
+    <input class="edit-input" value="{{editForm.invoiceTitle}}" data-field="invoiceTitle" bindinput="onEditInput" placeholder="发票抬头" />
+    <view class="edit-label">税号</view>
+    <input class="edit-input" value="{{editForm.invoiceTaxNo}}" data-field="invoiceTaxNo" bindinput="onEditInput" placeholder="纳税人识别号" />
+    <view class="edit-label">收款户名</view>
+    <input class="edit-input" value="{{editForm.settleAccountName}}" data-field="settleAccountName" bindinput="onEditInput" placeholder="对公或本人账户户名" />
+    <view class="edit-label">收款开户行</view>
+    <input class="edit-input" value="{{editForm.settleBankName}}" data-field="settleBankName" bindinput="onEditInput" placeholder="开户银行" />
+    <view class="edit-label">收款账号</view>
+    <input class="edit-input" value="{{editForm.settleBankAccount}}" data-field="settleBankAccount" bindinput="onEditInput" placeholder="银行账号" />
     <view class="edit-label">球场简介</view>
     <textarea class="edit-textarea" value="{{editForm.description}}" data-field="description" bindinput="onEditInput" placeholder="交通、停车、更衣室等" maxlength="500" />
     <view class="edit-actions">

@@ -150,6 +150,14 @@ Page({
         phone: court.phone || '',
         price: court.price != null ? String(court.price) : '',
         description: court.description || '',
+        entityType: court.entityType || '',
+        creditCode: court.creditCode || '',
+        taxpayerType: court.taxpayerType || '',
+        invoiceTitle: court.invoiceTitle || '',
+        invoiceTaxNo: court.invoiceTaxNo || '',
+        settleAccountName: court.settleAccountName || '',
+        settleBankName: court.settleBankName || '',
+        settleBankAccount: court.settleBankAccount || '',
         coverUrl: court.coverUrl || '',
         localPreview: '',
         longitude: court.longitude != null ? String(court.longitude) : '',
@@ -265,7 +273,15 @@ Page({
         type: f.types[0],
         phone: String(f.phone || '').trim(),
         price: Number(f.price) || 0,
-        description: String(f.description || '').trim()
+        description: String(f.description || '').trim(),
+        entityType: String(f.entityType || '').trim(),
+        creditCode: String(f.creditCode || '').trim(),
+        taxpayerType: String(f.taxpayerType || '').trim(),
+        invoiceTitle: String(f.invoiceTitle || '').trim(),
+        invoiceTaxNo: String(f.invoiceTaxNo || '').trim(),
+        settleAccountName: String(f.settleAccountName || '').trim(),
+        settleBankName: String(f.settleBankName || '').trim(),
+        settleBankAccount: String(f.settleBankAccount || '').trim()
       };
       if (f.longitude !== '' && f.latitude !== '') {
         payload.longitude = Number(f.longitude);

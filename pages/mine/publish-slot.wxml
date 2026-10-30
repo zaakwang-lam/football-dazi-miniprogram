@@ -34,7 +34,10 @@
     <view class="time-hint">已选 {{timeSlot}}，点击时间滚动选择</view>
 
     <view class="label required">场次费用（元）</view>
-    <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="例如 300" />
+    <input class="input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="用户看到的价格，例如 300" />
+    <view class="label required">合作底价（元）</view>
+    <input class="input" type="digit" value="{{floorPrice}}" bindinput="onFloorInput" placeholder="结算给球场的价格，不能高于场次费用" />
+    <view class="time-hint">第一次填写立即生效。之后修改底价，7 天后才生效，已下单的仍按原底价。</view>
 
     <view class="btn-primary" bindtap="onPublish">{{editingId ? '保存修改' : '发布空闲时段'}}</view>
     <view class="btn-cancel" wx:if="{{editingId}}" bindtap="onCancelEdit">取消修改</view>
@@ -49,6 +52,7 @@
       </view>
       <view class="slot-side">
         <text class="price">¥{{item.price}}</text>
+        <text class="slot-type" wx:if="{{item.floorPrice != null}}">底价 ¥{{item.floorPrice}}</text>
         <text class="slot-edit" catchtap="onEditSlot" data-id="{{item.id}}">修改</text>
         <text class="slot-del" catchtap="onDeleteSlot" data-id="{{item.id}}" data-label="{{item.date}} {{item.timeSlot}}">删除</text>
       </view>

@@ -50,6 +50,7 @@
       <text>场地费（在线支付）</text>
       <text class="summary-price">¥{{totalPrice}}</text>
     </view>
+    <view class="pay-note" wx:if="{{totalPrice > 0}}">场地服务由球场提供。广州爱去拍球信息咨询有限责任公司只受球场委托代收场地使用费，场地费发票由球场开具。</view>
     <view class="summary-row">
       <text>时段</text>
       <text>{{form.dateText}} {{form.slotText || '未选择'}}</text>
@@ -63,7 +64,7 @@
   <view class="bottom-bar" wx:if="{{form.slotIdx >= 0}}">
     <view class="summary-left">
       <text class="summary-price">¥{{totalPrice}}/场</text>
-      <text class="summary-tip">{{totalPrice > 0 ? '支付到对公账户' : '免费预订'}}</text>
+      <text class="summary-tip">{{totalPrice > 0 ? '代收场地费，发票由球场开具' : '免费预订'}}</text>
     </view>
     <view class="btn-primary" bindtap="onSubmit">{{totalPrice > 0 ? '确认支付' : '立即预订'}}</view>
   </view>

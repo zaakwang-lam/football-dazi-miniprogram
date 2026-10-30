@@ -21,6 +21,7 @@ Page({
     pitchTypes: ['5人场', '7人场', '11人场'],
     pitchType: '5人场',
     price: '',
+    floorPrice: '',
     slots: [],
     editingId: null
   },
@@ -112,6 +113,7 @@ Page({
   },
 
   onPriceInput(e) { this.setData({ price: e.detail.value }); },
+  onFloorInput(e) { this.setData({ floorPrice: e.detail.value }); },
 
   onPitchTypeTap(e) {
     this.setData({ pitchType: e.currentTarget.dataset.value });
@@ -131,7 +133,8 @@ Page({
       endTime,
       timeSlot: `${startTime}-${endTime}`,
       pitchType: slot.pitchType || '5人场',
-      price: slot.price != null ? String(slot.price) : ''
+      price: slot.price != null ? String(slot.price) : '',
+      floorPrice: slot.floorPrice != null ? String(slot.floorPrice) : ''
     });
     wx.pageScrollTo({ scrollTop: 0, duration: 200 });
   },
@@ -166,18 +169,22 @@ Page({
   },
 
   async onPublish() {
-    const { courtId, date, startTime, endTime, price, pitchType, editingId } = this.data;
+    const { courtId, date, startTime, endTime, price, floorPrice, pitchType, editingId } = this.data;
     if (!courtId) return wx.showToast({ title: '请选择球场', icon: 'none' });
     if (!date) return wx.showToast({ title: '请选择日期', icon: 'none' });
     if (!pitchType) return wx.showToast({ title: '请选择球场类型', icon: 'none' });
     if (price === '' || price == null) return wx.showToast({ title: '请填写场次费用', icon: 'none' });
+    if (floorPrice === '' || floorPrice == null) return wx.showToast({ title: '请填写合作底价', icon: 'none' });
     const fee = Number(price);
+    const floor = Number(floorPrice);
     if (Number.isNaN(fee) || fee < 0) return wx.showToast({ title: '场次费用格式不正确', icon: 'none' });
+    if (Number.isNaN(floor) || floor < 0) return wx.showToast({ title: '合作底价格式不正确', icon: 'none' });
+    if (floor > fee) return wx.showToast({ title: '合作底价不能高于场次费用', icon: 'none' });
     if (toMinutes(endTime) <= toMinutes(startTime)) {
       return wx.showToast({ title: '结束时间需晚于开始时间', icon: 'none' });
     }
     const timeSlot = `${startTime}-${endTime}`;
-    const payload = { date, timeSlot, pitchType, price: fee };
+    const payload = { date, timeSlot, pitchType, price: fee, floorPrice: floor };
     try {
       const res = editingId
         ? await api.updateFreeSlot(courtId, editingId, payload)

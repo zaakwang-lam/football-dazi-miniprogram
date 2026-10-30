@@ -62,6 +62,7 @@
 .summary-left { display: flex; flex-direction: column; gap: 4rpx; }
 .summary-left .summary-price { font-size: 36rpx; font-weight: 700; }
 .summary-tip { font-size: 22rpx; color: #999999; }
+.pay-note { font-size: 22rpx; color: #8a8f99; line-height: 1.5; padding: 8rpx 0 4rpx; }
 .bottom-bar .btn-primary {
   flex: 1; text-align: center; padding: 24rpx 0;
   background: linear-gradient(135deg, #1B4FD8, #4C8DFF); color: #fff;
